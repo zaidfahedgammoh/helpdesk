@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HelpDeskLive.Application\HelpDeskLive.Application.csproj" />
+    <ProjectReference Include="..\HelpDeskLive.Infrastructure\HelpDeskLive.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
