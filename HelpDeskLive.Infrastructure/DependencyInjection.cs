@@ -1,9 +1,10 @@
 ﻿
+using HelpDeskLive.Application.Abstractions;
 using HelpDeskLive.Infrastructure.Data;
+using HelpDeskLive.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace HelpDeskLive.Infrastructure;
 
 public static class DependencyInjection
@@ -12,6 +13,7 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddScoped<ITicketRepository, TicketRepository>();
         var connectionString =
             configuration.GetConnectionString("DefaultConnection");
 
