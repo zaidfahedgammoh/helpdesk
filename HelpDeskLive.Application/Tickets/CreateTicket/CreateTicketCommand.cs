@@ -8,5 +8,4 @@ public sealed record CreateTicketCommand(
     string Title,
     string Description,
     TicketPriority Priority,
-    int DepartmentId,
-    int CustomerId) : IRequest<int>;
+    int DepartmentId) : IRequest<int>;
