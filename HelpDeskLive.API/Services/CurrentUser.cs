@@ -28,4 +28,13 @@ public sealed class CurrentUser : ICurrentUser
             return null;
         }
     }
+
+    public string? Role
+    {
+        get
+        {
+            return _httpContextAccessor.HttpContext?
+                .User.FindFirstValue(ClaimTypes.Role);
+        }
+    }
 }

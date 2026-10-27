@@ -1,6 +1,7 @@
 ﻿
 using HelpDeskLive.Application.Abstractions;
 using HelpDeskLive.Domain.Entities;
+using HelpDeskLive.Domain.Enums;
 using MediatR;
 
 namespace HelpDeskLive.Application.Tickets.CreateTicket;
@@ -23,12 +24,16 @@ public sealed class CreateTicketCommandHandler
         CreateTicketCommand request,
         CancellationToken cancellationToken)
     {
-        var customerId = _currentUser.UserId;
-
-        if (customerId is null)
+        if (_currentUser.UserId is not int customerId)
         {
             throw new UnauthorizedAccessException(
                 "An authenticated user is required to create a ticket.");
+        }
+
+        if (_currentUser.Role != UserRole.Customer.ToString())
+        {
+            throw new UnauthorizedAccessException(
+                "Only customers can create tickets.");
         }
 
         var departmentExists =
@@ -44,18 +49,18 @@ public sealed class CreateTicketCommandHandler
 
         var customerExists =
             await _ticketRepository.CustomerExistsAsync(
-                customerId.Value,
+                customerId,
                 cancellationToken);
 
         if (!customerExists)
         {
             throw new UnauthorizedAccessException(
-                "Only authenticated customers can create tickets.");
+                "The authenticated customer does not exist.");
         }
 
         var openTicketCount =
             await _ticketRepository.CountOpenTicketsForCustomerAsync(
-                customerId.Value,
+                customerId,
                 cancellationToken);
 
         if (openTicketCount >= 3)
@@ -69,7 +74,7 @@ public sealed class CreateTicketCommandHandler
             request.Description,
             request.Priority,
             request.DepartmentId,
-            customerId.Value);
+            customerId);
 
         await _ticketRepository.AddAsync(
             ticket,
