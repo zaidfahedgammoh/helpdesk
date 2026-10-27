@@ -5,13 +5,20 @@ using HelpDeskLive.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using HelpDeskLive.API.Authentication;
+using HelpDeskLive.Infrastructure.Data;
+using HelpDeskLive.Infrastructure.Data.Seeding;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<JwtTokenService>();
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<PasswordService>();
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]
     ?? throw new InvalidOperationException(
         "JWT issuer is not configured.");
@@ -57,6 +64,17 @@ builder.Services
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<HelpDeskDbContext>();
+
+    await dbContext.Database.MigrateAsync();
+
+    await TestUserSeeder.SeedAsync(dbContext);
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
