@@ -10,6 +10,7 @@ using HelpDeskLive.Infrastructure.Data;
 using HelpDeskLive.Infrastructure.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
@@ -83,6 +84,7 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
+app.MapControllers();
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"

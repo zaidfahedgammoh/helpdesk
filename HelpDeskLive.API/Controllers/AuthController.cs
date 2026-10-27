@@ -4,7 +4,7 @@ using HelpDeskLive.API.Models;
 using HelpDeskLive.API.Services;
 using HelpDeskLive.Application.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace HelpDeskLive.API.Controllers;
 
 [ApiController]
@@ -52,4 +52,24 @@ public sealed class AuthController : ControllerBase
             accessToken
         });
     }
+    [Authorize]
+    [HttpGet("test-auth")]
+    public IActionResult TestAuth()
+    {
+        return Ok(new
+        {
+            message = "You are authenticated."
+        });
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("test-admin")]
+    public IActionResult TestAdmin()
+    {
+        return Ok(new
+        {
+            message = "You have the Admin role."
+        });
+    }
+
 }
