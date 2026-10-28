@@ -8,6 +8,12 @@ namespace HelpDeskLive.MVC.Controllers
     {
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(
+                HttpContext.Session.GetString("AccessToken")))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             return View();
         }
 
