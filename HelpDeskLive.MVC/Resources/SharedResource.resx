@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+	</resheader>
+
+	<data name="AppName" xml:space="preserve"><value>HelpDesk Live</value></data>
+	<data name="Welcome" xml:space="preserve"><value>Welcome</value></data>
+	<data name="WelcomeBack" xml:space="preserve"><value>Welcome back</value></data>
+	<data name="LoginWelcomeText" xml:space="preserve"><value>Sign in to your HelpDesk Live account.</value></data>
+	<data name="AdminWelcomeText" xml:space="preserve"><value>Welcome to the administration dashboard.</value></data>
+	<data name="AgentWelcomeText" xml:space="preserve"><value>Welcome to your agent dashboard.</value></data>
+	<data name="CustomerWelcomeText" xml:space="preserve"><value>Welcome to your customer dashboard.</value></data>
+
+	<data name="Home" xml:space="preserve"><value>Home</value></data>
+	<data name="Dashboard" xml:space="preserve"><value>Dashboard</value></data>
+	<data name="AdminDashboard" xml:space="preserve"><value>Admin Dashboard</value></data>
+	<data name="AgentDashboard" xml:space="preserve"><value>Agent Dashboard</value></data>
+	<data name="CustomerDashboard" xml:space="preserve"><value>Customer Dashboard</value></data>
+
+	<data name="Login" xml:space="preserve"><value>Login</value></data>
+	<data name="Logout" xml:space="preserve"><value>Log out</value></data>
+	<data name="SignIn" xml:space="preserve"><value>Sign in</value></data>
+	<data name="SignOut" xml:space="preserve"><value>Sign out</value></data>
+	<data name="Email" xml:space="preserve"><value>Email address</value></data>
+	<data name="EmailAddress" xml:space="preserve"><value>Email address</value></data>
+	<data name="Password" xml:space="preserve"><value>Password</value></data>
+	<data name="EnterEmail" xml:space="preserve"><value>Enter your email</value></data>
+	<data name="EnterPassword" xml:space="preserve"><value>Enter your password</value></data>
+	<data name="ShowPassword" xml:space="preserve"><value>Show</value></data>
+	<data name="HidePassword" xml:space="preserve"><value>Hide</value></data>
+	<data name="ForgotPassword" xml:space="preserve"><value>Forgot password?</value></data>
+	<data name="RememberMe" xml:space="preserve"><value>Remember me</value></data>
+	<data name="SigningIn" xml:space="preserve"><value>Signing in...</value></data>
+
+	<data name="InvalidCredentials" xml:space="preserve"><value>Invalid email or password.</value></data>
+	<data name="LoginRequired" xml:space="preserve"><value>Please sign in to continue.</value></data>
+	<data name="ApiNotConfigured" xml:space="preserve"><value>API URL is not configured.</value></data>
+	<data name="ApiConnectionFailed" xml:space="preserve"><value>Could not connect to the API. Please make sure it is running.</value></data>
+	<data name="ApiInvalidResponse" xml:space="preserve"><value>The API returned an invalid response.</value></data>
+	<data name="AccessDenied" xml:space="preserve"><value>You do not have permission to access this page.</value></data>
+	<data name="SessionExpired" xml:space="preserve"><value>Your session has expired. Please sign in again.</value></data>
+
+	<data name="Users" xml:space="preserve"><value>Users</value></data>
+	<data name="User" xml:space="preserve"><value>User</value></data>
+	<data name="ManageUsers" xml:space="preserve"><value>Manage users</value></data>
+	<data name="CreateUser" xml:space="preserve"><value>Create user</value></data>
+	<data name="EditUser" xml:space="preserve"><value>Edit user</value></data>
+	<data name="DeleteUser" xml:space="preserve"><value>Delete user</value></data>
+	<data name="UserDetails" xml:space="preserve"><value>User details</value></data>
+	<data name="Name" xml:space="preserve"><value>Name</value></data>
+	<data name="FullName" xml:space="preserve"><value>Full name</value></data>
+	<data name="Role" xml:space="preserve"><value>Role</value></data>
+	<data name="Admin" xml:space="preserve"><value>Administrator</value></data>
+	<data name="Agent" xml:space="preserve"><value>Support Agent</value></data>
+	<data name="Customer" xml:space="preserve"><value>Customer</value></data>
+	<data name="PreferredLanguage" xml:space="preserve"><value>Preferred language</value></data>
+
+	<data name="Tickets" xml:space="preserve"><value>Tickets</value></data>
+	<data name="Ticket" xml:space="preserve"><value>Ticket</value></data>
+	<data name="AllTickets" xml:space="preserve"><value>All tickets</value></data>
+	<data name="MyTickets" xml:space="preserve"><value>My tickets</value></data>
+	<data name="AssignedTickets" xml:space="preserve"><value>Assigned tickets</value></data>
+	<data name="CreateTicket" xml:space="preserve"><value>Create ticket</value></data>
+	<data name="NewTicket" xml:space="preserve"><value>New ticket</value></data>
+	<data name="TicketDetails" xml:space="preserve"><value>Ticket details</value></data>
+	<data name="TicketNumber" xml:space="preserve"><value>Ticket number</value></data>
+	<data name="TicketTitle" xml:space="preserve"><value>Ticket title</value></data>
+	<data name="EnterTicketTitle" xml:space="preserve"><value>Enter ticket title</value></data>
+	<data name="Description" xml:space="preserve"><value>Description</value></data>
+	<data name="EnterDescription" xml:space="preserve"><value>Enter a description</value></data>
+	<data name="Department" xml:space="preserve"><value>Department</value></data>
+	<data name="Departments" xml:space="preserve"><value>Departments</value></data>
+	<data name="SelectDepartment" xml:space="preserve"><value>Select a department</value></data>
+	<data name="Priority" xml:space="preserve"><value>Priority</value></data>
+	<data name="Status" xml:space="preserve"><value>Status</value></data>
+	<data name="AssignedAgent" xml:space="preserve"><value>Assigned agent</value></data>
+	<data name="CustomerName" xml:space="preserve"><value>Customer name</value></data>
+	<data name="CreatedAt" xml:space="preserve"><value>Created at</value></data>
+	<data name="UpdatedAt" xml:space="preserve"><value>Updated at</value></data>
+	<data name="ClosedAt" xml:space="preserve"><value>Closed at</value></data>
+	<data name="AssignTicket" xml:space="preserve"><value>Assign ticket</value></data>
+	<data name="ChangeStatus" xml:space="preserve"><value>Change status</value></data>
+	<data name="AddComment" xml:space="preserve"><value>Add comment</value></data>
+	<data name="TicketCreated" xml:space="preserve"><value>Ticket created successfully.</value></data>
+	<data name="TicketUpdated" xml:space="preserve"><value>Ticket updated successfully.</value></data>
+	<data name="TicketClosed" xml:space="preserve"><value>Ticket closed successfully.</value></data>
+	<data name="TicketAssigned" xml:space="preserve"><value>Ticket assigned successfully.</value></data>
+	<data name="NoTicketsFound" xml:space="preserve"><value>No tickets found.</value></data>
+	<data name="TicketTitleRequired" xml:space="preserve"><value>Ticket title is required.</value></data>
+	<data name="TicketDescriptionRequired" xml:space="preserve"><value>Ticket description is required.</value></data>
+
+	<data name="Open" xml:space="preserve"><value>Open</value></data>
+	<data name="InProgress" xml:space="preserve"><value>In Progress</value></data>
+	<data name="Resolved" xml:space="preserve"><value>Resolved</value></data>
+	<data name="Closed" xml:space="preserve"><value>Closed</value></data>
+
+	<data name="Low" xml:space="preserve"><value>Low</value></data>
+	<data name="Medium" xml:space="preserve"><value>Medium</value></data>
+	<data name="High" xml:space="preserve"><value>High</value></data>
+	<data name="Critical" xml:space="preserve"><value>Critical</value></data>
+
+	<data name="Overview" xml:space="preserve"><value>Overview</value></data>
+	<data name="TotalTickets" xml:space="preserve"><value>Total tickets</value></data>
+	<data name="OpenTickets" xml:space="preserve"><value>Open tickets</value></data>
+	<data name="InProgressTickets" xml:space="preserve"><value>In-progress tickets</value></data>
+	<data name="ResolvedTickets" xml:space="preserve"><value>Resolved tickets</value></data>
+	<data name="ClosedTickets" xml:space="preserve"><value>Closed tickets</value></data>
+	<data name="RecentTickets" xml:space="preserve"><value>Recent tickets</value></data>
+	<data name="AssignedToMe" xml:space="preserve"><value>Assigned to me</value></data>
+	<data name="UnassignedTickets" xml:space="preserve"><value>Unassigned tickets</value></data>
+	<data name="TicketStatistics" xml:space="preserve"><value>Ticket statistics</value></data>
+	<data name="TotalUsers" xml:space="preserve"><value>Total users</value></data>
+	<data name="TotalAgents" xml:space="preserve"><value>Total agents</value></data>
+	<data name="TotalCustomers" xml:space="preserve"><value>Total customers</value></data>
+
+	<data name="ManageDepartments" xml:space="preserve"><value>Manage departments</value></data>
+	<data name="DepartmentName" xml:space="preserve"><value>Department name</value></data>
+	<data name="CreateDepartment" xml:space="preserve"><value>Create department</value></data>
+
+	<data name="Chat" xml:space="preserve"><value>Chat</value></data>
+	<data name="Messages" xml:space="preserve"><value>Messages</value></data>
+	<data name="SendMessage" xml:space="preserve"><value>Send message</value></data>
+	<data name="TypeMessage" xml:space="preserve"><value>Type your message</value></data>
+	<data name="NoMessages" xml:space="preserve"><value>No messages yet.</value></data>
+	<data name="MessageSent" xml:space="preserve"><value>Message sent successfully.</value></data>
+
+	<data name="Profile" xml:space="preserve"><value>Profile</value></data>
+	<data name="MyProfile" xml:space="preserve"><value>My profile</value></data>
+	<data name="Settings" xml:space="preserve"><value>Settings</value></data>
+	<data name="Language" xml:space="preserve"><value>Language</value></data>
+	<data name="ChangeLanguage" xml:space="preserve"><value>Change language</value></data>
+	<data name="SelectLanguage" xml:space="preserve"><value>Select language</value></data>
+	<data name="English" xml:space="preserve"><value>English</value></data>
+	<data name="Arabic" xml:space="preserve"><value>Arabic</value></data>
+
+	<data name="Save" xml:space="preserve"><value>Save</value></data>
+	<data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+	<data name="Edit" xml:space="preserve"><value>Edit</value></data>
+	<data name="Delete" xml:space="preserve"><value>Delete</value></data>
+	<data name="Create" xml:space="preserve"><value>Create</value></data>
+	<data name="Update" xml:space="preserve"><value>Update</value></data>
+	<data name="Search" xml:space="preserve"><value>Search</value></data>
+	<data name="Filter" xml:space="preserve"><value>Filter</value></data>
+	<data name="Clear" xml:space="preserve"><value>Clear</value></data>
+	<data name="Actions" xml:space="preserve"><value>Actions</value></data>
+	<data name="Details" xml:space="preserve"><value>Details</value></data>
+	<data name="Back" xml:space="preserve"><value>Back</value></data>
+	<data name="Close" xml:space="preserve"><value>Close</value></data>
+	<data name="Submit" xml:space="preserve"><value>Submit</value></data>
+	<data name="Confirm" xml:space="preserve"><value>Confirm</value></data>
+	<data name="Yes" xml:space="preserve"><value>Yes</value></data>
+	<data name="No" xml:space="preserve"><value>No</value></data>
+	<data name="Loading" xml:space="preserve"><value>Loading...</value></data>
+	<data name="NoRecordsFound" xml:space="preserve"><value>No records found.</value></data>
+	<data name="NoDataAvailable" xml:space="preserve"><value>No data available.</value></data>
+	<data name="AreYouSure" xml:space="preserve"><value>Are you sure?</value></data>
+	<data name="OperationSuccessful" xml:space="preserve"><value>Operation completed successfully.</value></data>
+	<data name="OperationFailed" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+	<data name="RequiredField" xml:space="preserve"><value>This field is required.</value></data>
+	<data name="InvalidEmail" xml:space="preserve"><value>Please enter a valid email address.</value></data>
+
+	<data name="Today" xml:space="preserve"><value>Today</value></data>
+	<data name="Yesterday" xml:space="preserve"><value>Yesterday</value></data>
+	<data name="Date" xml:space="preserve"><value>Date</value></data>
+	<data name="Time" xml:space="preserve"><value>Time</value></data>
+	<data name="From" xml:space="preserve"><value>From</value></data>
+	<data name="To" xml:space="preserve"><value>To</value></data>
+	<data name="Showing" xml:space="preserve"><value>Showing</value></data>
+	<data name="Of" xml:space="preserve"><value>of</value></data>
+	<data name="Page" xml:space="preserve"><value>Page</value></data>
+	<data name="Next" xml:space="preserve"><value>Next</value></data>
+	<data name="Previous" xml:space="preserve"><value>Previous</value></data>
+	<data name="SignIn" xml:space="preserve">
+  <value>Sign In</value>
+</data>
+	<data name="Privacy" xml:space="preserve"><value>Privacy</value></data>
+	<data name="PrivacyPolicy" xml:space="preserve"><value>Privacy Policy</value></data>
+	<data name="Error" xml:space="preserve"><value>Error</value></data>
+	<data name="PageNotFound" xml:space="preserve"><value>Page not found.</value></data>
+	<data name="SomethingWentWrong" xml:space="preserve"><value>Something went wrong.</value></data>
+	<data name="TryAgain" xml:space="preserve"><value>Please try again.</value></data>
+	<data name="Unauthorized" xml:space="preserve"><value>You are not authorized to perform this action.</value></data>
+	<data name="Forbidden" xml:space="preserve"><value>Access denied.</value></data>
+	<data name="FooterCopyright" xml:space="preserve"><value>HelpDesk Live. All rights reserved.</value></data>
+</root>

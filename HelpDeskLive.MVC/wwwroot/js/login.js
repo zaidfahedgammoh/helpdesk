@@ -6,11 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.getElementById("login-button");
 
     if (toggleButton && passwordInput) {
+        const showText = toggleButton.dataset.showText;
+        const hideText = toggleButton.dataset.hideText;
+
         toggleButton.addEventListener("click", () => {
             const isPassword = passwordInput.type === "password";
 
             passwordInput.type = isPassword ? "text" : "password";
-            toggleButton.textContent = isPassword ? "Hide" : "Show";
+
+            toggleButton.textContent = isPassword
+                ? hideText
+                : showText;
         });
     }
 
@@ -18,7 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
         loginForm.addEventListener("submit", () => {
             if (loginButton) {
                 loginButton.disabled = true;
-                loginButton.textContent = "Signing in...";
+
+                loginButton.textContent =
+                    loginButton.dataset.loadingText;
             }
         });
     }

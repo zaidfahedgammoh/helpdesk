@@ -111,3 +111,13 @@ body {
 .btn-login {
     text-align: center;
 }
+.language-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+html[dir="rtl"] .language-switcher {
+    right: auto;
+    left: 20px;
+}

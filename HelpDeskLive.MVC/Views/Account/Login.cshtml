@@ -1,33 +1,71 @@
 ﻿
+@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<HelpDeskLive.MVC.SharedResource> Localizer
+
 @{
-    ViewData["Title"] = "Sign In";
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var isArabic = currentCulture == "ar";
+
+    ViewData["Title"] = Localizer["SignIn"];
     Layout = null;
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@currentCulture" dir="@(isArabic ? "rtl" : "ltr")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sign In | HelpDesk Live</title>
+    <title>@Localizer["SignIn"] | @Localizer["AppName"]</title>
 
-    <link rel="stylesheet"
-          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @if (isArabic)
+    {
+        <link rel="stylesheet"
+              href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    }
+    else
+    {
+        <link rel="stylesheet"
+              href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    }
 
     <link rel="stylesheet"
           href="~/css/login.css"
           asp-append-version="true" />
 </head>
 
+
 <body>
+    <div class="language-switcher">
+        <form asp-controller="Account"
+              asp-action="SetLanguage"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="returnUrl"
+                   value="/Account/Login" />
+
+            <button type="submit"
+                    name="culture"
+                    value="@(isArabic ? "en" : "ar")"
+                    class="btn btn-outline-secondary btn-sm">
+                @(isArabic ? "English" : "العربية")
+            </button>
+        </form>
+    </div>
+
     <main class="login-wrapper">
         <section class="login-card">
 
-            <h1 class="h3 fw-bold mb-2">Welcome</h1>
+            <h1 class="h3 fw-bold mb-2">
+                @Localizer["Welcome"]
+            </h1>
 
             <p class="subtitle mb-4">
-                Sign in to your HelpDesk Live account.
+                @Localizer["LoginWelcomeText"]
             </p>
 
             <form id="login-form"
@@ -39,21 +77,21 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">
-                        Email address
+                        @Localizer["EmailAddress"]
                     </label>
 
                     <input type="email"
                            id="email"
                            name="email"
                            class="form-control"
-                           placeholder="Enter your email"
+                           placeholder="@Localizer["EnterEmail"]"
                            autocomplete="username"
                            required />
                 </div>
 
                 <div class="mb-4">
                     <label for="password" class="form-label">
-                        Password
+                        @Localizer["Password"]
                     </label>
 
                     <div class="password-container">
@@ -61,14 +99,16 @@
                                id="password"
                                name="password"
                                class="form-control"
-                               placeholder="Enter your password"
+                               placeholder="@Localizer["EnterPassword"]"
                                autocomplete="current-password"
                                required />
 
                         <button type="button"
                                 id="toggle-password"
-                                class="toggle-password">
-                            Show
+                                class="toggle-password"
+                                data-show-text="@Localizer["ShowPassword"]"
+                                data-hide-text="@Localizer["HidePassword"]">
+                            @Localizer["ShowPassword"]
                         </button>
                     </div>
                 </div>
@@ -80,15 +120,16 @@
                     </div>
                 }
 
-                <button type="submit"
-                        id="login-button"
-                        class="btn-login">
-                    Sign in
-                </button>
+               <button type="submit"
+        id="login-button"
+        class="btn-login"
+        data-loading-text="@Localizer["SigningIn"]">
+    @Localizer["SignIn"]
+</button>
             </form>
 
             <p class="text-center text-secondary small mt-4 mb-0">
-                HelpDesk Live &copy; @DateTime.Now.Year
+                @Localizer["FooterCopyright"] &copy; @DateTime.Now.Year
             </p>
 
         </section>
@@ -97,4 +138,5 @@
     <script src="~/js/login.js"
             asp-append-version="true"></script>
 </body>
+
 </html>

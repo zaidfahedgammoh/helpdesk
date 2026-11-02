@@ -1,5 +1,85 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<HelpDeskLive.MVC.SharedResource> Localizer
+
 @{
+    ViewData["Title"] = Localizer["AdminDashboard"];
 }
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">
+            @Localizer["AdminDashboard"]
+        </h2>
+
+        <p class="text-muted">
+            @Localizer["AdminWelcomeText"]
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        @Localizer["TotalTickets"]
+                    </h6>
+
+                    <h2 class="fw-bold mb-0">—</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        @Localizer["OpenTickets"]
+                    </h6>
+
+                    <h2 class="fw-bold mb-0">—</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        @Localizer["TotalAgents"]
+                    </h6>
+
+                    <h2 class="fw-bold mb-0">—</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        @Localizer["TotalCustomers"]
+                    </h6>
+
+                    <h2 class="fw-bold mb-0">—</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body">
+            <h5 class="fw-bold mb-3">
+                @Localizer["Overview"]
+            </h5>
+
+            <p class="text-muted mb-0">
+                @Localizer["NoDataAvailable"]
+            </p>
+        </div>
+    </div>
+
+</div>

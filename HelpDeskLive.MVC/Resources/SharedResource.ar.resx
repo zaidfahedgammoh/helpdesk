@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+	</resheader>
+
+	<data name="AppName" xml:space="preserve"><value>HelpDesk Live</value></data>
+	<data name="Welcome" xml:space="preserve"><value>مرحباً</value></data>
+	<data name="WelcomeBack" xml:space="preserve"><value>أهلاً بعودتك</value></data>
+	<data name="LoginWelcomeText" xml:space="preserve"><value>سجل الدخول إلى حسابك في HelpDesk Live.</value></data>
+	<data name="AdminWelcomeText" xml:space="preserve"><value>مرحباً بك في لوحة تحكم الإدارة.</value></data>
+	<data name="AgentWelcomeText" xml:space="preserve"><value>مرحباً بك في لوحة تحكم موظف الدعم.</value></data>
+	<data name="CustomerWelcomeText" xml:space="preserve"><value>مرحباً بك في لوحة تحكم العميل.</value></data>
+
+	<data name="Home" xml:space="preserve"><value>الرئيسية</value></data>
+	<data name="Dashboard" xml:space="preserve"><value>لوحة التحكم</value></data>
+	<data name="AdminDashboard" xml:space="preserve"><value>لوحة تحكم المدير</value></data>
+	<data name="AgentDashboard" xml:space="preserve"><value>لوحة تحكم موظف الدعم</value></data>
+	<data name="CustomerDashboard" xml:space="preserve"><value>لوحة تحكم العميل</value></data>
+
+	<data name="Login" xml:space="preserve"><value>تسجيل الدخول</value></data>
+	<data name="Logout" xml:space="preserve"><value>تسجيل الخروج</value></data>
+	<data name="SignIn" xml:space="preserve"><value>تسجيل الدخول</value></data>
+	<data name="SignOut" xml:space="preserve"><value>تسجيل الخروج</value></data>
+	<data name="Email" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+	<data name="EmailAddress" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+	<data name="Password" xml:space="preserve"><value>كلمة المرور</value></data>
+	<data name="EnterEmail" xml:space="preserve"><value>أدخل بريدك الإلكتروني</value></data>
+	<data name="EnterPassword" xml:space="preserve"><value>أدخل كلمة المرور</value></data>
+	<data name="ShowPassword" xml:space="preserve"><value>إظهار</value></data>
+	<data name="HidePassword" xml:space="preserve"><value>إخفاء</value></data>
+	<data name="ForgotPassword" xml:space="preserve"><value>هل نسيت كلمة المرور؟</value></data>
+	<data name="RememberMe" xml:space="preserve"><value>تذكرني</value></data>
+	<data name="SigningIn" xml:space="preserve"><value>جارٍ تسجيل الدخول...</value></data>
+
+	<data name="InvalidCredentials" xml:space="preserve"><value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value></data>
+	<data name="LoginRequired" xml:space="preserve"><value>يرجى تسجيل الدخول للمتابعة.</value></data>
+	<data name="ApiNotConfigured" xml:space="preserve"><value>عنوان واجهة برمجة التطبيقات غير مُعد.</value></data>
+	<data name="ApiConnectionFailed" xml:space="preserve"><value>تعذر الاتصال بواجهة برمجة التطبيقات. يرجى التأكد من أنها تعمل.</value></data>
+	<data name="ApiInvalidResponse" xml:space="preserve"><value>أعادت واجهة برمجة التطبيقات استجابة غير صالحة.</value></data>
+	<data name="AccessDenied" xml:space="preserve"><value>ليس لديك صلاحية للوصول إلى هذه الصفحة.</value></data>
+	<data name="SessionExpired" xml:space="preserve"><value>انتهت جلستك. يرجى تسجيل الدخول مجدداً.</value></data>
+
+	<data name="Users" xml:space="preserve"><value>المستخدمون</value></data>
+	<data name="User" xml:space="preserve"><value>المستخدم</value></data>
+	<data name="ManageUsers" xml:space="preserve"><value>إدارة المستخدمين</value></data>
+	<data name="CreateUser" xml:space="preserve"><value>إنشاء مستخدم</value></data>
+	<data name="EditUser" xml:space="preserve"><value>تعديل المستخدم</value></data>
+	<data name="DeleteUser" xml:space="preserve"><value>حذف المستخدم</value></data>
+	<data name="UserDetails" xml:space="preserve"><value>بيانات المستخدم</value></data>
+	<data name="Name" xml:space="preserve"><value>الاسم</value></data>
+	<data name="FullName" xml:space="preserve"><value>الاسم الكامل</value></data>
+	<data name="Role" xml:space="preserve"><value>الدور</value></data>
+	<data name="Admin" xml:space="preserve"><value>مدير النظام</value></data>
+	<data name="Agent" xml:space="preserve"><value>موظف الدعم</value></data>
+	<data name="Customer" xml:space="preserve"><value>العميل</value></data>
+	<data name="PreferredLanguage" xml:space="preserve"><value>اللغة المفضلة</value></data>
+
+	<data name="Tickets" xml:space="preserve"><value>التذاكر</value></data>
+	<data name="Ticket" xml:space="preserve"><value>تذكرة</value></data>
+	<data name="AllTickets" xml:space="preserve"><value>جميع التذاكر</value></data>
+	<data name="MyTickets" xml:space="preserve"><value>تذاكري</value></data>
+	<data name="AssignedTickets" xml:space="preserve"><value>التذاكر المسندة</value></data>
+	<data name="CreateTicket" xml:space="preserve"><value>إنشاء تذكرة</value></data>
+	<data name="NewTicket" xml:space="preserve"><value>تذكرة جديدة</value></data>
+	<data name="TicketDetails" xml:space="preserve"><value>تفاصيل التذكرة</value></data>
+	<data name="TicketNumber" xml:space="preserve"><value>رقم التذكرة</value></data>
+	<data name="TicketTitle" xml:space="preserve"><value>عنوان التذكرة</value></data>
+	<data name="EnterTicketTitle" xml:space="preserve"><value>أدخل عنوان التذكرة</value></data>
+	<data name="Description" xml:space="preserve"><value>الوصف</value></data>
+	<data name="EnterDescription" xml:space="preserve"><value>أدخل وصفاً للمشكلة</value></data>
+	<data name="Department" xml:space="preserve"><value>القسم</value></data>
+	<data name="Departments" xml:space="preserve"><value>الأقسام</value></data>
+	<data name="SelectDepartment" xml:space="preserve"><value>اختر القسم</value></data>
+	<data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
+	<data name="Status" xml:space="preserve"><value>الحالة</value></data>
+	<data name="AssignedAgent" xml:space="preserve"><value>موظف الدعم المسؤول</value></data>
+	<data name="CustomerName" xml:space="preserve"><value>اسم العميل</value></data>
+	<data name="CreatedAt" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+	<data name="UpdatedAt" xml:space="preserve"><value>تاريخ التحديث</value></data>
+	<data name="ClosedAt" xml:space="preserve"><value>تاريخ الإغلاق</value></data>
+	<data name="AssignTicket" xml:space="preserve"><value>إسناد التذكرة</value></data>
+	<data name="ChangeStatus" xml:space="preserve"><value>تغيير الحالة</value></data>
+	<data name="AddComment" xml:space="preserve"><value>إضافة تعليق</value></data>
+	<data name="TicketCreated" xml:space="preserve"><value>تم إنشاء التذكرة بنجاح.</value></data>
+	<data name="TicketUpdated" xml:space="preserve"><value>تم تحديث التذكرة بنجاح.</value></data>
+	<data name="TicketClosed" xml:space="preserve"><value>تم إغلاق التذكرة بنجاح.</value></data>
+	<data name="TicketAssigned" xml:space="preserve"><value>تم إسناد التذكرة بنجاح.</value></data>
+	<data name="NoTicketsFound" xml:space="preserve"><value>لم يتم العثور على تذاكر.</value></data>
+	<data name="TicketTitleRequired" xml:space="preserve"><value>عنوان التذكرة مطلوب.</value></data>
+	<data name="TicketDescriptionRequired" xml:space="preserve"><value>وصف التذكرة مطلوب.</value></data>
+
+	<data name="Open" xml:space="preserve"><value>مفتوحة</value></data>
+	<data name="InProgress" xml:space="preserve"><value>قيد التنفيذ</value></data>
+	<data name="Resolved" xml:space="preserve"><value>تم حلها</value></data>
+	<data name="Closed" xml:space="preserve"><value>مغلقة</value></data>
+
+	<data name="Low" xml:space="preserve"><value>منخفضة</value></data>
+	<data name="Medium" xml:space="preserve"><value>متوسطة</value></data>
+	<data name="High" xml:space="preserve"><value>عالية</value></data>
+	<data name="Critical" xml:space="preserve"><value>حرجة</value></data>
+
+	<data name="Overview" xml:space="preserve"><value>نظرة عامة</value></data>
+	<data name="TotalTickets" xml:space="preserve"><value>إجمالي التذاكر</value></data>
+	<data name="OpenTickets" xml:space="preserve"><value>التذاكر المفتوحة</value></data>
+	<data name="InProgressTickets" xml:space="preserve"><value>التذاكر قيد التنفيذ</value></data>
+	<data name="ResolvedTickets" xml:space="preserve"><value>التذاكر التي تم حلها</value></data>
+	<data name="ClosedTickets" xml:space="preserve"><value>التذاكر المغلقة</value></data>
+	<data name="RecentTickets" xml:space="preserve"><value>أحدث التذاكر</value></data>
+	<data name="AssignedToMe" xml:space="preserve"><value>التذاكر المسندة إليّ</value></data>
+	<data name="UnassignedTickets" xml:space="preserve"><value>التذاكر غير المسندة</value></data>
+	<data name="TicketStatistics" xml:space="preserve"><value>إحصائيات التذاكر</value></data>
+	<data name="TotalUsers" xml:space="preserve"><value>إجمالي المستخدمين</value></data>
+	<data name="TotalAgents" xml:space="preserve"><value>إجمالي موظفي الدعم</value></data>
+	<data name="TotalCustomers" xml:space="preserve"><value>إجمالي العملاء</value></data>
+
+	<data name="ManageDepartments" xml:space="preserve"><value>إدارة الأقسام</value></data>
+	<data name="DepartmentName" xml:space="preserve"><value>اسم القسم</value></data>
+	<data name="CreateDepartment" xml:space="preserve"><value>إنشاء قسم</value></data>
+
+	<data name="Chat" xml:space="preserve"><value>المحادثة</value></data>
+	<data name="Messages" xml:space="preserve"><value>الرسائل</value></data>
+	<data name="SendMessage" xml:space="preserve"><value>إرسال الرسالة</value></data>
+	<data name="TypeMessage" xml:space="preserve"><value>اكتب رسالتك</value></data>
+	<data name="NoMessages" xml:space="preserve"><value>لا توجد رسائل بعد.</value></data>
+	<data name="MessageSent" xml:space="preserve"><value>تم إرسال الرسالة بنجاح.</value></data>
+
+	<data name="Profile" xml:space="preserve"><value>الملف الشخصي</value></data>
+	<data name="MyProfile" xml:space="preserve"><value>ملفي الشخصي</value></data>
+	<data name="Settings" xml:space="preserve"><value>الإعدادات</value></data>
+	<data name="Language" xml:space="preserve"><value>اللغة</value></data>
+	<data name="ChangeLanguage" xml:space="preserve"><value>تغيير اللغة</value></data>
+	<data name="SelectLanguage" xml:space="preserve"><value>اختر اللغة</value></data>
+	<data name="English" xml:space="preserve"><value>الإنجليزية</value></data>
+	<data name="Arabic" xml:space="preserve"><value>العربية</value></data>
+
+	<data name="Save" xml:space="preserve"><value>حفظ</value></data>
+	<data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+	<data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+	<data name="Delete" xml:space="preserve"><value>حذف</value></data>
+	<data name="Create" xml:space="preserve"><value>إنشاء</value></data>
+	<data name="Update" xml:space="preserve"><value>تحديث</value></data>
+	<data name="Search" xml:space="preserve"><value>بحث</value></data>
+	<data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+	<data name="Clear" xml:space="preserve"><value>مسح</value></data>
+	<data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+	<data name="Details" xml:space="preserve"><value>التفاصيل</value></data>
+	<data name="Back" xml:space="preserve"><value>رجوع</value></data>
+	<data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+	<data name="Submit" xml:space="preserve"><value>إرسال</value></data>
+	<data name="Confirm" xml:space="preserve"><value>تأكيد</value></data>
+	<data name="Yes" xml:space="preserve"><value>نعم</value></data>
+	<data name="No" xml:space="preserve"><value>لا</value></data>
+	<data name="Loading" xml:space="preserve"><value>جارٍ التحميل...</value></data>
+	<data name="NoRecordsFound" xml:space="preserve"><value>لم يتم العثور على سجلات.</value></data>
+	<data name="NoDataAvailable" xml:space="preserve"><value>لا توجد بيانات متاحة.</value></data>
+	<data name="AreYouSure" xml:space="preserve"><value>هل أنت متأكد؟</value></data>
+	<data name="OperationSuccessful" xml:space="preserve"><value>تمت العملية بنجاح.</value></data>
+	<data name="OperationFailed" xml:space="preserve"><value>حدث خطأ. يرجى المحاولة مرة أخرى.</value></data>
+	<data name="RequiredField" xml:space="preserve"><value>هذا الحقل مطلوب.</value></data>
+	<data name="InvalidEmail" xml:space="preserve"><value>يرجى إدخال بريد إلكتروني صحيح.</value></data>
+
+	<data name="Today" xml:space="preserve"><value>اليوم</value></data>
+	<data name="Yesterday" xml:space="preserve"><value>أمس</value></data>
+	<data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+	<data name="Time" xml:space="preserve"><value>الوقت</value></data>
+	<data name="From" xml:space="preserve"><value>من</value></data>
+	<data name="To" xml:space="preserve"><value>إلى</value></data>
+	<data name="Showing" xml:space="preserve"><value>عرض</value></data>
+	<data name="Of" xml:space="preserve"><value>من</value></data>
+	<data name="Page" xml:space="preserve"><value>الصفحة</value></data>
+	<data name="Next" xml:space="preserve"><value>التالي</value></data>
+	<data name="Previous" xml:space="preserve"><value>السابق</value></data>
+
+	<data name="Privacy" xml:space="preserve"><value>الخصوصية</value></data>
+	<data name="PrivacyPolicy" xml:space="preserve"><value>سياسة الخصوصية</value></data>
+	<data name="Error" xml:space="preserve"><value>خطأ</value></data>
+	<data name="PageNotFound" xml:space="preserve"><value>الصفحة غير موجودة.</value></data>
+	<data name="SomethingWentWrong" xml:space="preserve"><value>حدث خطأ ما.</value></data>
+	<data name="TryAgain" xml:space="preserve"><value>يرجى المحاولة مرة أخرى.</value></data>
+	<data name="Unauthorized" xml:space="preserve"><value>غير مصرح لك بتنفيذ هذا الإجراء.</value></data>
+	<data name="Forbidden" xml:space="preserve"><value>تم رفض الوصول.</value></data>
+	<data name="SignIn" xml:space="preserve">
+  <value>تسجيل الدخول</value>
+</data>
+	<data name="FooterCopyright" xml:space="preserve"><value>HelpDesk Live. جميع الحقوق محفوظة.</value></data>
+</root>
