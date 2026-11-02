@@ -1,85 +1,139 @@
 ﻿
-@using Microsoft.AspNetCore.Mvc.Localization
-@inject IHtmlLocalizer<HelpDeskLive.MVC.SharedResource> Localizer
+@model HelpDeskLive.MVC.Models.AdminDashboardViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> Localizer
 
 @{
     ViewData["Title"] = Localizer["AdminDashboard"];
 }
 
-<div class="container-fluid py-4">
+<div class="container mt-4">
+    <h2 class="mb-4">@Localizer["AdminDashboard"]</h2>
 
-    <div class="mb-4">
-        <h2 class="fw-bold">
-            @Localizer["AdminDashboard"]
-        </h2>
-
-        <p class="text-muted">
-            @Localizer["AdminWelcomeText"]
-        </p>
-    </div>
-
-    <div class="row g-4">
-
-        <div class="col-md-6 col-xl-3">
-            <div class="card shadow-sm border-0 h-100">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted">
-                        @Localizer["TotalTickets"]
-                    </h6>
-
-                    <h2 class="fw-bold mb-0">—</h2>
+                    <h6>@Localizer["TotalTickets"]</h6>
+                    <h2>@Model.TotalTickets</h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-xl-3">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted">
-                        @Localizer["OpenTickets"]
-                    </h6>
-
-                    <h2 class="fw-bold mb-0">—</h2>
+                    <h6>@Localizer["OpenTickets"]</h6>
+                    <h2>@Model.OpenTickets</h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-xl-3">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted">
-                        @Localizer["TotalAgents"]
-                    </h6>
-
-                    <h2 class="fw-bold mb-0">—</h2>
+                    <h6>@Localizer["InProgressTickets"]</h6>
+                    <h2>@Model.InProgressTickets</h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-xl-3">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted">
-                        @Localizer["TotalCustomers"]
-                    </h6>
-
-                    <h2 class="fw-bold mb-0">—</h2>
+                    <h6>@Localizer["ResolvedTickets"]</h6>
+                    <h2>@Model.ResolvedTickets</h2>
                 </div>
             </div>
         </div>
 
-    </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["ClosedTickets"]</h6>
+                    <h2>@Model.ClosedTickets</h2>
+                </div>
+            </div>
+        </div>
 
-    <div class="card shadow-sm border-0 mt-4">
-        <div class="card-body">
-            <h5 class="fw-bold mb-3">
-                @Localizer["Overview"]
-            </h5>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["TotalAgents"]</h6>
+                    <h2>@Model.TotalAgents</h2>
+                </div>
+            </div>
+        </div>
 
-            <p class="text-muted mb-0">
-                @Localizer["NoDataAvailable"]
-            </p>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["TotalCustomers"]</h6>
+                    <h2>@Model.TotalCustomers</h2>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        @Localizer["TicketsByStatus"]
+                    </h5>
+
+                    <canvas id="ticketsStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const statusLabels = [
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["OpenStatus"].Value)),
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["InProgressStatus"].Value)),
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["ResolvedStatus"].Value)),
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["ClosedStatus"].Value))
+    ];
+
+    const statusCounts = [
+        @Model.OpenTickets,
+        @Model.InProgressTickets,
+        @Model.ResolvedTickets,
+        @Model.ClosedTickets
+    ];
+
+    const chartContext = document
+        .getElementById("ticketsStatusChart");
+
+    new Chart(chartContext, {
+        type: "bar",
+
+        data: {
+            labels: statusLabels,
+
+            datasets: [{
+                label: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["NumberOfTickets"].Value)),
+                data: statusCounts,
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+</script>

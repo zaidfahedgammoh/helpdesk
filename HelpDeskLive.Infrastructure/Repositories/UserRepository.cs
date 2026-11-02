@@ -1,6 +1,7 @@
 ﻿
 using HelpDeskLive.Application.Abstractions;
 using HelpDeskLive.Domain.Entities;
+using HelpDeskLive.Domain.Enums;
 using HelpDeskLive.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,5 +25,15 @@ public sealed class UserRepository : IUserRepository
         return _dbContext.Users.SingleOrDefaultAsync(
             user => user.Email == normalizedEmail,
             cancellationToken);
+    }
+
+    public async Task<int> CountByRoleAsync(
+        UserRole role,
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.Users
+            .CountAsync(
+                user => user.Role == role,
+                cancellationToken);
     }
 }

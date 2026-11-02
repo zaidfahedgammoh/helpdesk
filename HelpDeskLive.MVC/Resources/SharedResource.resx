@@ -183,6 +183,25 @@
 	<data name="SignIn" xml:space="preserve">
   <value>Sign In</value>
 </data>
+	<data name="TicketsByStatus" xml:space="preserve">
+    <value>Tickets by Status</value>
+  </data>
+	<data name="NumberOfTickets" xml:space="preserve">
+    <value>Number of Tickets</value>
+  </data>
+	<data name="OpenStatus" xml:space="preserve">
+    <value>Open</value>
+  </data>
+	<data name="InProgressStatus" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+	<data name="ResolvedStatus" xml:space="preserve">
+    <value>Resolved</value>
+  </data>
+	<data name="ClosedStatus" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+
 	<data name="Privacy" xml:space="preserve"><value>Privacy</value></data>
 	<data name="PrivacyPolicy" xml:space="preserve"><value>Privacy Policy</value></data>
 	<data name="Error" xml:space="preserve"><value>Error</value></data>

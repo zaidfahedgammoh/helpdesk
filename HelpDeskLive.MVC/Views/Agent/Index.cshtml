@@ -1,5 +1,65 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
+@model HelpDeskLive.MVC.Models.AgentDashboardViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> Localizer
+
 @{
+    ViewData["Title"] = Localizer["AgentDashboard"];
 }
+
+<div class="container mt-4">
+    <h2 class="mb-4">@Localizer["AgentDashboard"]</h2>
+
+    <p class="text-muted mb-4">
+        @Localizer["AgentWelcomeText"]
+    </p>
+
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["AssignedTickets"]</h6>
+                    <h2>@Model.AssignedTickets</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["OpenTickets"]</h6>
+                    <h2>@Model.OpenTickets</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["InProgressTickets"]</h6>
+                    <h2>@Model.InProgressTickets</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["ResolvedTickets"]</h6>
+                    <h2>@Model.ResolvedTickets</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>@Localizer["ClosedTickets"]</h6>
+                    <h2>@Model.ClosedTickets</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

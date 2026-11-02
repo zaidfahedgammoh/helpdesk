@@ -192,5 +192,24 @@
 	<data name="SignIn" xml:space="preserve">
   <value>تسجيل الدخول</value>
 </data>
+	<data name="TicketsByStatus" xml:space="preserve">
+    <value>التذاكر حسب الحالة</value>
+  </data>
+	<data name="NumberOfTickets" xml:space="preserve">
+    <value>عدد التذاكر</value>
+  </data>
+	<data name="OpenStatus" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+	<data name="InProgressStatus" xml:space="preserve">
+    <value>قيد المعالجة</value>
+  </data>
+	<data name="ResolvedStatus" xml:space="preserve">
+    <value>تم حلها</value>
+  </data>
+	<data name="ClosedStatus" xml:space="preserve">
+    <value>مغلقة</value>
+  </data>
+
 	<data name="FooterCopyright" xml:space="preserve"><value>HelpDesk Live. جميع الحقوق محفوظة.</value></data>
 </root>

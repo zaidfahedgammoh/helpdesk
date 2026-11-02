@@ -1,11 +1,14 @@
 ﻿
 using HelpDeskLive.Domain.Entities;
+using HelpDeskLive.Domain.Enums;
 
 namespace HelpDeskLive.Application.Abstractions;
 
 public interface ITicketRepository
 {
-    Task AddAsync(Ticket ticket, CancellationToken cancellationToken);
+    Task AddAsync(
+        Ticket ticket,
+        CancellationToken cancellationToken);
 
     Task<bool> DepartmentExistsAsync(
         int departmentId,
@@ -19,5 +22,31 @@ public interface ITicketRepository
         int customerId,
         CancellationToken cancellationToken);
 
-    Task SaveChangesAsync(CancellationToken cancellationToken);
+    Task<int> CountAllAsync(
+        CancellationToken cancellationToken);
+
+    Task<int> CountByStatusAsync(
+        TicketStatus status,
+        CancellationToken cancellationToken);
+
+    Task<int> CountByPriorityAsync(
+        TicketPriority priority,
+        CancellationToken cancellationToken);
+
+    Task<int> CountAssignedToAgentAsync(
+        int agentId,
+        CancellationToken cancellationToken);
+
+    Task<int> CountAssignedToAgentByStatusAsync(
+        int agentId,
+        TicketStatus status,
+        CancellationToken cancellationToken);
+
+    Task<int> CountAssignedToAgentByPriorityAsync(
+        int agentId,
+        TicketPriority priority,
+        CancellationToken cancellationToken);
+
+    Task SaveChangesAsync(
+        CancellationToken cancellationToken);
 }
