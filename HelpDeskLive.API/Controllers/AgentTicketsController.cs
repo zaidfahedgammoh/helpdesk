@@ -16,6 +16,18 @@ public sealed class AgentTicketsController : ControllerBase
     private readonly ICurrentUser _currentUser;
     public AgentTicketsController(HelpDeskDbContext db, ICurrentUser currentUser) { _db = db; _currentUser = currentUser; }
 
+    [HttpGet]
+    public async Task<IActionResult> Mine(CancellationToken ct)
+    {
+        if (_currentUser.UserId is not int agentId) return Unauthorized();
+        var rows = await _db.Tickets.AsNoTracking()
+            .Where(t => t.AssignedAgentId == agentId && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status != TicketStatus.Closed)
+            .OrderBy(t => t.CreatedAt)
+            .Select(t => new { t.Id, t.Title, t.Description, t.Status, t.Priority, t.DepartmentId, t.CreatedAt })
+            .ToListAsync(ct);
+        return Ok(rows);
+    }
+
     [HttpPost("{ticketId:int}/start")]
     public async Task<IActionResult> Start(int ticketId, CancellationToken ct)
     {
