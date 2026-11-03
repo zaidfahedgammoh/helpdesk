@@ -41,6 +41,8 @@ public partial class CustomTicketApprovalAndAgentDepartments : Migration
             type: "int",
             nullable: true);
 
+        migrationBuilder.Sql("UPDATE Users SET DepartmentId = (SELECT TOP 1 Id FROM Departments ORDER BY Id) WHERE Role = 2 AND EXISTS (SELECT 1 FROM Departments)");
+
         migrationBuilder.CreateIndex(
             name: "IX_Users_DepartmentId",
             table: "Users",
