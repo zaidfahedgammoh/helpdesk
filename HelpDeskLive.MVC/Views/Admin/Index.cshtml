@@ -103,8 +103,8 @@
                         <p class="text-muted small mb-0">@Localizer["AdminWorkspaceHint"]</p>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
-                        <span class="btn btn-outline-secondary disabled">Manage Customers</span>
-                        <span class="btn btn-outline-secondary disabled">Manage Agents</span>
+                        <a class="btn btn-outline-primary" asp-controller="AdminAccounts" asp-action="Index" asp-route-role="Customer">Manage Customers</a>
+                        <a class="btn btn-outline-primary" asp-controller="AdminAccounts" asp-action="Index" asp-route-role="Agent">Manage Agents</a>
                         <a class="btn btn-primary" asp-controller="AdminIssueTypes" asp-action="Index">Manage Issue Types</a>
                     </div>
                 </div>
