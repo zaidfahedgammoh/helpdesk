@@ -72,6 +72,17 @@ public sealed class TicketRepository : ITicketRepository
                 cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Ticket>> GetByCustomerIdAsync(
+        int customerId,
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.Tickets
+            .AsNoTracking()
+            .Where(ticket => ticket.CustomerId == customerId)
+            .OrderByDescending(ticket => ticket.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<int> CountAllAsync(
         CancellationToken cancellationToken)
     {
