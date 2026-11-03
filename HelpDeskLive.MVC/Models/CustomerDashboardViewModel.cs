@@ -5,7 +5,8 @@ public sealed class CustomerDashboardViewModel
     public IReadOnlyList<CustomerTicketViewModel> Tickets { get; init; } = Array.Empty<CustomerTicketViewModel>();
     public IReadOnlyList<CustomerIssueTypeViewModel> IssueTypes { get; init; } = Array.Empty<CustomerIssueTypeViewModel>();
     public int TotalTickets => Tickets.Count;
-    public int OpenTickets => Tickets.Count(ticket => ticket.Status == 1);
+    public int OpenTickets => Tickets.Count(ticket => ticket.Status == 1 && ticket.ApprovalStatus == 2);
+    public int PendingApprovalTickets => Tickets.Count(ticket => ticket.ApprovalStatus == 1);
     public int InProgressTickets => Tickets.Count(ticket => ticket.Status == 2);
     public int ResolvedTickets => Tickets.Count(ticket => ticket.Status == 3);
     public int ClosedTickets => Tickets.Count(ticket => ticket.Status == 4);
