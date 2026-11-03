@@ -39,14 +39,14 @@
                     {
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
-                                <thead><tr><th>Name</th><th>Email</th><th>Account ID</th></tr></thead>
+                                <thead><tr><th>Name</th><th>Email</th><th>Account ID</th>@if (Model.Role == "Agent") { <th>Department</th> }</tr></thead>
                                 <tbody>
                                 @foreach (var account in Model.Accounts)
                                 {
                                     <tr>
                                         <td class="fw-semibold">@account.Name</td>
                                         <td>@account.Email</td>
-                                        <td class="text-muted">#@account.Id</td>
+                                        <td class="text-muted">#@account.Id</td>@if (Model.Role == "Agent") { <td>@(Model.Departments.FirstOrDefault(d => d.Id == account.DepartmentId)?.Name ?? "Not assigned")</td> }
                                     </tr>
                                 }
                                 </tbody>
@@ -71,6 +71,16 @@
                             <label class="form-label" for="Email">Email</label>
                             <input class="form-control" type="email" id="Email" name="Email" maxlength="256" required />
                         </div>
+                        @if (Model.Role == "Agent")
+                        {
+                            <div class="mb-3">
+                                <label class="form-label" for="DepartmentId">Department</label>
+                                <select class="form-select" id="DepartmentId" name="DepartmentId" required>
+                                    <option value="">Select department</option>
+                                    @foreach (var department in Model.Departments) { <option value="@department.Id">@department.Name</option> }
+                                </select>
+                            </div>
+                        }
                         <div class="mb-3">
                             <label class="form-label" for="Password">Temporary password</label>
                             <input class="form-control" type="password" id="Password" name="Password" minlength="8" autocomplete="new-password" required />
