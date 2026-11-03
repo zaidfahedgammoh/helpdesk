@@ -182,7 +182,7 @@
                             }
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3" id="customTitleContainer" hidden>
                         <label for="CustomTitle" class="form-label">Custom title (only for Other)</label>
                         <input id="CustomTitle" name="CustomTitle" class="form-control" maxlength="200" placeholder="Summarize your issue" />
                     </div>
@@ -199,3 +199,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    (() => {
+        const issueTypeSelect = document.getElementById("IssueTypeId");
+        const customTitleContainer = document.getElementById("customTitleContainer");
+        const customTitleInput = document.getElementById("CustomTitle");
+
+        if (!issueTypeSelect || !customTitleContainer || !customTitleInput) return;
+
+        const updateCustomTitleVisibility = () => {
+            const isCustomRequest = issueTypeSelect.value === "";
+            customTitleContainer.hidden = !isCustomRequest;
+            customTitleInput.required = isCustomRequest;
+
+            if (!isCustomRequest) {
+                customTitleInput.value = "";
+            }
+        };
+
+        issueTypeSelect.addEventListener("change", updateCustomTitleVisibility);
+        updateCustomTitleVisibility();
+    })();
+</script>
