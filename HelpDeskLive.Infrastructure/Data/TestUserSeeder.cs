@@ -18,6 +18,7 @@ public static class TestUserSeeder
         }
 
         var passwordHasher = new PasswordHasher<User>();
+        var defaultDepartmentId = await dbContext.Departments.Select(d => (int?)d.Id).FirstOrDefaultAsync(cancellationToken) ?? 1;
 
         var users = new[]
         {
@@ -31,7 +32,8 @@ public static class TestUserSeeder
                 passwordHasher,
                 "Test Agent",
                 "agent@helpdesklive.local",
-                UserRole.Agent),
+                UserRole.Agent,
+                defaultDepartmentId),
 
             CreateUser(
                 passwordHasher,
@@ -48,7 +50,8 @@ public static class TestUserSeeder
         PasswordHasher<User> passwordHasher,
         string name,
         string email,
-        UserRole role)
+        UserRole role,
+        int? departmentId = null)
     {
         const string testPassword = "HelpDeskTest!2026";
 
@@ -57,7 +60,8 @@ public static class TestUserSeeder
             email,
             "temporary-hash",
             role,
-            PreferredLanguage.English);
+            PreferredLanguage.English,
+            departmentId);
 
         var passwordHash = passwordHasher.HashPassword(
             user,
@@ -68,6 +72,7 @@ public static class TestUserSeeder
             email,
             passwordHash,
             role,
-            PreferredLanguage.English);
+            PreferredLanguage.English,
+            departmentId);
     }
 }
