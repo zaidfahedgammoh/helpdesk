@@ -25,6 +25,9 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
             .IsRequired();
 
         builder.Property(ticket => ticket.Priority)
+            .IsRequired(false);
+
+        builder.Property(ticket => ticket.ApprovalStatus)
             .IsRequired();
 
         builder.Property(ticket => ticket.CreatedAt)
@@ -46,7 +49,8 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
         builder.HasOne<Department>()
             .WithMany()
             .HasForeignKey(ticket => ticket.DepartmentId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired(false);
 
         builder.HasOne<User>()
             .WithMany()
