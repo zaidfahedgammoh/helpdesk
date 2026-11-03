@@ -22,54 +22,42 @@ public sealed class CreateTicketCommandHandler
         _currentUser = currentUser;
     }
 
-    public async Task<int> Handle(
-        CreateTicketCommand request,
-        CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateTicketCommand request, CancellationToken cancellationToken)
     {
         if (_currentUser.UserId is not int customerId ||
             _currentUser.Role != UserRole.Customer.ToString())
-        {
-            throw new UnauthorizedAccessException(
-                "Only authenticated customers can create tickets.");
-        }
+            throw new UnauthorizedAccessException("Only authenticated customers can create tickets.");
 
-        var issueType = await _issueTypeRepository.GetByIdAsync(
-            request.IssueTypeId,
-            cancellationToken);
+        if (string.IsNullOrWhiteSpace(request.Description) || request.Description.Length > 5000)
+            throw new ArgumentException("Enter a description of up to 5000 characters.");
 
-        if (issueType is null || !issueType.IsActive)
-            throw new InvalidOperationException("The selected issue type is not available.");
-
-        if (string.IsNullOrWhiteSpace(request.Description))
-            throw new ArgumentException("Ticket description is required.");
-
-        if (request.Description.Length > 5000)
-            throw new ArgumentException("Ticket description cannot exceed 5000 characters.");
-
-        var customerExists = await _ticketRepository.CustomerExistsAsync(
-            customerId,
-            cancellationToken);
-
-        if (!customerExists)
+        if (!await _ticketRepository.CustomerExistsAsync(customerId, cancellationToken))
             throw new UnauthorizedAccessException("The authenticated customer does not exist.");
 
-        var openTicketCount = await _ticketRepository.CountOpenTicketsForCustomerAsync(
-            customerId,
-            cancellationToken);
+        Ticket ticket;
+        if (request.IssueTypeId is int issueTypeId && issueTypeId > 0 && string.IsNullOrWhiteSpace(request.CustomTitle))
+        {
+            var issueType = await _issueTypeRepository.GetByIdAsync(issueTypeId, cancellationToken);
+            if (issueType is null || !issueType.IsActive)
+                throw new InvalidOperationException("The selected issue type is not available.");
 
-        if (openTicketCount >= 3)
-            throw new InvalidOperationException("A customer cannot have more than three open tickets.");
+            var openCount = await _ticketRepository.CountOpenTicketsForCustomerAsync(customerId, cancellationToken);
+            if (openCount >= 3)
+                throw new InvalidOperationException("A customer cannot have more than three open tickets.");
 
-        var ticket = new Ticket(
-            issueType.Name,
-            request.Description,
-            issueType.DefaultPriority,
-            issueType.DepartmentId,
-            customerId);
+            ticket = new Ticket(issueType.Name, request.Description, issueType.DefaultPriority, issueType.DepartmentId, customerId);
+        }
+        else if (request.IssueTypeId is null && !string.IsNullOrWhiteSpace(request.CustomTitle))
+        {
+            ticket = Ticket.CreateCustomRequest(request.CustomTitle, request.Description, customerId);
+        }
+        else
+        {
+            throw new ArgumentException("Choose a predefined issue or enter a custom title for Other.");
+        }
 
         await _ticketRepository.AddAsync(ticket, cancellationToken);
         await _ticketRepository.SaveChangesAsync(cancellationToken);
-
         return ticket.Id;
     }
 }
