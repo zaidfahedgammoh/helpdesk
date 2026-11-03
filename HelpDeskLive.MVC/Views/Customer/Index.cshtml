@@ -93,13 +93,18 @@
                         <tbody>
                         @foreach (var ticket in Model.Tickets)
                         {
-                            var statusLabel = ticket.Status switch
+                            var statusLabel = ticket.ApprovalStatus switch
                             {
+                                1 => "Pending Admin approval",
+                                3 => "Request rejected",
+                                _ => ticket.Status switch
+                                {
                                 1 => Localizer["Open"].Value,
                                 2 => Localizer["InProgress"].Value,
                                 3 => Localizer["Resolved"].Value,
                                 4 => Localizer["Closed"].Value,
                                 _ => ticket.Status.ToString()
+                                }
                             };
                             var priorityLabel = ticket.Priority switch
                             {
@@ -107,7 +112,7 @@
                                 2 => Localizer["Medium"].Value,
                                 3 => Localizer["High"].Value,
                                 4 => Localizer["Critical"].Value,
-                                _ => ticket.Priority.ToString()
+                                _ => ticket.Priority?.ToString() ?? "Not set"
                             };
                             <tr>
                                 <td class="text-muted">#@ticket.Id</td>
@@ -147,7 +152,7 @@
                     <div class="col-md-6 col-xl-4">
                         <div class="border border-dashed rounded-3 p-3 h-100">
                             <div class="fw-semibold mb-1">@Localizer["Other"]</div>
-                            <p class="text-muted small mb-0">Custom requests will be available after the Admin review workflow is implemented.</p>
+                            <p class="text-muted small mb-0">Choose Other in the form to submit a custom request for Admin approval.</p>
                         </div>
                     </div>
                 </div>
@@ -172,16 +177,20 @@
                     }
                     else
                     {
-                        <p class="text-muted small">Select an issue type and describe the problem. Priority and department are assigned automatically.</p>
+                        <p class="text-muted small">Choose a predefined issue or leave the issue type on Other and enter a title. Custom requests require Admin approval.</p>
                         <div class="mb-3">
                             <label for="IssueTypeId" class="form-label">Issue type</label>
-                            <select id="IssueTypeId" name="IssueTypeId" class="form-select" required>
-                                <option value="">Select an issue</option>
+                            <select id="IssueTypeId" name="IssueTypeId" class="form-select">
+                                <option value="">Other — custom request</option>
                                 @foreach (var issue in Model.IssueTypes)
                                 {
                                     <option value="@issue.Id">@issue.Name</option>
                                 }
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CustomTitle" class="form-label">Custom title (only for Other)</label>
+                            <input id="CustomTitle" name="CustomTitle" class="form-control" maxlength="200" placeholder="Summarize your issue" />
                         </div>
                         <div class="mb-3">
                             <label for="Description" class="form-label">Describe your issue</label>
