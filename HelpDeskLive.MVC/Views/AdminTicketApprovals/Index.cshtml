@@ -1,0 +1,15 @@
+@model HelpDeskLive.MVC.Controllers.AdminTicketApprovalsPageModel
+@{ ViewData["Title"] = "Pending custom requests"; }
+<div class="container py-4">
+<h2>Pending custom requests</h2>
+<a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary mb-3">Back to dashboard</a>
+@if (TempData["ApprovalSuccess"] is string success) { <div class="alert alert-success">@success</div> }
+@if (TempData["ApprovalError"] is string error) { <div class="alert alert-danger">@error</div> }
+@if (Model.Requests.Count == 0) { <p class="text-muted">There are no pending custom requests.</p> }
+@foreach (var request in Model.Requests) {
+<div class="card mb-3"><div class="card-body"><h5>@request.Title <small>#@request.Id</small></h5><p>@request.Description</p><p class="text-muted">Customer #@request.CustomerId · @request.CreatedAt.ToLocalTime().ToString("g")</p>
+<form asp-action="Approve" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@request.Id"/><div class="row g-2"><div class="col-md-4"><label>Priority</label><select name="priority" class="form-select"><option value="1">Low</option><option value="2" selected>Medium</option><option value="3">High</option><option value="4">Critical</option></select></div><div class="col-md-5"><label>Department</label><select name="departmentId" class="form-select" required><option value="">Choose department</option>@foreach (var department in Model.Departments) { <option value="@department.Id">@department.Name</option> }</select></div><div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit">Approve</button></div></div></form>
+<form asp-action="Reject" method="post" class="mt-2">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@request.Id"/><button class="btn btn-outline-danger" type="submit">Reject request</button></form>
+</div></div>
+}
+</div>
