@@ -12,9 +12,12 @@
             <h2 class="mb-1">@Localizer["CustomerDashboard"]</h2>
             <p class="text-muted mb-0">@Localizer["CustomerWelcomeText"]</p>
         </div>
-        <a class="btn btn-primary" href="#available-issues">
+        <button type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#createTicketModal">
             <i class="bi bi-plus-circle me-1"></i>@Localizer["CreateTicket"]
-        </a>
+        </button>
     </div>
 
     @if (TempData["TicketSuccess"] is string success)
@@ -121,10 +124,10 @@
         </div>
     </section>
 
-    <section id="available-issues" class="card border-0 shadow-sm">
+    <section class="card border-0 shadow-sm">
         <div class="card-body">
-            <h4 class="h5 mb-1">@Localizer["CreateTicket"]</h4>
-            <p class="text-muted small mb-3">Select an issue type and describe the problem. Priority and department are assigned automatically.</p>
+            <h4 class="h5 mb-1">Available issue types</h4>
+            <p class="text-muted small mb-3">Choose Create Ticket to submit one of these issues.</p>
             @if (Model.IssueTypes.Count == 0)
             {
                 <p class="text-muted mb-0">@Localizer["NoDataAvailable"]</p>
@@ -144,32 +147,56 @@
                     <div class="col-md-6 col-xl-4">
                         <div class="border border-dashed rounded-3 p-3 h-100">
                             <div class="fw-semibold mb-1">@Localizer["Other"]</div>
-                            <p class="text-muted small mb-0">Describe an issue that is not listed above.</p>
+                            <p class="text-muted small mb-0">Custom requests will be available after the Admin review workflow is implemented.</p>
                         </div>
                     </div>
-                </div>
-                <form asp-controller="Customer" asp-action="CreateTicket" method="post" class="mt-4">
-                    @Html.AntiForgeryToken()
-                    <div class="mb-3">
-                        <label for="IssueTypeId" class="form-label">Issue type</label>
-                        <select id="IssueTypeId" name="IssueTypeId" class="form-select" required>
-                            <option value="">Select an issue</option>
-                            @foreach (var issue in Model.IssueTypes)
-                            {
-                                <option value="@issue.Id">@issue.Name</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Description" class="form-label">Describe your issue</label>
-                        <textarea id="Description" name="Description" class="form-control" rows="4" maxlength="5000" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit ticket</button>
-                </form>
-                <div class="alert alert-info mt-3 mb-0 small">
-                    "Other" custom requests will be enabled with the Admin review workflow. Priority and department are never selected by customers.
                 </div>
             }
         </div>
     </section>
+</div>
+
+<div class="modal fade" id="createTicketModal" tabindex="-1" aria-labelledby="createTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="Customer" asp-action="CreateTicket" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTicketModalLabel">@Localizer["CreateTicket"]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (Model.IssueTypes.Count == 0)
+                    {
+                        <div class="alert alert-warning mb-0">@Localizer["NoDataAvailable"]</div>
+                    }
+                    else
+                    {
+                        <p class="text-muted small">Select an issue type and describe the problem. Priority and department are assigned automatically.</p>
+                        <div class="mb-3">
+                            <label for="IssueTypeId" class="form-label">Issue type</label>
+                            <select id="IssueTypeId" name="IssueTypeId" class="form-select" required>
+                                <option value="">Select an issue</option>
+                                @foreach (var issue in Model.IssueTypes)
+                                {
+                                    <option value="@issue.Id">@issue.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Describe your issue</label>
+                            <textarea id="Description" name="Description" class="form-control" rows="4" maxlength="5000" required></textarea>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @if (Model.IssueTypes.Count > 0)
+                    {
+                        <button type="submit" class="btn btn-primary">Submit ticket</button>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
