@@ -97,7 +97,7 @@ public sealed class TicketRepository : ITicketRepository
     {
         return await _dbContext.Tickets
             .CountAsync(
-                ticket => ticket.Status == status,
+                ticket => ticket.Status == status && ticket.ApprovalStatus == TicketApprovalStatus.Approved,
                 cancellationToken);
     }
 
@@ -119,7 +119,7 @@ public sealed class TicketRepository : ITicketRepository
         return await _dbContext.Tickets
             .CountAsync(
                 ticket => ticket.AssignedAgentId == agentId &&
-                          ticket.Status == status,
+                          ticket.Status == status && ticket.ApprovalStatus == TicketApprovalStatus.Approved,
                 cancellationToken);
     }
 
