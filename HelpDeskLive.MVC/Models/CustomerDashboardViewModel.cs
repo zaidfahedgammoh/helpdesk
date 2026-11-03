@@ -2,12 +2,8 @@ namespace HelpDeskLive.MVC.Models;
 
 public sealed class CustomerDashboardViewModel
 {
-    public IReadOnlyList<CustomerTicketViewModel> Tickets { get; init; }
-        = Array.Empty<CustomerTicketViewModel>();
-
-    public IReadOnlyList<CustomerIssueTypeViewModel> IssueTypes { get; init; }
-        = Array.Empty<CustomerIssueTypeViewModel>();
-
+    public IReadOnlyList<CustomerTicketViewModel> Tickets { get; init; } = Array.Empty<CustomerTicketViewModel>();
+    public IReadOnlyList<CustomerIssueTypeViewModel> IssueTypes { get; init; } = Array.Empty<CustomerIssueTypeViewModel>();
     public int TotalTickets => Tickets.Count;
     public int OpenTickets => Tickets.Count(ticket => ticket.Status == 1);
     public int InProgressTickets => Tickets.Count(ticket => ticket.Status == 2);
@@ -20,7 +16,8 @@ public sealed class CustomerTicketViewModel
     public int Id { get; init; }
     public string Title { get; init; } = string.Empty;
     public int Status { get; init; }
-    public int Priority { get; init; }
+    public int? Priority { get; init; }
+    public int ApprovalStatus { get; init; }
     public DateTime CreatedAt { get; init; }
 }
 
@@ -34,6 +31,7 @@ public sealed class CustomerIssueTypeViewModel
 
 public sealed class CreateCustomerTicketViewModel
 {
-    public int IssueTypeId { get; set; }
+    public int? IssueTypeId { get; set; }
+    public string? CustomTitle { get; set; }
     public string Description { get; set; } = string.Empty;
 }
