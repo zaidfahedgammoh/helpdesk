@@ -71,6 +71,22 @@
 	<data name="MyTickets" xml:space="preserve"><value>تذاكري</value></data>
 	<data name="AssignedTickets" xml:space="preserve"><value>التذاكر المسندة</value></data>
 	<data name="CreateTicket" xml:space="preserve"><value>إنشاء تذكرة</value></data>
+	<data name="AwaitingWork" xml:space="preserve"><value>بانتظار المعالجة</value></data>
+	<data name="CurrentlyBeingHandled" xml:space="preserve"><value>قيد المعالجة حالياً</value></data>
+	<data name="ReadyForClosure" xml:space="preserve"><value>جاهزة للإغلاق</value></data>
+	<data name="People" xml:space="preserve"><value>المستخدمون</value></data>
+	<data name="PeopleOverviewHint" xml:space="preserve"><value>إجمالي الحسابات الحالية حسب دور الدعم.</value></data>
+	<data name="AdminWorkspace" xml:space="preserve"><value>مساحة إدارة النظام</value></data>
+	<data name="AdminWorkspaceHint" xml:space="preserve"><value>ستتوفر هنا إدارة المستخدمين والأقسام وأنواع المشكلات.</value></data>
+	<data name="ManageIssueTypes" xml:space="preserve"><value>إدارة أنواع المشكلات</value></data>
+	<data name="MyWorkload" xml:space="preserve"><value>عبء العمل الخاص بي</value></data>
+	<data name="WorkloadOverview" xml:space="preserve"><value>نظرة عامة على عبء العمل</value></data>
+	<data name="WorkloadOverviewHint" xml:space="preserve"><value>توزيع التذاكر المسندة إليك حسب الحالة.</value></data>
+	<data name="AgentGuidelines" xml:space="preserve"><value>إرشادات موظف الدعم</value></data>
+	<data name="AgentGuidelineOne" xml:space="preserve"><value>احرص على أن تكون تحديثات التذاكر واضحة وفي الوقت المناسب.</value></data>
+	<data name="AgentGuidelineTwo" xml:space="preserve"><value>انقل التذاكر وفق تسلسل الحالات المعتمد.</value></data>
+	<data name="AgentGuidelineThree" xml:space="preserve"><value>لا تتجاوز خمس تذاكر قيد التنفيذ.</value></data>
+	<data name="AgentWorkAreaComingSoon" xml:space="preserve"><value>ستتم إضافة إدارة التذاكر المسندة والمحادثة المباشرة إلى هذه المساحة.</value></data>
 	<data name="NewTicket" xml:space="preserve"><value>تذكرة جديدة</value></data>
 	<data name="TicketDetails" xml:space="preserve"><value>تفاصيل التذكرة</value></data>
 	<data name="TicketNumber" xml:space="preserve"><value>رقم التذكرة</value></data>
