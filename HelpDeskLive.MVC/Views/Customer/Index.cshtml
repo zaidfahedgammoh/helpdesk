@@ -171,39 +171,29 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    @if (Model.IssueTypes.Count == 0)
-                    {
-                        <div class="alert alert-warning mb-0">@Localizer["NoDataAvailable"]</div>
-                    }
-                    else
-                    {
-                        <p class="text-muted small">Choose a predefined issue or leave the issue type on Other and enter a title. Custom requests require Admin approval.</p>
-                        <div class="mb-3">
-                            <label for="IssueTypeId" class="form-label">Issue type</label>
-                            <select id="IssueTypeId" name="IssueTypeId" class="form-select">
-                                <option value="">Other — custom request</option>
-                                @foreach (var issue in Model.IssueTypes)
-                                {
-                                    <option value="@issue.Id">@issue.Name</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="CustomTitle" class="form-label">Custom title (only for Other)</label>
-                            <input id="CustomTitle" name="CustomTitle" class="form-control" maxlength="200" placeholder="Summarize your issue" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="Description" class="form-label">Describe your issue</label>
-                            <textarea id="Description" name="Description" class="form-control" rows="4" maxlength="5000" required></textarea>
-                        </div>
-                    }
+                    <p class="text-muted small">Choose a predefined issue or leave the issue type on Other and enter a title. Custom requests require Admin approval.</p>
+                    <div class="mb-3">
+                        <label for="IssueTypeId" class="form-label">Issue type</label>
+                        <select id="IssueTypeId" name="IssueTypeId" class="form-select">
+                            <option value="">Other — custom request</option>
+                            @foreach (var issue in Model.IssueTypes)
+                            {
+                                <option value="@issue.Id">@issue.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="CustomTitle" class="form-label">Custom title (only for Other)</label>
+                        <input id="CustomTitle" name="CustomTitle" class="form-control" maxlength="200" placeholder="Summarize your issue" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Describe your issue</label>
+                        <textarea id="Description" name="Description" class="form-control" rows="4" maxlength="5000" required></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    @if (Model.IssueTypes.Count > 0)
-                    {
-                        <button type="submit" class="btn btn-primary">Submit ticket</button>
-                    }
+                    <button type="submit" class="btn btn-primary">Submit ticket</button>
                 </div>
             </form>
         </div>
