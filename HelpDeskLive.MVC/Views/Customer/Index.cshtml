@@ -95,8 +95,8 @@
                         {
                             var statusLabel = ticket.ApprovalStatus switch
                             {
-                                1 => "Pending Admin approval",
-                                3 => "Request rejected",
+                                1 => Localizer["PendingAdminApproval"].Value,
+                                3 => Localizer["RequestRejected"].Value,
                                 _ => ticket.Status switch
                                 {
                                 1 => Localizer["Open"].Value,
@@ -112,7 +112,7 @@
                                 2 => Localizer["Medium"].Value,
                                 3 => Localizer["High"].Value,
                                 4 => Localizer["Critical"].Value,
-                                _ => ticket.Priority?.ToString() ?? "Not set"
+                                _ => ticket.Priority?.ToString() ?? Localizer["NotSet"].Value
                             };
                             <tr>
                                 <td class="text-muted">#@ticket.Id</td>
@@ -131,8 +131,8 @@
 
     <section class="card border-0 shadow-sm">
         <div class="card-body">
-            <h4 class="h5 mb-1">Available issue types</h4>
-            <p class="text-muted small mb-3">Choose Create Ticket to submit one of these issues.</p>
+            <h4 class="h5 mb-1">@Localizer["AvailableIssueTypes"]</h4>
+            <p class="text-muted small mb-3">@Localizer["ChooseIssueTypesHint"]</p>
             @if (Model.IssueTypes.Count == 0)
             {
                 <p class="text-muted mb-0">@Localizer["NoDataAvailable"]</p>
@@ -144,15 +144,28 @@
                 {
                     <div class="col-md-6 col-xl-4">
                         <div class="border rounded-3 p-3 h-100">
-                            <div class="fw-semibold mb-1">@issue.Name</div>
-                            <p class="text-muted small mb-0">@issue.Description</p>
+                            @{
+                                var issueKey = issue.Name switch
+                                {
+                                    "Password or Account Access" => "PasswordAccountAccess",
+                                    "Software Problem" => "SoftwareProblem",
+                                    "Computer or Hardware Problem" => "ComputerHardwareProblem",
+                                    "Network or Wi-Fi Problem" => "NetworkWifiProblem",
+                                    "Accounts and Billing Question" => "AccountsBillingQuestion",
+                                    "Facilities or Office Problem" => "FacilitiesOfficeProblem",
+                                    _ => string.Empty
+                                };
+                                var issueDescriptionKey = issueKey + "Desc";
+                            }
+                            <div class="fw-semibold mb-1">@(string.IsNullOrEmpty(issueKey) ? issue.Name : Localizer[issueKey].Value)</div>
+                            <p class="text-muted small mb-0">@(string.IsNullOrEmpty(issueKey) ? issue.Description : Localizer[issueDescriptionKey].Value)</p>
                         </div>
                     </div>
                 }
                     <div class="col-md-6 col-xl-4">
                         <div class="border border-dashed rounded-3 p-3 h-100">
                             <div class="fw-semibold mb-1">@Localizer["Other"]</div>
-                            <p class="text-muted small mb-0">Choose Other in the form to submit a custom request for Admin approval.</p>
+                            <p class="text-muted small mb-0">@Localizer["OtherIssueHint"]</p>
                         </div>
                     </div>
                 </div>
@@ -171,11 +184,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted small">Choose a predefined issue or leave the issue type on Other and enter a title. Custom requests require Admin approval.</p>
+                    <p class="text-muted small">@Localizer["ChooseIssueTypeHint"]</p>
                     <div class="mb-3">
-                        <label for="IssueTypeId" class="form-label">Issue type</label>
+                        <label for="IssueTypeId" class="form-label">@Localizer["IssueType"]</label>
                         <select id="IssueTypeId" name="IssueTypeId" class="form-select">
-                            <option value="">Other — custom request</option>
+                            <option value="">@Localizer["OtherCustomRequest"]</option>
                             @foreach (var issue in Model.IssueTypes)
                             {
                                 <option value="@issue.Id">@issue.Name</option>
@@ -183,17 +196,17 @@
                         </select>
                     </div>
                     <div class="mb-3" id="customTitleContainer" hidden>
-                        <label for="CustomTitle" class="form-label">Custom title (only for Other)</label>
-                        <input id="CustomTitle" name="CustomTitle" class="form-control" maxlength="200" placeholder="Summarize your issue" />
+                        <label for="CustomTitle" class="form-label">@Localizer["CustomTitleOnlyOther"]</label>
+                        <input id="CustomTitle" name="CustomTitle" class="form-control" maxlength="200" placeholder="@Localizer["SummarizeIssue"]" />
                     </div>
                     <div class="mb-3">
-                        <label for="Description" class="form-label">Describe your issue</label>
+                        <label for="Description" class="form-label">@Localizer["DescribeIssue"]</label>
                         <textarea id="Description" name="Description" class="form-control" rows="4" maxlength="5000" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit ticket</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["SubmitTicket"]</button>
                 </div>
             </form>
         </div>
