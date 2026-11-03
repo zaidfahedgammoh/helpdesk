@@ -27,7 +27,7 @@ public sealed class AdminAccountsController : ControllerBase
         var accounts = await _db.Users.AsNoTracking()
             .Where(user => user.Role == parsedRole)
             .OrderBy(user => user.Name)
-            .Select(user => new AccountDto(user.Id, user.Name, user.Email, user.Role.ToString()))
+            .Select(user => new AccountDto(user.Id, user.Name, user.Email, user.Role.ToString(), user.DepartmentId))
             .ToListAsync(cancellationToken);
 
         return Ok(accounts);
@@ -49,15 +49,15 @@ public sealed class AdminAccountsController : ControllerBase
         if (await _db.Users.AnyAsync(user => user.Email == email, cancellationToken))
             return Conflict(new { message = "Email already exists." });
 
-        var temporary = new User(request.Name, email, "temporary-hash", parsedRole, PreferredLanguage.English);
+        if (parsedRole == UserRole.Agent && (request.DepartmentId is null || !await _db.Departments.AnyAsync(d => d.Id == request.DepartmentId, cancellationToken)))\n            return BadRequest(new { message = "Select a valid department for the agent." });\n        if (parsedRole == UserRole.Customer && request.DepartmentId is not null)\n            return BadRequest();\n\n        var temporary = new User(request.Name, email, "temporary-hash", parsedRole, PreferredLanguage.English, request.DepartmentId);
         var hash = _hasher.HashPassword(temporary, request.Password);
-        var account = new User(request.Name, email, hash, parsedRole, PreferredLanguage.English);
+        var account = new User(request.Name, email, hash, parsedRole, PreferredLanguage.English, request.DepartmentId);
 
         await _db.Users.AddAsync(account, cancellationToken);
         await _db.SaveChangesAsync(cancellationToken);
 
         return Created($"/api/admin/accounts/{account.Id}",
-            new AccountDto(account.Id, account.Name, account.Email, account.Role.ToString()));
+            new AccountDto(account.Id, account.Name, account.Email, account.Role.ToString(), account.DepartmentId));
     }
 
     private static bool TryRole(string value, out UserRole role)
@@ -76,6 +76,6 @@ public sealed class AdminAccountsController : ControllerBase
         return false;
     }
 
-    public sealed record CreateAccountRequest(string Name, string Email, string Password, string Role);
-    public sealed record AccountDto(int Id, string Name, string Email, string Role);
+    public sealed record CreateAccountRequest(string Name, string Email, string Password, string Role, int? DepartmentId);
+    public sealed record AccountDto(int Id, string Name, string Email, string Role, int? DepartmentId);
 }
