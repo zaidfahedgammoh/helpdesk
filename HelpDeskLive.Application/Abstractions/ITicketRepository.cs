@@ -51,6 +51,8 @@ public interface ITicketRepository
         TicketPriority priority,
         CancellationToken cancellationToken);
 
+    Task AssignToAvailableAgentAsync(Ticket ticket, CancellationToken cancellationToken);
+
     Task SaveChangesAsync(
         CancellationToken cancellationToken);
 }
