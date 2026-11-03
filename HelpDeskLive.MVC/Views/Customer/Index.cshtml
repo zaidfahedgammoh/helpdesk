@@ -17,6 +17,15 @@
         </a>
     </div>
 
+    @if (TempData["TicketSuccess"] is string success)
+    {
+        <div class="alert alert-success">@success</div>
+    }
+    @if (TempData["TicketError"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg">
             <div class="card border-0 shadow-sm h-100"><div class="card-body">
