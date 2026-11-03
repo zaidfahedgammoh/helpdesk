@@ -115,7 +115,7 @@
     <section id="available-issues" class="card border-0 shadow-sm">
         <div class="card-body">
             <h4 class="h5 mb-1">@Localizer["CreateTicket"]</h4>
-            <p class="text-muted small mb-3">Choose the issue that best describes what you need help with.</p>
+            <p class="text-muted small mb-3">Select an issue type and describe the problem. Priority and department are assigned automatically.</p>
             @if (Model.IssueTypes.Count == 0)
             {
                 <p class="text-muted mb-0">@Localizer["NoDataAvailable"]</p>
@@ -139,8 +139,26 @@
                         </div>
                     </div>
                 </div>
+                <form asp-controller="Customer" asp-action="CreateTicket" method="post" class="mt-4">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="IssueTypeId" class="form-label">Issue type</label>
+                        <select id="IssueTypeId" name="IssueTypeId" class="form-select" required>
+                            <option value="">Select an issue</option>
+                            @foreach (var issue in Model.IssueTypes)
+                            {
+                                <option value="@issue.Id">@issue.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Describe your issue</label>
+                        <textarea id="Description" name="Description" class="form-control" rows="4" maxlength="5000" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit ticket</button>
+                </form>
                 <div class="alert alert-info mt-3 mb-0 small">
-                    Ticket submission will be enabled with the customer ticket-review workflow. Selecting a predefined issue will set its department and priority automatically; "Other" requests will be sent for Admin review.
+                    "Other" custom requests will be enabled with the Admin review workflow. Priority and department are never selected by customers.
                 </div>
             }
         </div>
