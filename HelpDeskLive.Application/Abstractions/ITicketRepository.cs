@@ -22,6 +22,10 @@ public interface ITicketRepository
         int customerId,
         CancellationToken cancellationToken);
 
+    Task<IReadOnlyList<Ticket>> GetByCustomerIdAsync(
+        int customerId,
+        CancellationToken cancellationToken);
+
     Task<int> CountAllAsync(
         CancellationToken cancellationToken);
 
