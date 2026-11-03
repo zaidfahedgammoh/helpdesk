@@ -31,3 +31,9 @@ public sealed class CustomerIssueTypeViewModel
     public string Description { get; init; } = string.Empty;
     public int DefaultPriority { get; init; }
 }
+
+public sealed class CreateCustomerTicketViewModel
+{
+    public int IssueTypeId { get; set; }
+    public string Description { get; set; } = string.Empty;
+}
