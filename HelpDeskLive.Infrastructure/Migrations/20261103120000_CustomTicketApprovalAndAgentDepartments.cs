@@ -1,9 +1,13 @@
+using HelpDeskLive.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace HelpDeskLive.Infrastructure.Migrations;
 
+[DbContext(typeof(HelpDeskDbContext))]
+[Migration("20261103120000_CustomTicketApprovalAndAgentDepartments")]
 public partial class CustomTicketApprovalAndAgentDepartments : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
