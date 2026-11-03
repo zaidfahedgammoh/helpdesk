@@ -1,5 +1,148 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model HelpDeskLive.MVC.Models.CustomerDashboardViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> Localizer
+
 @{
+    ViewData["Title"] = Localizer["CustomerDashboard"];
 }
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">@Localizer["CustomerDashboard"]</h2>
+            <p class="text-muted mb-0">@Localizer["CustomerWelcomeText"]</p>
+        </div>
+        <a class="btn btn-primary" href="#available-issues">
+            <i class="bi bi-plus-circle me-1"></i>@Localizer["CreateTicket"]
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["TotalTickets"]</div>
+                <div class="fs-2 fw-semibold">@Model.TotalTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["OpenTickets"]</div>
+                <div class="fs-2 fw-semibold text-primary">@Model.OpenTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["InProgressTickets"]</div>
+                <div class="fs-2 fw-semibold text-info">@Model.InProgressTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["ResolvedTickets"]</div>
+                <div class="fs-2 fw-semibold text-success">@Model.ResolvedTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["ClosedTickets"]</div>
+                <div class="fs-2 fw-semibold">@Model.ClosedTickets</div>
+            </div></div>
+        </div>
+    </div>
+
+    <section class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="h5 mb-0">@Localizer["MyTickets"]</h4>
+                <span class="badge text-bg-light">@Model.TotalTickets</span>
+            </div>
+
+            @if (Model.Tickets.Count == 0)
+            {
+                <div class="text-center py-5">
+                    <div class="display-6 text-muted mb-2"><i class="bi bi-inbox"></i></div>
+                    <h5>@Localizer["NoTicketsFound"]</h5>
+                    <p class="text-muted mb-0">@Localizer["CustomerWelcomeText"]</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>@Localizer["TicketNumber"]</th>
+                                <th>@Localizer["TicketTitle"]</th>
+                                <th>@Localizer["Status"]</th>
+                                <th>@Localizer["Priority"]</th>
+                                <th>@Localizer["CreatedAt"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var ticket in Model.Tickets)
+                        {
+                            var statusLabel = ticket.Status switch
+                            {
+                                1 => Localizer["Open"].Value,
+                                2 => Localizer["InProgress"].Value,
+                                3 => Localizer["Resolved"].Value,
+                                4 => Localizer["Closed"].Value,
+                                _ => ticket.Status.ToString()
+                            };
+                            var priorityLabel = ticket.Priority switch
+                            {
+                                1 => Localizer["Low"].Value,
+                                2 => Localizer["Medium"].Value,
+                                3 => Localizer["High"].Value,
+                                4 => Localizer["Critical"].Value,
+                                _ => ticket.Priority.ToString()
+                            };
+                            <tr>
+                                <td class="text-muted">#@ticket.Id</td>
+                                <td class="fw-medium">@ticket.Title</td>
+                                <td><span class="badge rounded-pill text-bg-light">@statusLabel</span></td>
+                                <td>@priorityLabel</td>
+                                <td class="text-muted">@ticket.CreatedAt.ToLocalTime().ToString("g")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section id="available-issues" class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h4 class="h5 mb-1">@Localizer["CreateTicket"]</h4>
+            <p class="text-muted small mb-3">Choose the issue that best describes what you need help with.</p>
+            @if (Model.IssueTypes.Count == 0)
+            {
+                <p class="text-muted mb-0">@Localizer["NoDataAvailable"]</p>
+            }
+            else
+            {
+                <div class="row g-3">
+                @foreach (var issue in Model.IssueTypes)
+                {
+                    <div class="col-md-6 col-xl-4">
+                        <div class="border rounded-3 p-3 h-100">
+                            <div class="fw-semibold mb-1">@issue.Name</div>
+                            <p class="text-muted small mb-0">@issue.Description</p>
+                        </div>
+                    </div>
+                }
+                    <div class="col-md-6 col-xl-4">
+                        <div class="border border-dashed rounded-3 p-3 h-100">
+                            <div class="fw-semibold mb-1">@Localizer["Other"]</div>
+                            <p class="text-muted small mb-0">Describe an issue that is not listed above.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0 small">
+                    Ticket submission will be enabled with the customer ticket-review workflow. Selecting a predefined issue will set its department and priority automatically; "Other" requests will be sent for Admin review.
+                </div>
+            }
+        </div>
+    </section>
+</div>
