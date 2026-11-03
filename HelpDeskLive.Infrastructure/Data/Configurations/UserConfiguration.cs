@@ -33,5 +33,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(user => user.PreferredLanguage)
             .IsRequired();
+
+        builder.HasOne<Department>()
+            .WithMany()
+            .HasForeignKey(user => user.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
