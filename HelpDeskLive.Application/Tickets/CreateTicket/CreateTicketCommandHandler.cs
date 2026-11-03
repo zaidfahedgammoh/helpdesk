@@ -1,4 +1,3 @@
-﻿
 using HelpDeskLive.Application.Abstractions;
 using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Domain.Enums;
@@ -10,13 +9,16 @@ public sealed class CreateTicketCommandHandler
     : IRequestHandler<CreateTicketCommand, int>
 {
     private readonly ITicketRepository _ticketRepository;
+    private readonly IIssueTypeRepository _issueTypeRepository;
     private readonly ICurrentUser _currentUser;
 
     public CreateTicketCommandHandler(
         ITicketRepository ticketRepository,
+        IIssueTypeRepository issueTypeRepository,
         ICurrentUser currentUser)
     {
         _ticketRepository = ticketRepository;
+        _issueTypeRepository = issueTypeRepository;
         _currentUser = currentUser;
     }
 
@@ -24,64 +26,49 @@ public sealed class CreateTicketCommandHandler
         CreateTicketCommand request,
         CancellationToken cancellationToken)
     {
-        if (_currentUser.UserId is not int customerId)
+        if (_currentUser.UserId is not int customerId ||
+            _currentUser.Role != UserRole.Customer.ToString())
         {
             throw new UnauthorizedAccessException(
-                "An authenticated user is required to create a ticket.");
+                "Only authenticated customers can create tickets.");
         }
 
-        if (_currentUser.Role != UserRole.Customer.ToString())
-        {
-            throw new UnauthorizedAccessException(
-                "Only customers can create tickets.");
-        }
+        var issueType = await _issueTypeRepository.GetByIdAsync(
+            request.IssueTypeId,
+            cancellationToken);
 
-        var departmentExists =
-            await _ticketRepository.DepartmentExistsAsync(
-                request.DepartmentId,
-                cancellationToken);
+        if (issueType is null || !issueType.IsActive)
+            throw new InvalidOperationException("The selected issue type is not available.");
 
-        if (!departmentExists)
-        {
-            throw new InvalidOperationException(
-                "The specified department does not exist.");
-        }
+        if (string.IsNullOrWhiteSpace(request.Description))
+            throw new ArgumentException("Ticket description is required.");
 
-        var customerExists =
-            await _ticketRepository.CustomerExistsAsync(
-                customerId,
-                cancellationToken);
+        if (request.Description.Length > 5000)
+            throw new ArgumentException("Ticket description cannot exceed 5000 characters.");
+
+        var customerExists = await _ticketRepository.CustomerExistsAsync(
+            customerId,
+            cancellationToken);
 
         if (!customerExists)
-        {
-            throw new UnauthorizedAccessException(
-                "The authenticated customer does not exist.");
-        }
+            throw new UnauthorizedAccessException("The authenticated customer does not exist.");
 
-        var openTicketCount =
-            await _ticketRepository.CountOpenTicketsForCustomerAsync(
-                customerId,
-                cancellationToken);
+        var openTicketCount = await _ticketRepository.CountOpenTicketsForCustomerAsync(
+            customerId,
+            cancellationToken);
 
         if (openTicketCount >= 3)
-        {
-            throw new InvalidOperationException(
-                "A customer cannot have more than three open tickets.");
-        }
+            throw new InvalidOperationException("A customer cannot have more than three open tickets.");
 
         var ticket = new Ticket(
-            request.Title,
+            issueType.Name,
             request.Description,
-            request.Priority,
-            request.DepartmentId,
+            issueType.DefaultPriority,
+            issueType.DepartmentId,
             customerId);
 
-        await _ticketRepository.AddAsync(
-            ticket,
-            cancellationToken);
-
-        await _ticketRepository.SaveChangesAsync(
-            cancellationToken);
+        await _ticketRepository.AddAsync(ticket, cancellationToken);
+        await _ticketRepository.SaveChangesAsync(cancellationToken);
 
         return ticket.Id;
     }

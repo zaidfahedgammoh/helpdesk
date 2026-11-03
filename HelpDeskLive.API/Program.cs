@@ -76,6 +76,7 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 
     await TestUserSeeder.SeedAsync(dbContext);
+    await ReferenceDataSeeder.SeedAsync(dbContext);
 }
 
 app.UseHttpsRedirection();

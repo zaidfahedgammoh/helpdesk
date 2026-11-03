@@ -1,4 +1,3 @@
-﻿
 using HelpDeskLive.API.Models;
 using HelpDeskLive.Application.Tickets.CreateTicket;
 using MediatR;
@@ -14,10 +13,7 @@ public sealed class TicketsController : ControllerBase
 {
     private readonly ISender _sender;
 
-    public TicketsController(ISender sender)
-    {
-        _sender = sender;
-    }
+    public TicketsController(ISender sender) => _sender = sender;
 
     [HttpPost]
     [Authorize(Roles = "Customer")]
@@ -26,17 +22,11 @@ public sealed class TicketsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new CreateTicketCommand(
-            request.Title,
-            request.Description,
-            request.Priority,
-            request.DepartmentId);
+            request.IssueTypeId,
+            request.Description);
 
-        var ticketId = await _sender.Send(
-            command,
-            cancellationToken);
+        var ticketId = await _sender.Send(command, cancellationToken);
 
-        return Created(
-            $"/api/tickets/{ticketId}",
-            new { id = ticketId });
+        return Created($"/api/tickets/{ticketId}", new { id = ticketId });
     }
 }

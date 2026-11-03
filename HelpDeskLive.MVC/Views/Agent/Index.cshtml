@@ -1,4 +1,3 @@
-﻿
 @model HelpDeskLive.MVC.Models.AgentDashboardViewModel
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<SharedResource> Localizer
@@ -7,59 +6,85 @@
     ViewData["Title"] = Localizer["AgentDashboard"];
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">@Localizer["AgentDashboard"]</h2>
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">@Localizer["AgentDashboard"]</h2>
+            <p class="text-muted mb-0">@Localizer["AgentWelcomeText"]</p>
+        </div>
+        <span class="badge text-bg-light px-3 py-2">@Localizer["MyWorkload"]</span>
+    </div>
 
-    <p class="text-muted mb-4">
-        @Localizer["AgentWelcomeText"]
-    </p>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["AssignedTickets"]</div>
+                <div class="display-6 fw-semibold">@Model.AssignedTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["OpenTickets"]</div>
+                <div class="display-6 fw-semibold text-primary">@Model.OpenTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["InProgressTickets"]</div>
+                <div class="display-6 fw-semibold text-info">@Model.InProgressTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["ResolvedTickets"]</div>
+                <div class="display-6 fw-semibold text-success">@Model.ResolvedTickets</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg">
+            <div class="card border-0 shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">@Localizer["ClosedTickets"]</div>
+                <div class="display-6 fw-semibold">@Model.ClosedTickets</div>
+            </div></div>
+        </div>
+    </div>
 
     <div class="row g-3">
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
+        <div class="col-lg-8">
+            <section class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <h6>@Localizer["AssignedTickets"]</h6>
-                    <h2>@Model.AssignedTickets</h2>
+                    <h5 class="mb-1">@Localizer["WorkloadOverview"]</h5>
+                    <p class="text-muted small mb-4">@Localizer["WorkloadOverviewHint"]</p>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Open"]</span><strong>@Model.OpenTickets</strong></div>
+                        <div class="progress"><div class="progress-bar bg-primary" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.OpenTickets * 100 / Model.AssignedTickets)%"></div></div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1"><span>@Localizer["InProgress"]</span><strong>@Model.InProgressTickets</strong></div>
+                        <div class="progress"><div class="progress-bar bg-info" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.InProgressTickets * 100 / Model.AssignedTickets)%"></div></div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Resolved"]</span><strong>@Model.ResolvedTickets</strong></div>
+                        <div class="progress"><div class="progress-bar bg-success" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.ResolvedTickets * 100 / Model.AssignedTickets)%"></div></div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Closed"]</span><strong>@Model.ClosedTickets</strong></div>
+                        <div class="progress"><div class="progress-bar bg-secondary" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.ClosedTickets * 100 / Model.AssignedTickets)%"></div></div>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <h6>@Localizer["OpenTickets"]</h6>
-                    <h2>@Model.OpenTickets</h2>
+                    <h5 class="mb-3">@Localizer["AgentGuidelines"]</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0">@Localizer["AgentGuidelineOne"]</li>
+                        <li class="list-group-item px-0">@Localizer["AgentGuidelineTwo"]</li>
+                        <li class="list-group-item px-0">@Localizer["AgentGuidelineThree"]</li>
+                    </ul>
+                    <div class="alert alert-info small mt-3 mb-0">@Localizer["AgentWorkAreaComingSoon"]</div>
                 </div>
-            </div>
+            </section>
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>@Localizer["InProgressTickets"]</h6>
-                    <h2>@Model.InProgressTickets</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>@Localizer["ResolvedTickets"]</h6>
-                    <h2>@Model.ResolvedTickets</h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>@Localizer["ClosedTickets"]</h6>
-                    <h2>@Model.ClosedTickets</h2>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>

@@ -1,6 +1,5 @@
 ﻿
 using HelpDeskLive.Application.Abstractions;
-using HelpDeskLive.Application.Interfaces;
 using HelpDeskLive.Infrastructure.Data;
 using HelpDeskLive.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;

@@ -71,6 +71,22 @@
 	<data name="MyTickets" xml:space="preserve"><value>My tickets</value></data>
 	<data name="AssignedTickets" xml:space="preserve"><value>Assigned tickets</value></data>
 	<data name="CreateTicket" xml:space="preserve"><value>Create ticket</value></data>
+	<data name="AwaitingWork" xml:space="preserve"><value>Awaiting work</value></data>
+	<data name="CurrentlyBeingHandled" xml:space="preserve"><value>Currently being handled</value></data>
+	<data name="ReadyForClosure" xml:space="preserve"><value>Ready for closure</value></data>
+	<data name="People" xml:space="preserve"><value>People</value></data>
+	<data name="PeopleOverviewHint" xml:space="preserve"><value>Current account totals by support role.</value></data>
+	<data name="AdminWorkspace" xml:space="preserve"><value>Administration workspace</value></data>
+	<data name="AdminWorkspaceHint" xml:space="preserve"><value>User, department, and issue catalog management will be available here.</value></data>
+	<data name="ManageIssueTypes" xml:space="preserve"><value>Manage issue types</value></data>
+	<data name="MyWorkload" xml:space="preserve"><value>My workload</value></data>
+	<data name="WorkloadOverview" xml:space="preserve"><value>Workload overview</value></data>
+	<data name="WorkloadOverviewHint" xml:space="preserve"><value>Distribution of your assigned tickets by status.</value></data>
+	<data name="AgentGuidelines" xml:space="preserve"><value>Agent guidelines</value></data>
+	<data name="AgentGuidelineOne" xml:space="preserve"><value>Keep ticket updates clear and timely.</value></data>
+	<data name="AgentGuidelineTwo" xml:space="preserve"><value>Move tickets through the documented status flow.</value></data>
+	<data name="AgentGuidelineThree" xml:space="preserve"><value>Do not exceed five in-progress tickets.</value></data>
+	<data name="AgentWorkAreaComingSoon" xml:space="preserve"><value>Assigned ticket handling and live chat will be added to this workspace.</value></data>
 	<data name="NewTicket" xml:space="preserve"><value>New ticket</value></data>
 	<data name="TicketDetails" xml:space="preserve"><value>Ticket details</value></data>
 	<data name="TicketNumber" xml:space="preserve"><value>Ticket number</value></data>
