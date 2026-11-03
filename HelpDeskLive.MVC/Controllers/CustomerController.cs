@@ -25,14 +25,9 @@ public sealed class CustomerController : Controller
         if (HttpContext.Session.GetString("UserRole") != "Customer")
             return Forbid();
 
-        var apiBaseUrl = _configuration["ApiSettings:BaseUrl"];
-        if (string.IsNullOrWhiteSpace(apiBaseUrl))
+        var client = CreateApiClient(token);
+        if (client is null)
             return StatusCode(500, "API base URL is not configured.");
-
-        var client = _httpClientFactory.CreateClient();
-        client.BaseAddress = new Uri(apiBaseUrl);
-        client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", token);
 
         var ticketsResponse = await client.GetAsync("api/customer/tickets", cancellationToken);
         if (!ticketsResponse.IsSuccessStatusCode)
@@ -57,5 +52,63 @@ public sealed class CustomerController : Controller
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateTicket(
+        CreateCustomerTicketViewModel model,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("AccessToken")))
+            return RedirectToAction("Login", "Account");
+
+        if (HttpContext.Session.GetString("UserRole") != "Customer")
+            return Forbid();
+
+        if (model.IssueTypeId <= 0 || string.IsNullOrWhiteSpace(model.Description))
+        {
+            TempData["TicketError"] = "Choose an issue and enter a description.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (model.Description.Length > 5000)
+        {
+            TempData["TicketError"] = "Description cannot exceed 5000 characters.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var client = CreateApiClient(HttpContext.Session.GetString("AccessToken")!);
+        if (client is null)
+            return StatusCode(500, "API base URL is not configured.");
+
+        var response = await client.PostAsJsonAsync(
+            "api/tickets",
+            new { model.IssueTypeId, model.Description },
+            cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["TicketError"] = response.StatusCode == System.Net.HttpStatusCode.BadRequest
+                ? "Please check the issue and description."
+                : "Your ticket could not be created. Please try again.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        TempData["TicketSuccess"] = "Your ticket has been created successfully.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    private HttpClient? CreateApiClient(string token)
+    {
+        var apiBaseUrl = _configuration["ApiSettings:BaseUrl"];
+        if (string.IsNullOrWhiteSpace(apiBaseUrl))
+            return null;
+
+        var client = _httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(apiBaseUrl);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+        return client;
     }
 }
