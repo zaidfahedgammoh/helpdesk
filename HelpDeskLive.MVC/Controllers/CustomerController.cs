@@ -72,9 +72,9 @@ public sealed class CustomerController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        if (model.Description.Length > 5000)
+        if (model.Description.Length > 5000 || (model.CustomTitle?.Length ?? 0) > 200)
         {
-            TempData["TicketError"] = "Description cannot exceed 5000 characters.";
+            TempData["TicketError"] = "The custom title cannot exceed 200 characters and the description cannot exceed 5000 characters.";
             return RedirectToAction(nameof(Index));
         }
 
