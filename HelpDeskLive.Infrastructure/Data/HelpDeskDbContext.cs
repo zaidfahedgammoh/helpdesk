@@ -27,6 +27,7 @@ public class HelpDeskDbContext : DbContext
     public DbSet<Department> Departments => Set<Department>();
 
     public DbSet<Ticket> Tickets => Set<Ticket>();
+    public DbSet<IssueType> IssueTypes => Set<IssueType>();
 
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 }

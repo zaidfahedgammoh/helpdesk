@@ -15,7 +15,24 @@ public sealed class TicketRepository : ITicketRepository
     {
         _dbContext = dbContext;
     }
+    public async Task<int> CountByPriorityAsync(
+    TicketPriority priority,
+    CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Tickets
+            .CountAsync(t => t.Priority == priority, cancellationToken);
+    }
 
+    public async Task<int> CountAssignedToAgentByPriorityAsync(
+        int agentId,
+        TicketPriority priority,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Tickets
+            .CountAsync(
+                t => t.AssignedAgentId == agentId && t.Priority == priority,
+                cancellationToken);
+    }
     public async Task AddAsync(
         Ticket ticket,
         CancellationToken cancellationToken)

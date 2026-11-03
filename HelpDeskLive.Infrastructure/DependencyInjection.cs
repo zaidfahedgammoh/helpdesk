@@ -1,5 +1,6 @@
 ﻿
 using HelpDeskLive.Application.Abstractions;
+using HelpDeskLive.Application.Interfaces;
 using HelpDeskLive.Infrastructure.Data;
 using HelpDeskLive.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddScoped<ITicketRepository, TicketRepository>();
+         services.AddScoped<IIssueTypeRepository, IssueTypeRepository>();
         var connectionString =
             configuration.GetConnectionString("DefaultConnection");
 
@@ -23,10 +25,12 @@ public static class DependencyInjection
             throw new InvalidOperationException(
                 "Connection string 'DefaultConnection' was not found.");
         }
-
+ 
         services.AddDbContext<HelpDeskDbContext>(options =>
             options.UseSqlServer(connectionString));
         services.AddScoped<IUserRepository, UserRepository>();
+       
+      
         return services;
     }
 }
