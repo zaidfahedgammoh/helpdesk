@@ -228,4 +228,29 @@
   </data>
 
 	<data name="FooterCopyright" xml:space="preserve"><value>HelpDesk Live. جميع الحقوق محفوظة.</value></data>
+<data name="AvailableIssueTypes" xml:space="preserve"><value>أنواع المشكلات المتاحة</value></data>
+<data name="ChooseIssueTypesHint" xml:space="preserve"><value>اختر إنشاء تذكرة لإرسال إحدى هذه المشكلات.</value></data>
+<data name="ChooseIssueTypeHint" xml:space="preserve"><value>اختر مشكلة محددة مسبقاً أو اختر أخرى وأدخل عنواناً. تتطلب الطلبات المخصصة موافقة المدير.</value></data>
+<data name="IssueType" xml:space="preserve"><value>نوع المشكلة</value></data>
+<data name="OtherCustomRequest" xml:space="preserve"><value>أخرى — طلب مخصص</value></data>
+<data name="CustomTitleOnlyOther" xml:space="preserve"><value>عنوان مخصص (لخيار أخرى فقط)</value></data>
+<data name="SummarizeIssue" xml:space="preserve"><value>اكتب ملخصاً للمشكلة</value></data>
+<data name="DescribeIssue" xml:space="preserve"><value>صف المشكلة</value></data>
+<data name="SubmitTicket" xml:space="preserve"><value>إرسال التذكرة</value></data>
+<data name="PendingAdminApproval" xml:space="preserve"><value>بانتظار موافقة المدير</value></data>
+<data name="RequestRejected" xml:space="preserve"><value>تم رفض الطلب</value></data>
+<data name="NotSet" xml:space="preserve"><value>غير محدد</value></data>
+<data name="OtherIssueHint" xml:space="preserve"><value>اختر «أخرى» في النموذج لإرسال طلب مخصص لموافقة المدير.</value></data>
+<data name="PasswordAccountAccess" xml:space="preserve"><value>مشكلات كلمة المرور أو الوصول إلى الحساب</value></data>
+<data name="PasswordAccountAccessDesc" xml:space="preserve"><value>مشكلات تسجيل الدخول أو إعادة تعيين كلمة المرور أو الوصول إلى الحساب.</value></data>
+<data name="SoftwareProblem" xml:space="preserve"><value>مشكلة في البرامج</value></data>
+<data name="SoftwareProblemDesc" xml:space="preserve"><value>تطبيق لا يعمل أو لا يتم تثبيته أو تحديثه بشكل صحيح.</value></data>
+<data name="ComputerHardwareProblem" xml:space="preserve"><value>مشكلة في الكمبيوتر أو الأجهزة</value></data>
+<data name="ComputerHardwareProblemDesc" xml:space="preserve"><value>مشكلات في الكمبيوتر أو الشاشة أو لوحة المفاتيح أو الطابعة أو أي معدات أخرى.</value></data>
+<data name="NetworkWifiProblem" xml:space="preserve"><value>مشكلة في الشبكة أو الواي فاي</value></data>
+<data name="NetworkWifiProblemDesc" xml:space="preserve"><value>مشكلات الاتصال بالإنترنت أو شبكة المكتب أو الواي فاي.</value></data>
+<data name="AccountsBillingQuestion" xml:space="preserve"><value>استفسار حول الحسابات والفواتير</value></data>
+<data name="AccountsBillingQuestionDesc" xml:space="preserve"><value>استفسارات حول رسوم الحساب أو الفواتير أو سجلات الفوترة.</value></data>
+<data name="FacilitiesOfficeProblem" xml:space="preserve"><value>مشكلة في المرافق أو المكتب</value></data>
+<data name="FacilitiesOfficeProblemDesc" xml:space="preserve"><value>مشكلات في مساحة المكتب أو الأثاث أو الإضاءة أو مرافق المبنى.</value></data>
 </root>

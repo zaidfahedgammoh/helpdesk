@@ -227,4 +227,29 @@
 	<data name="Unauthorized" xml:space="preserve"><value>You are not authorized to perform this action.</value></data>
 	<data name="Forbidden" xml:space="preserve"><value>Access denied.</value></data>
 	<data name="FooterCopyright" xml:space="preserve"><value>HelpDesk Live. All rights reserved.</value></data>
+<data name="AvailableIssueTypes" xml:space="preserve"><value>Available issue types</value></data>
+<data name="ChooseIssueTypesHint" xml:space="preserve"><value>Choose Create Ticket to submit one of these issues.</value></data>
+<data name="ChooseIssueTypeHint" xml:space="preserve"><value>Choose a predefined issue or select Other and enter a title. Custom requests require Admin approval.</value></data>
+<data name="IssueType" xml:space="preserve"><value>Issue type</value></data>
+<data name="OtherCustomRequest" xml:space="preserve"><value>Other — custom request</value></data>
+<data name="CustomTitleOnlyOther" xml:space="preserve"><value>Custom title (only for Other)</value></data>
+<data name="SummarizeIssue" xml:space="preserve"><value>Summarize your issue</value></data>
+<data name="DescribeIssue" xml:space="preserve"><value>Describe your issue</value></data>
+<data name="SubmitTicket" xml:space="preserve"><value>Submit ticket</value></data>
+<data name="PendingAdminApproval" xml:space="preserve"><value>Pending Admin approval</value></data>
+<data name="RequestRejected" xml:space="preserve"><value>Request rejected</value></data>
+<data name="NotSet" xml:space="preserve"><value>Not set</value></data>
+<data name="OtherIssueHint" xml:space="preserve"><value>Choose Other in the form to submit a custom request for Admin approval.</value></data>
+<data name="PasswordAccountAccess" xml:space="preserve"><value>Password or Account Access</value></data>
+<data name="PasswordAccountAccessDesc" xml:space="preserve"><value>Problems signing in, resetting passwords, or accessing an account.</value></data>
+<data name="SoftwareProblem" xml:space="preserve"><value>Software Problem</value></data>
+<data name="SoftwareProblemDesc" xml:space="preserve"><value>An application is not working, installing, or updating correctly.</value></data>
+<data name="ComputerHardwareProblem" xml:space="preserve"><value>Computer or Hardware Problem</value></data>
+<data name="ComputerHardwareProblemDesc" xml:space="preserve"><value>Problems with a computer, monitor, keyboard, printer, or other equipment.</value></data>
+<data name="NetworkWifiProblem" xml:space="preserve"><value>Network or Wi-Fi Problem</value></data>
+<data name="NetworkWifiProblemDesc" xml:space="preserve"><value>Problems connecting to the internet, office network, or Wi-Fi.</value></data>
+<data name="AccountsBillingQuestion" xml:space="preserve"><value>Accounts and Billing Question</value></data>
+<data name="AccountsBillingQuestionDesc" xml:space="preserve"><value>Questions about account charges, invoices, or billing records.</value></data>
+<data name="FacilitiesOfficeProblem" xml:space="preserve"><value>Facilities or Office Problem</value></data>
+<data name="FacilitiesOfficeProblemDesc" xml:space="preserve"><value>Problems with office space, furniture, lighting, or building facilities.</value></data>
 </root>
