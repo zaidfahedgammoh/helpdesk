@@ -12,13 +12,20 @@ public static class TestUserSeeder
         HelpDeskDbContext dbContext,
         CancellationToken cancellationToken = default)
     {
-        if (await dbContext.Users.AnyAsync(cancellationToken))
+        var defaultDepartmentId = await dbContext.Departments.Select(d => (int?)d.Id).FirstOrDefaultAsync(cancellationToken);
+        if (defaultDepartmentId is null)
+            throw new InvalidOperationException("Reference departments must be seeded before users.");
+
+        var existingUsers = await dbContext.Users.ToListAsync(cancellationToken);
+        foreach (var agent in existingUsers.Where(u => u.Role == UserRole.Agent && u.DepartmentId is null))
+            agent.ChangeDepartment(defaultDepartmentId.Value);
+        if (existingUsers.Count > 0)
         {
+            await dbContext.SaveChangesAsync(cancellationToken);
             return;
         }
 
         var passwordHasher = new PasswordHasher<User>();
-        var defaultDepartmentId = await dbContext.Departments.Select(d => (int?)d.Id).FirstOrDefaultAsync(cancellationToken) ?? 1;
 
         var users = new[]
         {
