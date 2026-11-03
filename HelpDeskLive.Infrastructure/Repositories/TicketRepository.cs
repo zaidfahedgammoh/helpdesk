@@ -68,7 +68,7 @@ public sealed class TicketRepository : ITicketRepository
         return await _dbContext.Tickets
             .CountAsync(
                 ticket => ticket.CustomerId == customerId &&
-                          ticket.Status == TicketStatus.Open,
+                          ticket.Status == TicketStatus.Open &&\n                          ticket.ApprovalStatus != TicketApprovalStatus.Rejected,
                 cancellationToken);
     }
 
