@@ -46,7 +46,7 @@
                                     <tr>
                                         <td class="fw-semibold">@account.Name</td>
                                         <td>@account.Email</td>
-                                        <td class="text-muted">#@account.Id</td>@if (Model.Role == "Agent") { <td>@(Model.Departments.FirstOrDefault(d => d.Id == account.DepartmentId)?.Name ?? "Not assigned")</td> }
+                                        <td class="text-muted">#@account.Id</td>@if (Model.Role == "Agent") { <td><form asp-action="ChangeDepartment" method="post" class="d-flex gap-2">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@account.Id"/><select name="departmentId" class="form-select form-select-sm" required>@foreach (var department in Model.Departments) { <option value="@department.Id" selected="@(department.Id == account.DepartmentId)">@department.Name</option> }</select><button class="btn btn-sm btn-outline-primary" type="submit">Save</button></form></td> }
                                     </tr>
                                 }
                                 </tbody>
