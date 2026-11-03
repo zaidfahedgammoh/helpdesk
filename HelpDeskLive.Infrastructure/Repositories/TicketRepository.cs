@@ -122,6 +122,19 @@ public sealed class TicketRepository : ITicketRepository
                 cancellationToken);
     }
 
+    public async Task AssignToAvailableAgentAsync(Ticket ticket, CancellationToken cancellationToken)
+    {
+        if (ticket.DepartmentId is not int departmentId || ticket.ApprovalStatus != TicketApprovalStatus.Approved) return;
+        var agent = await _dbContext.Users
+            .Where(user => user.Role == UserRole.Agent && user.DepartmentId == departmentId)
+            .Select(user => new { User = user, Load = _dbContext.Tickets.Count(t => t.AssignedAgentId == user.Id && t.Status == TicketStatus.InProgress && t.ApprovalStatus == TicketApprovalStatus.Approved) })
+            .Where(item => item.Load < 5)
+            .OrderBy(item => item.Load)
+            .ThenBy(item => item.User.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (agent is not null) ticket.AssignToAgent(agent.User.Id);
+    }
+
     public async Task SaveChangesAsync(
         CancellationToken cancellationToken)
     {
