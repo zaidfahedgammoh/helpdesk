@@ -46,6 +46,16 @@ public sealed class AdminAccountsController : Controller
         return RedirectToAction(nameof(Index), new { role = model.Role });
     }
 
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeDepartment(int id, int departmentId, CancellationToken ct)
+    {
+        var client = CreateClient();
+        if (client is null) return RedirectToAction("Login", "Account");
+        var response = await client.PutAsJsonAsync($"api/admin/accounts/{id}/department", new { DepartmentId = departmentId }, ct);
+        TempData[response.IsSuccessStatusCode ? "AccountSuccess" : "AccountError"] = response.IsSuccessStatusCode ? "Agent department updated." : "Could not update Agent department.";
+        return RedirectToAction(nameof(Index), new { role = "Agent" });
+    }
+
     private HttpClient? CreateClient()
     {
         var token = HttpContext.Session.GetString("AccessToken");
