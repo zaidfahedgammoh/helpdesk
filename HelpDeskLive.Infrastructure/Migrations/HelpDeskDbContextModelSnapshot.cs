@@ -88,7 +88,7 @@ namespace HelpDeskLive.Infrastructure.Migrations
                     b.Property<int>("DefaultPriority")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -162,7 +162,7 @@ namespace HelpDeskLive.Infrastructure.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
