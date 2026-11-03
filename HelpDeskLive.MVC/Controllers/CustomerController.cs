@@ -66,7 +66,7 @@ public sealed class CustomerController : Controller
         if (HttpContext.Session.GetString("UserRole") != "Customer")
             return Forbid();
 
-        if (model.IssueTypeId <= 0 || string.IsNullOrWhiteSpace(model.Description))
+        if ((model.IssueTypeId is null && string.IsNullOrWhiteSpace(model.CustomTitle)) || (model.IssueTypeId is not null && model.IssueTypeId <= 0) || string.IsNullOrWhiteSpace(model.Description))
         {
             TempData["TicketError"] = "Choose an issue and enter a description.";
             return RedirectToAction(nameof(Index));
@@ -84,7 +84,7 @@ public sealed class CustomerController : Controller
 
         var response = await client.PostAsJsonAsync(
             "api/tickets",
-            new { model.IssueTypeId, model.Description },
+            new { model.IssueTypeId, model.CustomTitle, model.Description },
             cancellationToken);
 
         if (!response.IsSuccessStatusCode)
@@ -95,7 +95,7 @@ public sealed class CustomerController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        TempData["TicketSuccess"] = "Your ticket has been created successfully.";
+        TempData["TicketSuccess"] = model.IssueTypeId is null ? "Your custom request is waiting for Admin approval." : "Your ticket has been created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
