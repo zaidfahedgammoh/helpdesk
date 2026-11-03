@@ -34,16 +34,16 @@ public sealed class CreateTicketCommandHandler
         if (!await _ticketRepository.CustomerExistsAsync(customerId, cancellationToken))
             throw new UnauthorizedAccessException("The authenticated customer does not exist.");
 
+        var openCount = await _ticketRepository.CountOpenTicketsForCustomerAsync(customerId, cancellationToken);
+        if (openCount >= 3)
+            throw new InvalidOperationException("A customer cannot have more than three open tickets.");
+
         Ticket ticket;
         if (request.IssueTypeId is int issueTypeId && issueTypeId > 0 && string.IsNullOrWhiteSpace(request.CustomTitle))
         {
             var issueType = await _issueTypeRepository.GetByIdAsync(issueTypeId, cancellationToken);
             if (issueType is null || !issueType.IsActive)
                 throw new InvalidOperationException("The selected issue type is not available.");
-
-            var openCount = await _ticketRepository.CountOpenTicketsForCustomerAsync(customerId, cancellationToken);
-            if (openCount >= 3)
-                throw new InvalidOperationException("A customer cannot have more than three open tickets.");
 
             ticket = new Ticket(issueType.Name, request.Description, issueType.DefaultPriority, issueType.DepartmentId, customerId);
         }
