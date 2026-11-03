@@ -1,0 +1,111 @@
+@model HelpDeskLive.MVC.Controllers.AdminIssueTypesViewModel
+@{
+    ViewData["Title"] = "Manage Issue Types";
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h2 class="mb-1">Manage Issue Types</h2>
+            <p class="text-muted mb-0">Control the predefined issues customers can select when creating tickets.</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary">Back to dashboard</a>
+    </div>
+
+    @if (TempData["IssueTypeSuccess"] is string success)
+    {
+        <div class="alert alert-success">@success</div>
+    }
+    @if (TempData["IssueTypeError"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <section class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Active issue types</h5>
+                    @if (Model.IssueTypes.Count == 0)
+                    {
+                        <p class="text-muted mb-0">No active issue types were found.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead><tr><th>Name</th><th>Description</th><th>Department ID</th><th>Priority</th></tr></thead>
+                                <tbody>
+                                @foreach (var issue in Model.IssueTypes)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@issue.Name</td>
+                                        <td>@issue.Description</td>
+                                        <td>@issue.DepartmentId</td>
+                                        <td>@(((TicketPriorityLabel)issue.DefaultPriority).ToString())</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-5">
+            <section class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">Add issue type</h5>
+                    @if (Model.Departments.Count == 0)
+                    {
+                        <div class="alert alert-warning mb-0">Create departments before adding issue types.</div>
+                    }
+                    else
+                    {
+                        <form asp-controller="AdminIssueTypes" asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label class="form-label" for="Name">Name</label>
+                                <input class="form-control" id="Name" name="Name" maxlength="150" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="Description">Description</label>
+                                <textarea class="form-control" id="Description" name="Description" rows="3" maxlength="1000" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="DepartmentId">Department</label>
+                                <select class="form-select" id="DepartmentId" name="DepartmentId" required>
+                                    <option value="">Select department</option>
+                                    @foreach (var department in Model.Departments)
+                                    {
+                                        <option value="@department.Id">@department.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="DefaultPriority">Default priority</label>
+                                <select class="form-select" id="DefaultPriority" name="DefaultPriority" required>
+                                    <option value="1">Low</option>
+                                    <option value="2" selected>Medium</option>
+                                    <option value="3">High</option>
+                                    <option value="4">Critical</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add issue type</button>
+                        </form>
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private enum TicketPriorityLabel
+    {
+        Low = 1,
+        Medium = 2,
+        High = 3,
+        Critical = 4
+    }
+}
