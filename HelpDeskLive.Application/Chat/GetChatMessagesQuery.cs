@@ -35,17 +35,11 @@ public sealed class GetChatMessagesQueryHandler : IRequestHandler<GetChatMessage
             throw new KeyNotFoundException($"Ticket #{request.TicketId} was not found.");
 
         var isCustomer = _currentUser.Role == UserRole.Customer.ToString() && ticket.CustomerId == userId;
-        var isAssignedAgent = _currentUser.Role == UserRole.Agent.ToString() && ticket.AssignedAgentId == userId;
+        var isAssignedAgent = _currentUser.Role == UserRole.Agent.ToString() && (ticket.AssignedAgentId == userId || ticket.AssignedAgentId == null);
+        var isAdmin = _currentUser.Role == UserRole.Admin.ToString();
 
-        if (!isCustomer && !isAssignedAgent)
+        if (!isCustomer && !isAssignedAgent && !isAdmin)
             throw new UnauthorizedAccessException("You are not authorized to view messages for this ticket.");
-
-        if (ticket.ApprovalStatus != TicketApprovalStatus.Approved ||
-            ticket.Priority is not (TicketPriority.High or TicketPriority.Critical) ||
-            ticket.Status is not (TicketStatus.Open or TicketStatus.InProgress))
-        {
-            throw new InvalidOperationException("Live chat is available only for approved High and Critical tickets that are waiting or in progress.");
-        }
 
         var messages = await _chatRepository.GetMessagesByTicketIdAsync(request.TicketId, ct);
         var dtos = new List<ChatMessageDto>(messages.Count);

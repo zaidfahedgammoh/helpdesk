@@ -51,16 +51,20 @@ public sealed class SendChatMessageCommandHandler : IRequestHandler<SendChatMess
             throw new UnauthorizedAccessException("Sender account could not be found.");
 
         var isCustomer = sender.Role == UserRole.Customer && ticket.CustomerId == request.SenderId;
-        var isAgent = sender.Role == UserRole.Agent && ticket.AssignedAgentId == request.SenderId;
+        var isAgent = sender.Role == UserRole.Agent && (ticket.AssignedAgentId == request.SenderId || ticket.AssignedAgentId == null);
+        var isAdmin = sender.Role == UserRole.Admin;
 
-        if (!isCustomer && !isAgent)
+        if (!isCustomer && !isAgent && !isAdmin)
             throw new UnauthorizedAccessException("You are not allowed to send messages in this chat.");
 
-        if (ticket.ApprovalStatus != TicketApprovalStatus.Approved ||
-            ticket.Priority is not (TicketPriority.High or TicketPriority.Critical) ||
-            ticket.Status is not (TicketStatus.Open or TicketStatus.InProgress))
+        if (ticket.Status == TicketStatus.Closed)
         {
-            throw new InvalidOperationException("Live chat is only active for approved High and Critical tickets that are waiting or in progress.");
+            throw new InvalidOperationException("Messages cannot be sent on a closed ticket.");
+        }
+
+        if (ticket.ApprovalStatus != TicketApprovalStatus.Approved)
+        {
+            throw new InvalidOperationException("Ticket must be approved before messages can be sent.");
         }
 
         var message = new ChatMessage(request.TicketId, request.SenderId, request.Content.Trim());

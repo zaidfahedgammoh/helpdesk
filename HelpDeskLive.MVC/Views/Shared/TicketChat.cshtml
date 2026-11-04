@@ -15,47 +15,72 @@
      data-chat-ready="@Localizer["ChatReady"]"
      data-load-error="@Localizer["ChatLoadError"]"
      data-send-error="@Localizer["ChatSendError"]"
-     data-you="@Localizer["You"]">
+     data-you="@Localizer["You"]"
+     data-agent-typing="@Localizer["AgentTyping"]"
+     data-customer-typing="@Localizer["CustomerTyping"]"
+     data-typing="@Localizer["Typing"]">
+
+    @Html.AntiForgeryToken()
+
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <div><h2 class="mb-1">@Localizer["LiveChat"] — #@Model.TicketId</h2><p class="text-muted mb-0" id="chat-status">@Localizer["ConnectingToChat"]</p></div>
-        @if (Model.IsAgent) { <a asp-controller="AgentTickets" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a> }
-        else { <a asp-controller="Customer" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a> }
+        <div>
+            <h2 class="mb-1">@Localizer["LiveChat"] — #@Model.TicketId</h2>
+            <p class="text-muted mb-0" id="chat-status">@Localizer["ConnectingToChat"]</p>
+        </div>
+        @if (Model.IsAgent)
+        {
+            <a asp-controller="AgentTickets" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a>
+        }
+        else
+        {
+            <a asp-controller="Customer" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a>
+        }
     </div>
+
     <div class="d-flex flex-wrap gap-2 mb-3">
         @if (Model.IsAgent)
         {
-            @if (Model.TicketStatus != 3)
+            @if (Model.TicketStatus != 3 && Model.TicketStatus != 4)
             {
                 <form asp-controller="AgentTickets" asp-action="Resolve" method="post" onsubmit="return confirm('@Localizer["ConfirmResolveTicket"]')">
-                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.TicketId" />
                     <button type="submit" class="btn btn-success">@Localizer["MarkResolved"]</button>
                 </form>
-                <form asp-controller="AgentTickets" asp-action="Escalate" method="post" onsubmit="return confirm('@Localizer["ConfirmEscalateTicket"]')">
-                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
-                    <button type="submit" class="btn btn-warning">@Localizer["EscalateAndLeaveChat"]</button>
-                </form>
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#escalateModal">
+                    @Localizer["EscalateAndLeaveChat"]
+                </button>
             }
             else
             {
                 <form asp-controller="AgentTickets" asp-action="Close" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
-                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.TicketId" />
                     <button type="submit" class="btn btn-outline-danger">@Localizer["CloseTicket"]</button>
                 </form>
             }
         }
         else
         {
-            <form asp-controller="Customer" asp-action="CloseTicket" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
-                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
-                <button type="submit" class="btn btn-outline-danger">@Localizer["CloseMyTicket"]</button>
-            </form>
+            @if (Model.TicketStatus != 4)
+            {
+                <form asp-controller="Customer" asp-action="CloseTicket" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.TicketId" />
+                    <button type="submit" class="btn btn-outline-danger">@Localizer["CloseMyTicket"]</button>
+                </form>
+            }
         }
     </div>
+
     <div class="card border-0 shadow-sm">
         <div class="card-body">
-            <div id="chat-messages" class="chat-messages d-flex flex-column gap-2 mb-3" aria-live="polite">
+            <div id="chat-messages" class="chat-messages d-flex flex-column gap-2 mb-2" aria-live="polite">
                 <p class="text-muted text-center my-auto" id="chat-empty">@Localizer["NoMessagesYet"]</p>
             </div>
+
+            <div id="typing-indicator" class="text-muted small fst-italic px-1 mb-2" style="min-height: 20px;"></div>
+
             <form id="chat-form" class="d-flex gap-2">
                 <input id="chat-input" class="form-control" maxlength="5000" autocomplete="off" placeholder="@Localizer["ChatInputPlaceholder"]" required />
                 <button id="chat-send" class="btn btn-primary" type="submit">@Localizer["Send"]</button>
@@ -64,11 +89,68 @@
         </div>
     </div>
 </div>
+
+@if (Model.IsAgent)
+{
+    <!-- Escalation Modal with Client & Server Validation -->
+    <div class="modal fade" id="escalateModal" tabindex="-1" aria-labelledby="escalateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="escalateForm" asp-controller="AgentTickets" asp-action="Escalate" method="post" onsubmit="return validateEscalationForm(event)">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.TicketId" />
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="escalateModalLabel">@Localizer["EscalateTicket"]</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">@Localizer["ConfirmEscalateTicket"]</p>
+                        <div class="mb-2">
+                            <label for="escalateReason" class="form-label fw-semibold">@Localizer["EscalationReason"] <span class="text-danger">*</span></label>
+                            <textarea id="escalateReason" name="reason" class="form-control" rows="4" maxlength="1000" required placeholder="@Localizer["EscalationReasonPlaceholder"]" oninput="updateEscalateCharCount(this)"></textarea>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <div id="escalateFeedback" class="text-danger small d-none">@Localizer["EscalationReasonRequired"]</div>
+                                <div class="text-muted small ms-auto"><span id="escalateCharCount">0</span> / 1000</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
+                        <button type="submit" class="btn btn-warning">@Localizer["ConfirmEscalate"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateEscalateCharCount(el) {
+            document.getElementById('escalateCharCount').textContent = el.value.length;
+            if (el.value.trim().length > 0) {
+                document.getElementById('escalateFeedback').classList.add('d-none');
+                el.classList.remove('is-invalid');
+            }
+        }
+
+        function validateEscalationForm(e) {
+            const reason = document.getElementById('escalateReason').value.trim();
+            if (!reason || reason.length > 1000) {
+                e.preventDefault();
+                document.getElementById('escalateFeedback').classList.remove('d-none');
+                document.getElementById('escalateReason').classList.add('is-invalid');
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+
 @section Styles {
     <link rel="stylesheet" href="~/css/ticket-chat.css" asp-append-version="true" />
 }
 
 @section Scripts {
     <script src="~/lib/signalr/dist/browser/signalr.min.js" asp-append-version="true"></script>
+    <script src="~/lib/signalr-protocol-msgpack/dist/browser/signalr-protocol-msgpack.min.js" asp-append-version="true"></script>
     <script src="~/js/ticket-chat.js" asp-append-version="true"></script>
 }
