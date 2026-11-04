@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using HelpDeskLive.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace HelpDeskLive.MVC.Controllers;
 
@@ -9,11 +10,13 @@ public sealed class CustomerController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public CustomerController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public CustomerController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IStringLocalizer<SharedResource> localizer)
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
+        _localizer = localizer;
     }
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -27,7 +30,7 @@ public sealed class CustomerController : Controller
 
         var client = CreateApiClient(token);
         if (client is null)
-            return StatusCode(500, "API base URL is not configured.");
+            return StatusCode(500, _localizer["ApiBaseUrlMissing"].Value);
 
         var ticketsResponse = await client.GetAsync("api/customer/tickets", cancellationToken);
         if (!ticketsResponse.IsSuccessStatusCode)
@@ -68,13 +71,13 @@ public sealed class CustomerController : Controller
 
         if ((model.IssueTypeId is null && string.IsNullOrWhiteSpace(model.CustomTitle)) || (model.IssueTypeId is not null && model.IssueTypeId <= 0) || string.IsNullOrWhiteSpace(model.Description))
         {
-            TempData["TicketError"] = "Choose an issue and enter a description.";
+            TempData["TicketError"] = _localizer["ChooseIssueAndDescription"].Value;
             return RedirectToAction(nameof(Index));
         }
 
         if (model.Description.Length > 5000 || (model.CustomTitle?.Length ?? 0) > 200)
         {
-            TempData["TicketError"] = "The custom title cannot exceed 200 characters and the description cannot exceed 5000 characters.";
+            TempData["TicketError"] = _localizer["TitleDescriptionTooLong"].Value;
             return RedirectToAction(nameof(Index));
         }
 
@@ -90,12 +93,12 @@ public sealed class CustomerController : Controller
         if (!response.IsSuccessStatusCode)
         {
             TempData["TicketError"] = response.StatusCode == System.Net.HttpStatusCode.BadRequest
-                ? "Please check the issue and description."
-                : "Your ticket could not be created. Please try again.";
+                ? _localizer["CheckIssueDescription"].Value
+                : _localizer["TicketCreateFailed"].Value;
             return RedirectToAction(nameof(Index));
         }
 
-        TempData["TicketSuccess"] = model.IssueTypeId is null ? "Your custom request is waiting for Admin approval." : "Your ticket has been created successfully.";
+        TempData["TicketSuccess"] = model.IssueTypeId is null ? _localizer["CustomRequestPending"].Value : _localizer["TicketCreatedSuccessfully"].Value;
         return RedirectToAction(nameof(Index));
     }
 
