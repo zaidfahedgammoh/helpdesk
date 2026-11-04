@@ -320,4 +320,6 @@
   <data name="ApiReturnedInvalidToken" xml:space="preserve"><value>The API returned an invalid access token.</value></data>
   <data name="HomePageTitle" xml:space="preserve"><value>Home page</value></data>
   <data name="LearnAboutAspNet" xml:space="preserve"><value>Learn about building web apps with ASP.NET Core.</value></data>
+  <data name="ManageRegisteredAccounts" xml:space="preserve"><value>Create accounts and view registered accounts.</value></data>
+  <data name="AccountId" xml:space="preserve"><value>Account ID</value></data>
 </root>
