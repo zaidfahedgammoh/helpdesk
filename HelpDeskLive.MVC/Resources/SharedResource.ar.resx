@@ -325,4 +325,17 @@
   <data name="AccountId" xml:space="preserve"><value>رقم الحساب</value></data>
   <data name="RequestId" xml:space="preserve"><value>معرّف الطلب</value></data>
   <data name="PrivacyPolicyBody" xml:space="preserve"><value>استخدم هذه الصفحة لعرض سياسة الخصوصية الخاصة بموقعك.</value></data>
+  <data name="JoinChat" xml:space="preserve"><value>الانضمام إلى المحادثة</value></data>
+  <data name="WaitingInDepartmentQueue" xml:space="preserve"><value>بانتظار دورها في قائمة انتظار القسم</value></data>
+  <data name="OpenLiveChat" xml:space="preserve"><value>فتح المحادثة المباشرة</value></data>
+  <data name="ConnectingToChat" xml:space="preserve"><value>جارٍ الاتصال بالمحادثة…</value></data>
+  <data name="AgentConnected" xml:space="preserve"><value>انضم موظف الدعم إلى المحادثة.</value></data>
+  <data name="CustomerConnected" xml:space="preserve"><value>العميل موجود في المحادثة.</value></data>
+  <data name="ChatLoadError" xml:space="preserve"><value>تعذر فتح المحادثة. حدّث الصفحة وحاول مرة أخرى.</value></data>
+  <data name="ChatSendError" xml:space="preserve"><value>تعذر إرسال رسالتك. تحقق من الاتصال وحاول مرة أخرى.</value></data>
+  <data name="You" xml:space="preserve"><value>أنت</value></data>
+  <data name="NoMessagesYet" xml:space="preserve"><value>لا توجد رسائل بعد. يمكنك إرسال أول رسالة عند انضمام موظف الدعم.</value></data>
+  <data name="ChatInputPlaceholder" xml:space="preserve"><value>اكتب رسالتك…</value></data>
+  <data name="Send" xml:space="preserve"><value>إرسال</value></data>
+  <data name="BackToTickets" xml:space="preserve"><value>العودة إلى التذاكر</value></data>
 </root>
