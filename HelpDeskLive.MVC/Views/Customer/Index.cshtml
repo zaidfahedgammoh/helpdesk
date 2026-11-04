@@ -88,6 +88,7 @@
                                 <th>@Localizer["Status"]</th>
                                 <th>@Localizer["Priority"]</th>
                                 <th>@Localizer["CreatedAt"]</th>
+                                <th>@Localizer["Actions"]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,6 +121,20 @@
                                 <td><span class="badge rounded-pill text-bg-light">@statusLabel</span></td>
                                 <td>@priorityLabel</td>
                                 <td class="text-muted">@ticket.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>
+                                    @if (ticket.ApprovalStatus == 2 && ticket.Priority is 3 or 4 && ticket.Status is not (3 or 4))
+                                    {
+                                        <a asp-controller="Customer" asp-action="Chat" asp-route-id="@ticket.Id" class="btn btn-sm btn-primary">@Localizer["JoinChat"]</a>
+                                        @if (ticket.AssignedAgentId is null)
+                                        {
+                                            <div class="small text-muted mt-1">@Localizer["WaitingForAgent"]</div>
+                                        }
+                                    }
+                                    else if (ticket.ApprovalStatus == 1)
+                                    {
+                                        <span class="small text-muted">@Localizer["PendingAdminApproval"]</span>
+                                    }
+                                </td>
                             </tr>
                         }
                         </tbody>
