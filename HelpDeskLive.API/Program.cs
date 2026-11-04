@@ -80,7 +80,8 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<HelpDeskDbContext>();
     await dbContext.Database.MigrateAsync();
     await ReferenceDataSeeder.SeedAsync(dbContext);
-    await TestUserSeeder.SeedAsync(dbContext);
+    if (app.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("SeedTestUsers:Enabled"))
+        await TestUserSeeder.SeedAsync(dbContext, builder.Configuration);
 }
 
 if (!app.Environment.IsDevelopment())
