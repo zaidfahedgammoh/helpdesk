@@ -338,4 +338,6 @@
   <data name="ChatInputPlaceholder" xml:space="preserve"><value>اكتب رسالتك…</value></data>
   <data name="Send" xml:space="preserve"><value>إرسال</value></data>
   <data name="BackToTickets" xml:space="preserve"><value>العودة إلى التذاكر</value></data>
+  <data name="DepartmentQueue" xml:space="preserve"><value>قائمة انتظار تذاكر القسم</value></data>
+  <data name="DepartmentQueueDescription" xml:space="preserve"><value>تظهر طلبات العملاء ذات الأولوية العالية أولاً. ابدأ التذكرة عندما تكون مستعداً لمعالجتها.</value></data>
 </root>
