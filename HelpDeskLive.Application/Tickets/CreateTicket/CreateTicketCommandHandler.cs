@@ -57,7 +57,6 @@ public sealed class CreateTicketCommandHandler
         }
 
         await _ticketRepository.AddAsync(ticket, cancellationToken);
-        await _ticketRepository.AssignToAvailableAgentAsync(ticket, cancellationToken);
         await _ticketRepository.SaveChangesAsync(cancellationToken);
         return ticket.Id;
     }
