@@ -321,4 +321,6 @@
   <data name="ApiReturnedInvalidToken" xml:space="preserve"><value>أعادت واجهة برمجة التطبيقات رمز وصول غير صالح.</value></data>
   <data name="HomePageTitle" xml:space="preserve"><value>الصفحة الرئيسية</value></data>
   <data name="LearnAboutAspNet" xml:space="preserve"><value>تعرّف على بناء تطبيقات الويب باستخدام ASP.NET Core.</value></data>
+  <data name="ManageRegisteredAccounts" xml:space="preserve"><value>إنشاء الحسابات وعرض الحسابات المسجلة.</value></data>
+  <data name="AccountId" xml:space="preserve"><value>رقم الحساب</value></data>
 </root>
