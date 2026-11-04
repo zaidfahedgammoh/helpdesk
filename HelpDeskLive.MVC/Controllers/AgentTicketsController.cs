@@ -33,6 +33,8 @@ public sealed class AgentTicketsController : Controller
     public Task<IActionResult> Resolve(int id, CancellationToken ct) => Send(id, "resolve", ct);
     [HttpPost, ValidateAntiForgeryToken]
     public Task<IActionResult> Close(int id, CancellationToken ct) => Send(id, "close", ct);
+    [HttpPost, ValidateAntiForgeryToken]
+    public Task<IActionResult> Escalate(int id, CancellationToken ct) => Send(id, "escalate", ct);
 
     [HttpGet]
     public async Task<IActionResult> Chat(int id, CancellationToken ct)
