@@ -286,4 +286,9 @@
   <data name="InProgressTicketsAria" xml:space="preserve"><value>In-progress tickets</value></data>
   <data name="ResolvedTicketsAria" xml:space="preserve"><value>Resolved tickets</value></data>
   <data name="ClosedTicketsAria" xml:space="preserve"><value>Closed tickets</value></data>
+  <data name="ChooseIssueAndDescription" xml:space="preserve"><value>Choose an issue and enter a description.</value></data>
+  <data name="TitleDescriptionTooLong" xml:space="preserve"><value>The custom title cannot exceed 200 characters and the description cannot exceed 5000 characters.</value></data>
+  <data name="CheckIssueDescription" xml:space="preserve"><value>Please check the issue and description.</value></data>
+  <data name="TicketCreateFailed" xml:space="preserve"><value>Your ticket could not be created. Please try again.</value></data>
+  <data name="ApiBaseUrlMissing" xml:space="preserve"><value>API base URL is not configured.</value></data>
 </root>
