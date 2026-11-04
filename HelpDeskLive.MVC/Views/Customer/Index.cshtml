@@ -122,7 +122,7 @@
                                 <td>@priorityLabel</td>
                                 <td class="text-muted">@ticket.CreatedAt.ToLocalTime().ToString("g")</td>
                                 <td>
-                                    @if (ticket.ApprovalStatus == 2 && ticket.Priority is 3 or 4 && ticket.Status is not (3 or 4))
+                                    @if (ticket.ApprovalStatus == 2 && (ticket.Priority is 3 or 4) && (ticket.Status is not (3 or 4)))
                                     {
                                         <a asp-controller="Customer" asp-action="Chat" asp-route-id="@ticket.Id" class="btn btn-sm btn-primary">@Localizer["JoinChat"]</a>
                                         @if (ticket.AssignedAgentId is null)
