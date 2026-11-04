@@ -117,3 +117,58 @@ html[dir="rtl"] .text-end { text-align: left !important; }
   background: #fff;
   border-color: var(--helpdesk-border) !important;
 }
+
+
+/* HelpDesk Live white and purple theme */
+:root {
+  --hd-purple: #7c3aed;
+  --hd-purple-dark: #6d28d9;
+  --hd-purple-soft: #f5f3ff;
+  --hd-purple-border: #ddd6fe;
+  --bs-primary: #7c3aed;
+  --bs-primary-rgb: 124, 58, 237;
+  --bs-link-color: #6d28d9;
+  --bs-link-hover-color: #5b21b6;
+}
+body {
+  background: #fff;
+  color: #27213b;
+}
+a { color: var(--hd-purple-dark); }
+a:hover { color: #5b21b6; }
+.btn-primary, .btn-primary:focus, .btn-primary:active,
+.page-link.active, .active > .page-link {
+  --bs-btn-bg: var(--hd-purple);
+  --bs-btn-border-color: var(--hd-purple);
+  --bs-btn-hover-bg: var(--hd-purple-dark);
+  --bs-btn-hover-border-color: var(--hd-purple-dark);
+  --bs-btn-active-bg: #5b21b6;
+  --bs-btn-active-border-color: #5b21b6;
+  --bs-btn-disabled-bg: #a78bfa;
+  --bs-btn-disabled-border-color: #a78bfa;
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--hd-purple-dark);
+  --bs-btn-border-color: var(--hd-purple);
+  --bs-btn-hover-bg: var(--hd-purple);
+  --bs-btn-hover-border-color: var(--hd-purple);
+  --bs-btn-active-bg: var(--hd-purple-dark);
+  --bs-btn-active-border-color: var(--hd-purple-dark);
+}
+.btn-link { color: var(--hd-purple-dark); }
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 .2rem rgba(124, 58, 237, .18);
+}
+.form-check-input:checked {
+  background-color: var(--hd-purple);
+  border-color: var(--hd-purple);
+}
+.text-primary { color: var(--hd-purple) !important; }
+.bg-primary, .progress-bar.bg-primary { background-color: var(--hd-purple) !important; }
+.badge.text-bg-primary { background-color: var(--hd-purple) !important; }
+.nav-pills { --bs-nav-pills-link-active-bg: var(--hd-purple); }
+.card { border-color: #eeeaf7; }
+.navbar { background-color: #fff !important; }
+html[dir="rtl"] body { text-align: right; }
+html[dir="rtl"] .form-floating > .form-control::placeholder { text-align: right; }
