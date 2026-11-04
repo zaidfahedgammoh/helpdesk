@@ -27,10 +27,7 @@ public sealed class TicketChatHub : Hub
         var role = Context.User?.FindFirstValue(ClaimTypes.Role);
         if (role == UserRole.Agent.ToString() && int.TryParse(Context.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var agentId))
         {
-            var departmentId = await _db.Users.AsNoTracking()
-                .Where(user => user.Id == agentId && user.Role == UserRole.Agent)
-                .Select(user => user.DepartmentId)
-                .FirstOrDefaultAsync();
+            var departmentId = await _sender.Send(new GetAgentDepartmentQuery(agentId));
             if (departmentId.HasValue)
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"department-{departmentId.Value}");
         }
