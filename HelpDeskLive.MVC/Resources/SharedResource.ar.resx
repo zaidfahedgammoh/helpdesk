@@ -292,4 +292,33 @@
   <data name="CheckIssueDescription" xml:space="preserve"><value>يرجى التحقق من نوع المشكلة والوصف.</value></data>
   <data name="TicketCreateFailed" xml:space="preserve"><value>تعذر إنشاء التذكرة. يرجى المحاولة مرة أخرى.</value></data>
   <data name="ApiBaseUrlMissing" xml:space="preserve"><value>لم يتم إعداد عنوان واجهة برمجة التطبيقات.</value></data>
+  <data name="AccountType" xml:space="preserve"><value>نوع الحساب</value></data>
+  <data name="NoAccountsFound" xml:space="preserve"><value>لم يتم العثور على حسابات.</value></data>
+  <data name="CreateAgentAccount" xml:space="preserve"><value>إنشاء حساب موظف دعم</value></data>
+  <data name="CreateCustomerAccount" xml:space="preserve"><value>إنشاء حساب عميل</value></data>
+  <data name="TemporaryPassword" xml:space="preserve"><value>كلمة مرور مؤقتة</value></data>
+  <data name="TemporaryPasswordHint" xml:space="preserve"><value>8 أحرف على الأقل. شاركها بأمان مع صاحب الحساب الجديد.</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>إنشاء حساب</value></data>
+  <data name="AccountCreated" xml:space="preserve"><value>تم إنشاء الحساب.</value></data>
+  <data name="EmailAlreadyRegistered" xml:space="preserve"><value>عنوان البريد الإلكتروني مسجل بالفعل.</value></data>
+  <data name="AccountCreateFailed" xml:space="preserve"><value>تعذر إنشاء الحساب. تحقق من البيانات والقسم المحدد.</value></data>
+  <data name="AgentDepartmentUpdated" xml:space="preserve"><value>تم تحديث قسم موظف الدعم.</value></data>
+  <data name="AgentDepartmentUpdateFailed" xml:space="preserve"><value>تعذر تحديث قسم موظف الدعم.</value></data>
+  <data name="CompleteAccountFields" xml:space="preserve"><value>أكمل جميع الحقول واختر قسماً لموظف الدعم.</value></data>
+  <data name="ManageIssueTypesTitle" xml:space="preserve"><value>إدارة أنواع المشكلات</value></data>
+  <data name="IssueTypesDescription" xml:space="preserve"><value>تحكم في أنواع المشكلات المحددة مسبقاً التي يمكن للعملاء اختيارها عند إنشاء التذاكر.</value></data>
+  <data name="ActiveIssueTypes" xml:space="preserve"><value>أنواع المشكلات النشطة</value></data>
+  <data name="NoActiveIssueTypes" xml:space="preserve"><value>لم يتم العثور على أنواع مشكلات نشطة.</value></data>
+  <data name="AddIssueType" xml:space="preserve"><value>إضافة نوع مشكلة</value></data>
+  <data name="CreateDepartmentsFirst" xml:space="preserve"><value>أنشئ الأقسام قبل إضافة أنواع المشكلات.</value></data>
+  <data name="DefaultPriority" xml:space="preserve"><value>الأولوية الافتراضية</value></data>
+  <data name="IssueTypeCreated" xml:space="preserve"><value>تم إنشاء نوع المشكلة بنجاح.</value></data>
+  <data name="IssueTypeCreateFailed" xml:space="preserve"><value>تعذر إنشاء نوع المشكلة. تحقق من البيانات وحاول مرة أخرى.</value></data>
+  <data name="PleaseEnterCredentials" xml:space="preserve"><value>يرجى إدخال البريد الإلكتروني وكلمة المرور.</value></data>
+  <data name="LoginInvalidCredentials" xml:space="preserve"><value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value></data>
+  <data name="ApiDidNotReturnToken" xml:space="preserve"><value>لم تُرجع واجهة برمجة التطبيقات رمز الوصول.</value></data>
+  <data name="TokenMissingRole" xml:space="preserve"><value>لا يحتوي رمز الوصول على دور المستخدم.</value></data>
+  <data name="ApiReturnedInvalidToken" xml:space="preserve"><value>أعادت واجهة برمجة التطبيقات رمز وصول غير صالح.</value></data>
+  <data name="HomePageTitle" xml:space="preserve"><value>الصفحة الرئيسية</value></data>
+  <data name="LearnAboutAspNet" xml:space="preserve"><value>تعرّف على بناء تطبيقات الويب باستخدام ASP.NET Core.</value></data>
 </root>
