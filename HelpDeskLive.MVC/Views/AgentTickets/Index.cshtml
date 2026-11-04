@@ -53,7 +53,6 @@
         </div></div>
     }
 </div>
-<script>
-    // Refresh the department queue periodically so newly created waiting tickets appear for agents.
-    window.setTimeout(() => window.location.reload(), 15000);
-</script>
+@section Scripts {
+    <script src="~/js/agent-ticket-queue.js" asp-append-version="true"></script>
+}
