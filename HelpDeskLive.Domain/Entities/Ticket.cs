@@ -14,6 +14,7 @@ public class Ticket
     public int? AssignedAgentId { get; private set; }
     public TicketApprovalStatus ApprovalStatus { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public DateTime? ResolvedAt { get; private set; }
     public DateTime? ClosedAt { get; private set; }
 
     private readonly List<TicketEscalation> _escalations = new();
@@ -84,6 +85,7 @@ public class Ticket
         };
         if (!valid) throw new InvalidOperationException($"Cannot change ticket status from {Status} to {newStatus}.");
         Status = newStatus;
+        if (newStatus == TicketStatus.Resolved) ResolvedAt = DateTime.UtcNow;
         if (newStatus == TicketStatus.Closed) ClosedAt = DateTime.UtcNow;
     }
 

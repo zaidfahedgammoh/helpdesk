@@ -7,6 +7,7 @@ using HelpDeskLive.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace HelpDeskLive.Infrastructure.Services;
 
@@ -14,40 +15,45 @@ public sealed class AdminReportingService : IAdminReportingService
 {
     private readonly HelpDeskDbContext _dbContext;
     private readonly string _connectionString;
-    private static bool _storedProcedureEnsured;
+    private readonly ILogger<AdminReportingService> _logger;
 
-    public AdminReportingService(HelpDeskDbContext dbContext, IConfiguration configuration)
+    public AdminReportingService(
+        HelpDeskDbContext dbContext,
+        IConfiguration configuration,
+        ILogger<AdminReportingService> logger)
     {
         _dbContext = dbContext;
-        _connectionString = dbContext.Database.GetConnectionString()
-            ?? configuration.GetConnectionString("DefaultConnection")
+        _logger = logger;
+        string? connectionString = null;
+        try
+        {
+            if (dbContext.Database.IsRelational())
+            {
+                connectionString = dbContext.Database.GetConnectionString();
+            }
+        }
+        catch { }
+
+        _connectionString = connectionString
+            ?? (configuration != null ? configuration.GetConnectionString("DefaultConnection") : null)
             ?? string.Empty;
     }
 
     public async Task<IReadOnlyList<DepartmentTicketStatsDto>> GetDepartmentTicketStatsViaLinqAsync(CancellationToken ct = default)
     {
-        var departments = await _dbContext.Departments.AsNoTracking().ToListAsync(ct);
-        var tickets = await _dbContext.Tickets.AsNoTracking()
-            .Where(t => t.ApprovalStatus == TicketApprovalStatus.Approved)
-            .ToListAsync(ct);
-
-        var list = new List<DepartmentTicketStatsDto>();
-        foreach (var dept in departments)
-        {
-            var deptTickets = tickets.Where(t => t.DepartmentId == dept.Id).ToList();
-            list.Add(new DepartmentTicketStatsDto(
+        return await _dbContext.Departments.AsNoTracking()
+            .Select(dept => new DepartmentTicketStatsDto(
                 dept.Id,
                 dept.Name,
-                deptTickets.Count,
-                deptTickets.Count(t => t.Status == TicketStatus.Open),
-                deptTickets.Count(t => t.Status == TicketStatus.InProgress),
-                deptTickets.Count(t => t.Status == TicketStatus.Resolved),
-                deptTickets.Count(t => t.Status == TicketStatus.Closed),
-                deptTickets.Count(t => t.Status == TicketStatus.Escalated)
-            ));
-        }
-
-        return list.OrderBy(d => d.DepartmentName).ToList();
+                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved),
+                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Open),
+                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.InProgress),
+                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Resolved),
+                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Closed),
+                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Escalated)
+            ))
+            .OrderBy(d => d.DepartmentName)
+            .ToListAsync(ct);
     }
 
     public async Task<IReadOnlyList<AgentTicketStatsDto>> GetAgentTicketStatsViaDapperAsync(CancellationToken ct = default)
@@ -80,8 +86,6 @@ public sealed class AdminReportingService : IAdminReportingService
 
     public async Task<EscalatedTicketStatsDto> GetEscalatedTicketStatsViaStoredProcedureAsync(CancellationToken ct = default)
     {
-        await EnsureStoredProcedureExistsAsync(ct);
-
         var connection = _dbContext.Database.GetDbConnection();
         if (connection.State != ConnectionState.Open)
         {
@@ -97,7 +101,7 @@ public sealed class AdminReportingService : IAdminReportingService
                 from esc in _dbContext.TicketEscalations.AsNoTracking()
                 join t in _dbContext.Tickets.AsNoTracking() on esc.TicketId equals t.Id
                 where t.Status == TicketStatus.Resolved || t.Status == TicketStatus.Closed
-                select (double?)EF.Functions.DateDiffMinute(esc.EscalatedAt, t.ClosedAt ?? DateTime.UtcNow) / 60.0
+                select (double?)EF.Functions.DateDiffMinute(esc.EscalatedAt, t.ResolvedAt ?? t.ClosedAt ?? DateTime.UtcNow) / 60.0
             ).ToListAsync(ct);
 
             var avgHoursAfterEscalation = durations.Count != 0 && durations.Any(d => d.HasValue)
@@ -111,10 +115,11 @@ public sealed class AdminReportingService : IAdminReportingService
                 Math.Round(avgHoursAfterEscalation, 1)
             );
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error executing sp_GetEscalationStats for escalation statistics report.");
             var total = await _dbContext.TicketEscalations.CountAsync(ct);
-            var active = await _dbContext.TicketEscalations.CountAsync(e => e.NewAgentId == null, ct);
+            var active = await _dbContext.Tickets.CountAsync(t => t.Status == TicketStatus.Escalated, ct);
             var reassigned = await _dbContext.TicketEscalations.CountAsync(e => e.NewAgentId != null, ct);
             return new EscalatedTicketStatsDto(total, active, reassigned, 0.0);
         }
@@ -124,6 +129,7 @@ public sealed class AdminReportingService : IAdminReportingService
     {
         if (string.IsNullOrWhiteSpace(_connectionString))
         {
+            _logger.LogWarning("Connection string is missing for ADO.NET performance stats query.");
             return new ResolutionClosingTimeStatsDto(0, 0, 0, 0);
         }
 
@@ -136,6 +142,7 @@ public sealed class AdminReportingService : IAdminReportingService
                 SELECT 
                     Id,
                     CreatedAt,
+                    ResolvedAt,
                     ClosedAt,
                     Status
                 FROM Tickets
@@ -152,20 +159,30 @@ public sealed class AdminReportingService : IAdminReportingService
             while (await reader.ReadAsync(ct))
             {
                 var createdAt = reader.GetDateTime(1);
-                var isClosedAtNull = reader.IsDBNull(2);
-                var closedAt = isClosedAtNull ? (DateTime?)null : reader.GetDateTime(2);
-                var status = reader.GetInt32(3);
+                var isResolvedAtNull = reader.IsDBNull(2);
+                var resolvedAt = isResolvedAtNull ? (DateTime?)null : reader.GetDateTime(2);
+                var isClosedAtNull = reader.IsDBNull(3);
+                var closedAt = isClosedAtNull ? (DateTime?)null : reader.GetDateTime(3);
+                var status = reader.GetInt32(4);
 
-                if (status == 3)
+                if (status == 3) // Resolved
                 {
                     resolvedCount++;
-                    var resTime = closedAt ?? DateTime.UtcNow;
+                    var resTime = resolvedAt ?? closedAt ?? DateTime.UtcNow;
                     totalResolvedMinutes += (resTime - createdAt).TotalMinutes;
                 }
-                else if (status == 4 && closedAt.HasValue)
+                else if (status == 4) // Closed
                 {
-                    closedCount++;
-                    totalClosedMinutes += (closedAt.Value - createdAt).TotalMinutes;
+                    if (resolvedAt.HasValue)
+                    {
+                        resolvedCount++;
+                        totalResolvedMinutes += (resolvedAt.Value - createdAt).TotalMinutes;
+                    }
+                    if (closedAt.HasValue)
+                    {
+                        closedCount++;
+                        totalClosedMinutes += (closedAt.Value - createdAt).TotalMinutes;
+                    }
                 }
             }
 
@@ -179,37 +196,10 @@ public sealed class AdminReportingService : IAdminReportingService
                 closedCount
             );
         }
-        catch
+        catch (Exception ex)
         {
-            return new ResolutionClosingTimeStatsDto(0, 0, 0, 0);
-        }
-    }
-
-    private async Task EnsureStoredProcedureExistsAsync(CancellationToken ct)
-    {
-        if (_storedProcedureEnsured) return;
-
-        const string sql = @"
-            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[sp_GetEscalationStats]') AND type in (N'P', N'PC'))
-            BEGIN
-                EXEC(N'CREATE PROCEDURE [dbo].[sp_GetEscalationStats] AS
-                BEGIN
-                    SET NOCOUNT ON;
-                    SELECT 
-                        COUNT(*) AS TotalEscalations,
-                        ISNULL(SUM(CASE WHEN NewAgentId IS NULL THEN 1 ELSE 0 END), 0) AS CurrentlyEscalatedTickets,
-                        ISNULL(SUM(CASE WHEN NewAgentId IS NOT NULL THEN 1 ELSE 0 END), 0) AS ReassignedEscalations
-                    FROM TicketEscalations;
-                END')
-            END";
-
-        try
-        {
-            await _dbContext.Database.ExecuteSqlRawAsync(sql, ct);
-            _storedProcedureEnsured = true;
-        }
-        catch
-        {
+            _logger.LogError(ex, "Error calculating performance stats via ADO.NET.");
+            throw;
         }
     }
 

@@ -33,6 +33,9 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
         builder.Property(ticket => ticket.CreatedAt)
             .IsRequired();
 
+        builder.Property(ticket => ticket.ResolvedAt)
+            .IsRequired(false);
+
         builder.Property(ticket => ticket.ClosedAt)
             .IsRequired(false);
 

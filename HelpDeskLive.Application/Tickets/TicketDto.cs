@@ -14,5 +14,6 @@ public sealed record TicketDto(
     int? AssignedAgentId,
     string? AgentName,
     DateTime CreatedAt,
+    DateTime? ResolvedAt,
     DateTime? ClosedAt
 );

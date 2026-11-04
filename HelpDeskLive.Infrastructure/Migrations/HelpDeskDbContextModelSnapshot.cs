@@ -176,6 +176,9 @@ namespace HelpDeskLive.Infrastructure.Migrations
                     b.Property<int?>("Priority")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
