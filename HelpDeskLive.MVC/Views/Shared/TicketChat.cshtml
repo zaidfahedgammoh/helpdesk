@@ -46,6 +46,7 @@
         waiting: @Html.Raw(JsonSerializer.Serialize(Localizer["WaitingForAgent"].Value)),
         agentConnected: @Html.Raw(JsonSerializer.Serialize(Localizer["AgentConnected"].Value)),
         customerConnected: @Html.Raw(JsonSerializer.Serialize(Localizer["CustomerConnected"].Value)),
+        chatReady: @Html.Raw(JsonSerializer.Serialize(Localizer["ChatReady"].Value)),
         loadError: @Html.Raw(JsonSerializer.Serialize(Localizer["ChatLoadError"].Value)),
         sendError: @Html.Raw(JsonSerializer.Serialize(Localizer["ChatSendError"].Value)),
         you: @Html.Raw(JsonSerializer.Serialize(Localizer["You"].Value))
@@ -84,7 +85,7 @@
         if (!response.ok) throw new Error(text.loadError);
         const data = await response.json();
         data.messages.forEach(renderMessage);
-        status.textContent = data.waitingForAgent ? text.waiting : text.agentConnected;
+        status.textContent = isAgent ? text.chatReady : (data.waitingForAgent ? text.waiting : text.agentConnected);
     }
 
     async function start() {
@@ -96,12 +97,12 @@
 
         connection.on("ReceiveMessage", renderMessage);
         connection.on("ChatParticipantJoined", participant => {
-            if (participant.role === "Agent") status.textContent = text.agentConnected;
+            if (!isAgent && participant.role === "Agent") status.textContent = text.agentConnected;
             else if (isAgent && participant.role === "Customer") status.textContent = text.customerConnected;
         });
         connection.onreconnected(async () => {
             await connection.invoke("JoinTicket", ticketId);
-            status.textContent = isAgent ? text.customerConnected : text.agentConnected;
+            status.textContent = isAgent ? text.chatReady : text.agentConnected;
         });
 
         await connection.start();
