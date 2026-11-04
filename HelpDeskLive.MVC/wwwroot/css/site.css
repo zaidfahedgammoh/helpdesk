@@ -189,3 +189,11 @@ html[dir="rtl"] .form-floating > .form-control::placeholder { text-align: right;
   --bs-btn-hover-bg: var(--hd-purple);
   --bs-btn-hover-border-color: var(--hd-purple);
 }
+
+.text-info { color: var(--hd-purple) !important; }
+.bg-info, .progress-bar.bg-info { background-color: #a78bfa !important; }
+.alert-info {
+  --bs-alert-color: #5b21b6;
+  --bs-alert-bg: #f5f3ff;
+  --bs-alert-border-color: #ddd6fe;
+}
