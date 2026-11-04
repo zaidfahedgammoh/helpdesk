@@ -9,8 +9,8 @@ public sealed class AdminAccountsController : Controller
 {
     private readonly IHttpClientFactory _clients;
     private readonly IConfiguration _configuration;
-    private readonly IStringLocalizer<SharedResource> _localizer;
-    public AdminAccountsController(IHttpClientFactory clients, IConfiguration configuration, IStringLocalizer<SharedResource> localizer) { _clients = clients; _configuration = configuration; _localizer = localizer; }
+    private readonly IStringLocalizer<HelpDeskLive.MVC.SharedResource> _localizer;
+    public AdminAccountsController(IHttpClientFactory clients, IConfiguration configuration, IStringLocalizer<HelpDeskLive.MVC.SharedResource> localizer) { _clients = clients; _configuration = configuration; _localizer = localizer; }
 
     [HttpGet]
     public async Task<IActionResult> Index(string role = "Customer", CancellationToken ct = default)
