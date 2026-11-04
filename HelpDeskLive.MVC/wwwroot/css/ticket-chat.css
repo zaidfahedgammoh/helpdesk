@@ -1,0 +1,16 @@
+.chat-messages {
+    height: min(55vh, 520px);
+    overflow-y: auto;
+}
+
+.chat-message {
+    max-width: 85%;
+}
+
+.chat-message-content {
+    white-space: pre-wrap;
+}
+
+.chat-message-mine {
+    background-color: #7c3aed;
+}
