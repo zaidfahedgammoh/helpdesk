@@ -109,15 +109,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<TicketChatHub>("/hubs/chat").RequireAuthorization();
 
-app.MapPost("/api/notifications/ticket-closed", async (HttpRequest request) =>
-{
-    using var ms = new MemoryStream();
-    await request.Body.CopyToAsync(ms);
-    var bytes = ms.ToArray();
-    if (bytes.Length == 0) return Results.BadRequest(new { error = "Empty payload" });
-    var notification = MessagePackSerializer.Deserialize<HelpDeskLive.Application.Common.Models.TicketClosedNotificationDto>(bytes);
-    return Results.Ok(notification);
-});
+
 
 app.Run();
 
