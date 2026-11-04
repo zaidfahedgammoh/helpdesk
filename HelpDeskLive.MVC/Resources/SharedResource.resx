@@ -322,4 +322,6 @@
   <data name="LearnAboutAspNet" xml:space="preserve"><value>Learn about building web apps with ASP.NET Core.</value></data>
   <data name="ManageRegisteredAccounts" xml:space="preserve"><value>Create accounts and view registered accounts.</value></data>
   <data name="AccountId" xml:space="preserve"><value>Account ID</value></data>
+  <data name="RequestId" xml:space="preserve"><value>Request ID</value></data>
+  <data name="PrivacyPolicyBody" xml:space="preserve"><value>Use this page to detail your site's privacy policy.</value></data>
 </root>
