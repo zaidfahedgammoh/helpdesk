@@ -340,4 +340,5 @@
   <data name="BackToTickets" xml:space="preserve"><value>العودة إلى التذاكر</value></data>
   <data name="DepartmentQueue" xml:space="preserve"><value>قائمة انتظار تذاكر القسم</value></data>
   <data name="DepartmentQueueDescription" xml:space="preserve"><value>تظهر طلبات العملاء ذات الأولوية العالية أولاً. ابدأ التذكرة عندما تكون مستعداً لمعالجتها.</value></data>
+  <data name="ChatReady" xml:space="preserve"><value>أنت متصل بمحادثة هذه التذكرة.</value></data>
 </root>
