@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Domain.Enums;
-using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -77,8 +76,8 @@ public sealed class TicketChatHub : Hub
 
     private static bool IsChatTicket(Ticket ticket) =>
         ticket.ApprovalStatus == TicketApprovalStatus.Approved &&
-        ticket.Priority is TicketPriority.High or TicketPriority.Critical &&
-        ticket.Status is not (TicketStatus.Resolved or TicketStatus.Closed);
+        (ticket.Priority is TicketPriority.High or TicketPriority.Critical) &&
+        (ticket.Status is not (TicketStatus.Resolved or TicketStatus.Closed));
 
     private static string GroupName(int ticketId) => $"ticket-{ticketId}";
 }
