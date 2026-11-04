@@ -9,12 +9,12 @@ public sealed class AdminIssueTypesController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
-    private readonly IStringLocalizer<SharedResource> _localizer;
+    private readonly IStringLocalizer<HelpDeskLive.MVC.SharedResource> _localizer;
 
     public AdminIssueTypesController(
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration,
-        IStringLocalizer<SharedResource> localizer)
+        IStringLocalizer<HelpDeskLive.MVC.SharedResource> localizer)
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
