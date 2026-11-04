@@ -287,4 +287,9 @@
   <data name="InProgressTicketsAria" xml:space="preserve"><value>التذاكر قيد التنفيذ</value></data>
   <data name="ResolvedTicketsAria" xml:space="preserve"><value>التذاكر التي تم حلها</value></data>
   <data name="ClosedTicketsAria" xml:space="preserve"><value>التذاكر المغلقة</value></data>
+  <data name="ChooseIssueAndDescription" xml:space="preserve"><value>اختر نوع المشكلة وأدخل وصفاً لها.</value></data>
+  <data name="TitleDescriptionTooLong" xml:space="preserve"><value>يجب ألا يتجاوز عنوان الطلب المخصص 200 حرف، وألا يتجاوز الوصف 5000 حرف.</value></data>
+  <data name="CheckIssueDescription" xml:space="preserve"><value>يرجى التحقق من نوع المشكلة والوصف.</value></data>
+  <data name="TicketCreateFailed" xml:space="preserve"><value>تعذر إنشاء التذكرة. يرجى المحاولة مرة أخرى.</value></data>
+  <data name="ApiBaseUrlMissing" xml:space="preserve"><value>لم يتم إعداد عنوان واجهة برمجة التطبيقات.</value></data>
 </root>
