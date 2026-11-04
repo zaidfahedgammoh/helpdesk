@@ -931,18 +931,18 @@
     <value>هل تريد تصعيد هذه التذكرة وإعادتها إلى قائمة انتظار القسم؟</value>
   </data>
   <data name="TicketEscalatedNotice" xml:space="preserve">
-    <value>ØªÙ… ØªØµØ¹ÙŠØ¯ ØªØ°ÙƒØ±ØªÙƒ. Ø³ÙŠÙ‚ÙˆÙ… Ù…ÙˆØ¸Ù Ø¢Ø®Ø± Ø¨Ù…Ø³Ø§Ø¹Ø¯ØªÙƒ Ù‚Ø±ÙŠØ¨Ø§Ù‹.</value>
+    <value>تم تصعيد تذكرتك. سيقوم موظف آخر بمساعدتك قريباً.</value>
   </data>
   <data name="AverageResolutionTime" xml:space="preserve">
-    <value>Ù…ØªÙˆØ³Ø· ÙˆÙ‚Øª Ø§Ù„Ø­Ù„</value>
+    <value>متوسط وقت الحل</value>
   </data>
   <data name="AverageClosingTime" xml:space="preserve">
-    <value>Ù…ØªÙˆØ³Ø· ÙˆÙ‚Øª Ø§Ù„Ø¥ØºÙ„Ø§Ù‚</value>
+    <value>متوسط وقت الإغلاق</value>
   </data>
   <data name="DepartmentStatistics" xml:space="preserve">
-    <value>Ø¥Ø­ØµØ§Ø¦ÙŠØ§Øª Ø§Ù„Ø£Ù‚Ø³Ø§Ù…</value>
+    <value>إحصائيات الأقسام</value>
   </data>
   <data name="AgentPerformance" xml:space="preserve">
-    <value>Ø£Ø¯Ø§Ø¡ ÙˆØ¹Ø¨Ø¡ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</value>
+    <value>أداء وعبء الموظفين</value>
   </data>
 </root>

@@ -98,9 +98,19 @@ public sealed class AgentTicketsController : ControllerBase
     {
         if (_currentUser.UserId is not int agentId) return Unauthorized();
 
+        if (string.IsNullOrWhiteSpace(request?.Reason) || request.Reason.Trim().Length > 1000)
+        {
+            return BadRequest(new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Validation Error",
+                Detail = "Escalation reason is required and must not exceed 1000 characters."
+            });
+        }
+
         try
         {
-            var result = await _sender.Send(new EscalateTicketCommand(ticketId, agentId, request?.Reason), ct);
+            var result = await _sender.Send(new EscalateTicketCommand(ticketId, agentId, request.Reason.Trim()), ct);
 
             await _chatHub.Clients.Group(TicketGroup(ticketId)).SendAsync("TicketEscalated", new
             {
@@ -158,5 +168,5 @@ public sealed class AgentTicketsController : ControllerBase
     private static string TicketGroup(int ticketId) => $"ticket-{ticketId}";
     private static string DepartmentGroup(int departmentId) => $"department-{departmentId}";
 
-    public sealed record EscalateTicketRequest(string? Reason);
+    public sealed record EscalateTicketRequest(string Reason);
 }

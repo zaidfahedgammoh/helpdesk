@@ -129,7 +129,7 @@ public sealed class ResolveTicketCommandHandler : IRequestHandler<ResolveTicketC
 
 public sealed record EscalateTicketResult(int TicketId, int? DepartmentId, string Reason, DateTime EscalatedAt);
 
-public sealed record EscalateTicketCommand(int TicketId, int AgentId, string? Reason = null) : IRequest<EscalateTicketResult>;
+public sealed record EscalateTicketCommand(int TicketId, int AgentId, string Reason) : IRequest<EscalateTicketResult>;
 
 public sealed class EscalateTicketCommandValidator : AbstractValidator<EscalateTicketCommand>
 {
@@ -138,6 +138,7 @@ public sealed class EscalateTicketCommandValidator : AbstractValidator<EscalateT
         RuleFor(x => x.TicketId).GreaterThan(0);
         RuleFor(x => x.AgentId).GreaterThan(0);
         RuleFor(x => x.Reason)
+            .NotEmpty().WithMessage("Escalation reason is required.")
             .MaximumLength(1000).WithMessage("Escalation reason cannot exceed 1000 characters.");
     }
 }
@@ -159,9 +160,9 @@ public sealed class EscalateTicketCommandHandler : IRequestHandler<EscalateTicke
         if (ticket is null || ticket.AssignedAgentId != request.AgentId || ticket.Status != TicketStatus.InProgress)
             throw new KeyNotFoundException($"Ticket #{request.TicketId} was not found or is not currently active for you.");
 
-        var escalationReason = string.IsNullOrWhiteSpace(request.Reason)
-            ? "Ticket escalated by the assigned agent and returned to the department escalation queue."
-            : request.Reason.Trim();
+        if (string.IsNullOrWhiteSpace(request.Reason))
+            throw new ArgumentException("Escalation reason is required.", nameof(request.Reason));
+        var escalationReason = request.Reason.Trim();
 
         var escalation = ticket.EscalateToQueue(escalationReason);
         await _ticketRepository.AddEscalationAsync(escalation, ct);
