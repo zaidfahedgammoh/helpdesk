@@ -1,75 +1,101 @@
 # HelpDesk Live
 
-HelpDesk Live is an ASP.NET Core solution split into Domain, Application, Infrastructure, API, and MVC projects. The API owns persistence and JWT authentication; the MVC application calls the API and keeps its short-lived access token in server-side session storage.
+ASP.NET Core HelpDesk application using Domain, Application, Infrastructure, API, and MVC projects. The solution keeps business entities in Domain, use cases and abstractions in Application, persistence in Infrastructure, HTTP/SignalR endpoints in API, and the browser-facing UI in MVC.
 
 ## Configuration
 
-Do not commit connection strings, JWT signing keys, or test passwords. Configure these values through user secrets, a secret manager, or environment variables.
+Set secrets through user-secrets, environment variables, or a secret manager. Do not commit credentials.
 
-Required API settings:
+API:
+- `ConnectionStrings__DefaultConnection`: SQL Server connection string.
+- `Jwt__Issuer`, `Jwt__Audience`, and `Jwt__SigningKey`: JWT settings. Signing key must be at least 32 UTF-8 bytes.
+- `Jwt__AccessTokenMinutes`: access token lifetime; project requirement is 15 minutes.
+- `Cors__AllowedOrigins__0`: exact MVC origin.
 
-| Setting | Purpose |
-| --- | --- |
-| `ConnectionStrings__DefaultConnection` | SQL Server connection string |
-| `Jwt__Issuer` | JWT issuer |
-| `Jwt__Audience` | JWT audience |
-| `Jwt__SigningKey` | Random signing key of at least 32 UTF-8 bytes |
-| `Cors__AllowedOrigins__0` | Exact MVC origin, for example `https://localhost:7082` |
+MVC:
+- `ApiSettings__BaseUrl`: API base URL.
 
-The MVC application also requires `ApiSettings__BaseUrl` to point to the API base URL.
+Development-only sample users require both `SeedTestUsers__Enabled=true` and `SeedTestUsers__Password` (at least 12 characters). They are not seeded outside Development.
 
-Example PowerShell setup for a local development shell (replace values with your own):
+## Ticket rules
 
-```powershell
-$env:ConnectionStrings__DefaultConnection = "Server=localhost;Database=HelpDeskLiveDb;Trusted_Connection=True;TrustServerCertificate=True;"
-$env:Jwt__Issuer = "HelpDeskLive.API"
-$env:Jwt__Audience = "HelpDeskLive.Client"
-$env:Jwt__SigningKey = "<generate-a-random-secret-at-least-32-bytes-long>"
-$env:Cors__AllowedOrigins__0 = "https://localhost:7082"
-$env:ApiSettings__BaseUrl = "https://localhost:7001"
-```
-
-For development-only sample accounts, explicitly opt in with `SeedTestUsers__Enabled=true` and provide `SeedTestUsers__Password` (at least 12 characters). Test accounts are not seeded in non-development environments. Use unique passwords and never use this mechanism in production.
-
-## Ticket and chat behavior
-
-- Normal ticket lifecycle: Open → InProgress → Resolved → Closed.
-- Escalated is a separate queue state. Escalating releases the assigned agent; a department agent can pick up the escalated ticket.
-- Live chat is limited to approved High and Critical tickets in Open or InProgress states.
-- Customers can join an eligible waiting ticket; only its assigned agent can join as an agent.
-- Chat messages are persisted before they are broadcast.
-- Customer closure, agent resolution, closure, and escalation publish SignalR status events where currently implemented.
+- Normal lifecycle: Open → InProgress → Resolved → Closed.
+- Escalated is a separate queue state; escalation releases the assigned agent and a different agent can pick it up.
+- Customers may have at most three Open tickets.
+- Agents may have at most five InProgress tickets.
+- Approved High and Critical tickets use live chat.
+- Closed tickets cannot accept new messages.
+- Escalations require a reason and are stored in the TicketEscalations table, with the reason also visible in the ticket conversation history.
 
 ## Authentication
 
-- Login issues a short-lived JWT access token.
-- Refresh tokens are random, stored as SHA-256 hashes, expire after seven days, and rotate on successful refresh.
-- The refresh token is issued in an HttpOnly cookie; logout revokes the stored refresh token.
-- The MVC app stores the access token in server-side session rather than exposing it to page JavaScript.
+- Passwords are verified using ASP.NET Core PasswordHasher (PBKDF2-based).
+- Login issues a short-lived JWT access token and a seven-day random refresh token.
+- The database stores a SHA-256 hash of the refresh token.
+- Refresh rotates the token; logout revokes the current refresh token.
+- Refresh tokens are transported in an HttpOnly cookie. The MVC application stores the access token in server-side session.
 
-## Current implementation notes and known gaps
+## API routes
 
-This README records the implementation observed during the current code review; it is not a claim that every requirement in the full project audit has been completed.
+- `POST /api/auth/login`, `POST /api/auth/refresh`, `POST /api/auth/logout`
+- `POST /api/tickets`
+- `GET /api/customer/tickets`, `POST /api/customer/tickets/{id}/close`
+- `GET /api/agent/tickets`, `POST /api/agent/tickets/{id}/start|resolve|close|escalate`
+- `GET /api/chat/{id}/messages`
+- `GET /api/admin/reports/department-ticket-status` (Dapper stored procedure)
+- `GET /api/admin/reports/status-summary` (raw ADO.NET)
+- SignalR hub: `/hubs/chat`
 
-- API controllers and the SignalR hub still contain direct EF Core business/data access in several workflows; full CQRS extraction is outstanding.
-- A complete global ProblemDetails/exception middleware and MediatR validation/logging pipeline have not been verified or completed.
-- A dedicated escalation-history entity/table and required escalation-reason capture are not implemented; the current escalation audit is a chat message.
-- Department-level SignalR group subscription/authorization and push-driven queue updates are not complete; the agent queue currently refreshes periodically.
-- Automatic access-token refresh from MVC when API requests receive 401 responses still needs end-to-end implementation.
-- Reporting implementations using LINQ, stored procedures, Dapper, and ADO.NET need a full requirements audit.
-- MessagePack configuration, benchmarks, and compression experiments have not been verified.
-- Automated unit, integration, SignalR, authorization, and localization tests have not been added/verified as a complete suite.
-- Arabic/English resource coverage and all frontend strings still need a full view-by-view audit.
-- The API still applies EF Core migrations automatically at startup; review this operational choice for production deployment.
+## Reporting implementations
 
-## Build and test
+1. LINQ: dashboard query handlers/repositories.
+2. Dapper: `dbo.GetDepartmentTicketStatusReport` returns ticket counts by department/status and average close duration in hours.
+3. Raw ADO.NET: status summary endpoint uses SqlConnection, SqlCommand, and SqlDataReader.
 
-Build and test locally after configuring the required settings:
+Dapper is suitable for compact, high-performance SQL projections and stored procedures; raw ADO.NET gives explicit control but requires more boilerplate; LINQ is maintainable and composable for normal application queries, though complex reports may generate less predictable SQL. Compare actual query plans and timings on representative data before making performance claims.
+
+## Error handling and request pipeline
+
+API middleware order: ProblemDetails exception middleware first, then HSTS/HTTPS redirection, routing, CORS, authentication, authorization, endpoint mapping. Exception middleware must wrap downstream middleware so controller and authorization errors can be normalized. MediatR registers request handlers, FluentValidation validators, validation behavior, and logging behavior (including elapsed execution time).
+
+## Database
+
+EF Core SQL Server migrations are under `HelpDeskLive.Infrastructure/Migrations`. A new migration `20261104140000_AddTicketEscalations` creates durable escalation history. `20261104143000_AddDepartmentTicketReportProcedure` creates the Dapper report procedure. Review the EF model snapshot when generating future migrations.
+
+## Localization
+
+MVC supports English and Arabic resource files and a culture cookie / Accept-Language provider. Arabic/English resource coverage for every page and API validation message still needs a full audit. User PreferredLanguage is not yet wired as a per-user culture preference.
+
+## SignalR
+
+JWT authentication is accepted from the `access_token` query parameter only for `/hubs/chat`. Ticket groups enforce customer ownership and assigned-agent access. Agents automatically join their department group on hub connection. Chat messages are persisted before broadcast; typing and participant events are available.
+
+The hub still accesses EF Core directly for ticket authorization and message persistence rather than routing all hub operations through MediatR. MessagePack, JSON-vs-MessagePack benchmarks, compression experiments, and the separate MessagePack Notification API from the training document are not yet implemented.
+
+## Tests
+
+A domain test project covers normal ticket lifecycle, invalid transitions, escalation/reassignment, closure, and escalation reason validation. Add the test project to the solution and run it using:
 
 ```powershell
 dotnet restore
-dotnet build
 dotnet test
+dotnet build
 ```
 
-No build or test command was run as part of the current code changes.
+No build or tests were run during the current repository edits, as requested. API integration, authentication/authorization, database, MVC, localization, and SignalR end-to-end tests remain outstanding.
+
+## Remaining work / limitations
+
+- Finish extracting controller and SignalR database/business operations into Application commands/queries and repository abstractions.
+- Add GetTicketById and paged/filterable GetMyTickets queries; standardize all API responses as DTO records and add the documented AutoMapper profiles/custom mapping.
+- Complete refresh-token rotation concurrency protection and implement automatic refresh/retry for MVC API calls after access-token expiry.
+- Add complete API and MVC registration flow if public/self-service registration is intended; current account creation is admin-managed.
+- Update the EF Core model snapshot for the new escalation entity and add integration coverage for both migrations.
+- Add MessagePack server/client negotiation, payload DTO attributes, serialization-size benchmark, and compression experiment.
+- Implement the separate minimal Notification API and call it when a ticket closes.
+- Complete Arabic/English resource coverage, validation/error localization, and per-user PreferredLanguage selection.
+- Add integration and SignalR tests for multi-session customer/agent chat, unauthorized access, queue notification, escalation, and closed-ticket behavior.
+- Review MVC token exposure in the chat page: SignalR currently receives the short-lived JWT through the browser's SignalR accessTokenFactory. Keep its lifetime short and apply a strong Content Security Policy.
+- Consider moving production database migrations out of application startup into a controlled deployment step.
+
+Do not treat the remaining list as completed functionality.
