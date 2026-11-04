@@ -23,11 +23,37 @@ public sealed class TicketChatHub : Hub
             throw new HubException("You are not allowed to join this ticket chat.");
 
         await Groups.AddToGroupAsync(Context.ConnectionId, GroupName(ticketId));
-        await Clients.Group(GroupName(ticketId)).SendAsync("ChatParticipantJoined", new
-        {
-            userId,
-            role = Context.User?.FindFirstValue(ClaimTypes.Role) ?? string.Empty
-        });
+        var role = Context.User?.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+        var participant = new { userId, role };
+        await Clients.Group(GroupName(ticketId)).SendAsync("ChatParticipantJoined", participant);
+        await Clients.Group(GroupName(ticketId)).SendAsync(
+            role == UserRole.Agent.ToString() ? "AgentJoined" : "CustomerJoined",
+            participant);
+    }
+
+    public async Task LeaveTicket(int ticketId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupName(ticketId));
+    }
+
+    public async Task UserTyping(int ticketId)
+    {
+        var userId = GetUserId();
+        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
+        if (ticket is null || !CanAccess(ticket, userId) || !IsChatTicket(ticket))
+            throw new HubException("You are not allowed to use this ticket chat.");
+
+        await Clients.OthersInGroup(GroupName(ticketId)).SendAsync("UserTyping", new { userId });
+    }
+
+    public async Task StopTyping(int ticketId)
+    {
+        var userId = GetUserId();
+        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
+        if (ticket is null || !CanAccess(ticket, userId) || !IsChatTicket(ticket))
+            throw new HubException("You are not allowed to use this ticket chat.");
+
+        await Clients.OthersInGroup(GroupName(ticketId)).SendAsync("StopTyping", new { userId });
     }
 
     public async Task SendMessage(int ticketId, string content)
@@ -77,7 +103,7 @@ public sealed class TicketChatHub : Hub
     private static bool IsChatTicket(Ticket ticket) =>
         ticket.ApprovalStatus == TicketApprovalStatus.Approved &&
         (ticket.Priority is TicketPriority.High or TicketPriority.Critical) &&
-        (ticket.Status is not (TicketStatus.Resolved or TicketStatus.Closed));
+        ticket.Status is TicketStatus.Open or TicketStatus.InProgress;
 
     private static string GroupName(int ticketId) => $"ticket-{ticketId}";
 }
