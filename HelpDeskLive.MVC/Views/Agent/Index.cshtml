@@ -57,19 +57,19 @@
                     <p class="text-muted small mb-4">@Localizer["WorkloadOverviewHint"]</p>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Open"]</span><strong>@Model.OpenTickets</strong></div>
-                        <div class="progress"><div class="progress-bar bg-primary" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.OpenTickets * 100 / Model.AssignedTickets)%"></div></div>
+                        <div class="progress"><div class="progress-bar bg-primary" data-progress="@(Model.AssignedTickets == 0 ? 0 : Model.OpenTickets * 100 / Model.AssignedTickets)"></div></div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["InProgress"]</span><strong>@Model.InProgressTickets</strong></div>
-                        <div class="progress"><div class="progress-bar bg-info" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.InProgressTickets * 100 / Model.AssignedTickets)%"></div></div>
+                        <div class="progress"><div class="progress-bar bg-info" data-progress="@(Model.AssignedTickets == 0 ? 0 : Model.InProgressTickets * 100 / Model.AssignedTickets)"></div></div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Resolved"]</span><strong>@Model.ResolvedTickets</strong></div>
-                        <div class="progress"><div class="progress-bar bg-success" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.ResolvedTickets * 100 / Model.AssignedTickets)%"></div></div>
+                        <div class="progress"><div class="progress-bar bg-success" data-progress="@(Model.AssignedTickets == 0 ? 0 : Model.ResolvedTickets * 100 / Model.AssignedTickets)"></div></div>
                     </div>
                     <div>
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Closed"]</span><strong>@Model.ClosedTickets</strong></div>
-                        <div class="progress"><div class="progress-bar bg-secondary" style="width:@(Model.AssignedTickets == 0 ? 0 : Model.ClosedTickets * 100 / Model.AssignedTickets)%"></div></div>
+                        <div class="progress"><div class="progress-bar bg-secondary" data-progress="@(Model.AssignedTickets == 0 ? 0 : Model.ClosedTickets * 100 / Model.AssignedTickets)"></div></div>
                     </div>
                 </div>
             </section>
