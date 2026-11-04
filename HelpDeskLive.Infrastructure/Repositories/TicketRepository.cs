@@ -33,6 +33,10 @@ public sealed class TicketRepository : ITicketRepository
                 t => t.AssignedAgentId == agentId && t.Priority == priority,
                 cancellationToken);
     }
+    public Task<int?> GetDepartmentIdByTicketIdAsync(int ticketId, CancellationToken cancellationToken) =>
+        _dbContext.Tickets.AsNoTracking().Where(ticket => ticket.Id == ticketId)
+            .Select(ticket => ticket.DepartmentId).FirstOrDefaultAsync(cancellationToken);
+
     public async Task AddAsync(
         Ticket ticket,
         CancellationToken cancellationToken)
