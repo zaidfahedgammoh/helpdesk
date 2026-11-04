@@ -1,10 +1,13 @@
 using HelpDeskLive.Application.Abstractions;
+using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Domain.Enums;
 using HelpDeskLive.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using HelpDeskLive.API.Hubs;
 
 namespace HelpDeskLive.API.Controllers;
 
@@ -15,7 +18,14 @@ public sealed class AgentTicketsController : ControllerBase
 {
     private readonly HelpDeskDbContext _db;
     private readonly ICurrentUser _currentUser;
-    public AgentTicketsController(HelpDeskDbContext db, ICurrentUser currentUser) { _db = db; _currentUser = currentUser; }
+    private readonly IHubContext<TicketChatHub> _chatHub;
+
+    public AgentTicketsController(HelpDeskDbContext db, ICurrentUser currentUser, IHubContext<TicketChatHub> chatHub)
+    {
+        _db = db;
+        _currentUser = currentUser;
+        _chatHub = chatHub;
+    }
 
     [HttpGet]
     public async Task<IActionResult> Mine(CancellationToken ct)
@@ -27,9 +37,10 @@ public sealed class AgentTicketsController : ControllerBase
         var rows = await _db.Tickets.AsNoTracking()
             .Where(t => t.DepartmentId == departmentId &&
                 t.ApprovalStatus == TicketApprovalStatus.Approved &&
-                t.Status != TicketStatus.Closed && t.Status != TicketStatus.Resolved &&
-                (t.AssignedAgentId == null || t.AssignedAgentId == agentId))
-            .OrderByDescending(t => t.Priority)
+                (t.Status == TicketStatus.Open || t.Status == TicketStatus.Escalated ||
+                 t.Status == TicketStatus.InProgress && t.AssignedAgentId == agentId))
+            .OrderByDescending(t => t.Status == TicketStatus.Escalated)
+            .ThenByDescending(t => t.Priority)
             .ThenBy(t => t.CreatedAt)
             .Select(t => new { t.Id, t.Title, t.Description, t.Status, t.Priority, t.DepartmentId, t.CreatedAt, t.AssignedAgentId })
             .ToListAsync(ct);
@@ -46,7 +57,7 @@ public sealed class AgentTicketsController : ControllerBase
 
         var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId &&
             t.DepartmentId == departmentId && t.ApprovalStatus == TicketApprovalStatus.Approved &&
-            t.Status == TicketStatus.Open &&
+            (t.Status == TicketStatus.Open || t.Status == TicketStatus.Escalated) &&
             (t.AssignedAgentId == null || t.AssignedAgentId == agentId), ct);
         if (ticket is null) return NotFound(new { message = "This ticket is no longer waiting in your department." });
 
@@ -63,16 +74,24 @@ public sealed class AgentTicketsController : ControllerBase
         if (!isLivePriority)
         {
             var liveWaiting = await _db.Tickets.AnyAsync(t => t.DepartmentId == departmentId &&
-                t.AssignedAgentId == null && t.Status == TicketStatus.Open &&
+                t.AssignedAgentId == null && (t.Status == TicketStatus.Open || t.Status == TicketStatus.Escalated) &&
                 t.ApprovalStatus == TicketApprovalStatus.Approved &&
                 (t.Priority == TicketPriority.High || t.Priority == TicketPriority.Critical), ct);
             if (liveWaiting) return Conflict(new { message = "A high-priority customer is waiting for live support." });
         }
 
-        if (ticket.AssignedAgentId is null) ticket.AssignToAgent(agentId);
+        ticket.AssignToAgent(agentId);
         ticket.ChangeStatus(TicketStatus.InProgress);
         await _db.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
+
+        await _chatHub.Clients.Group(DepartmentGroup(departmentId)).SendAsync("TicketAssigned", new
+        {
+            ticketId,
+            agentId,
+            status = TicketStatus.InProgress.ToString()
+        }, ct);
+
         return Ok(new { priority = (int?)ticket.Priority, isLiveChat = isLivePriority });
     }
 
@@ -84,6 +103,7 @@ public sealed class AgentTicketsController : ControllerBase
         if (ticket is null) return NotFound();
         ticket.ChangeStatus(TicketStatus.Resolved);
         await _db.SaveChangesAsync(ct);
+        await _chatHub.Clients.Group(TicketGroup(ticketId)).SendAsync("TicketStatusChanged", new { ticketId, status = TicketStatus.Resolved.ToString() }, ct);
         return NoContent();
     }
 
@@ -94,8 +114,21 @@ public sealed class AgentTicketsController : ControllerBase
         var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId && t.AssignedAgentId == agentId &&
             t.Status == TicketStatus.InProgress, ct);
         if (ticket is null) return NotFound();
+
+        var departmentId = ticket.DepartmentId;
         ticket.EscalateToQueue();
+        _db.ChatMessages.Add(new ChatMessage(ticketId, agentId, "Ticket escalated by the assigned agent and returned to the department escalation queue."));
         await _db.SaveChangesAsync(ct);
+
+        await _chatHub.Clients.Group(TicketGroup(ticketId)).SendAsync("TicketEscalated", new
+        {
+            ticketId,
+            status = TicketStatus.Escalated.ToString(),
+            message = "Your ticket has been escalated. Another agent will assist you."
+        }, ct);
+        if (departmentId is int id)
+            await _chatHub.Clients.Group(DepartmentGroup(id)).SendAsync("EscalatedTicketAvailable", new { ticketId }, ct);
+
         return NoContent();
     }
 
@@ -107,6 +140,10 @@ public sealed class AgentTicketsController : ControllerBase
         if (ticket is null) return NotFound();
         ticket.ChangeStatus(TicketStatus.Closed);
         await _db.SaveChangesAsync(ct);
+        await _chatHub.Clients.Group(TicketGroup(ticketId)).SendAsync("TicketStatusChanged", new { ticketId, status = TicketStatus.Closed.ToString() }, ct);
         return NoContent();
     }
+
+    private static string TicketGroup(int ticketId) => $"ticket-{ticketId}";
+    private static string DepartmentGroup(int departmentId) => $"department-{departmentId}";
 }
