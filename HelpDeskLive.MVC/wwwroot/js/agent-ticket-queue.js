@@ -7,9 +7,13 @@
     const liveBadge = document.getElementById("queue-live-badge");
 
     async function getChatToken() {
+        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || "";
         const response = await fetch("/account/chat-token", {
-            method: "GET",
-            headers: { "Accept": "application/json" }
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "RequestVerificationToken": csrfToken
+            }
         });
         if (!response.ok) throw new Error("Could not acquire token");
         const data = await response.json();
