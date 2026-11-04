@@ -22,7 +22,7 @@
     }
     @foreach (var ticket in Model)
     {
-        var status = ticket.Status switch { 1 => Localizer["Open"].Value, 2 => Localizer["InProgress"].Value, 3 => Localizer["Resolved"].Value, 4 => Localizer["Closed"].Value, _ => ticket.Status.ToString() };
+        var status = ticket.Status switch { 1 => Localizer["Open"].Value, 2 => Localizer["InProgress"].Value, 3 => Localizer["Resolved"].Value, 4 => Localizer["Closed"].Value, 5 => Localizer["Escalated"].Value, _ => ticket.Status.ToString() };
         var priority = ticket.Priority switch { 1 => Localizer["Low"].Value, 2 => Localizer["Medium"].Value, 3 => Localizer["High"].Value, 4 => Localizer["Critical"].Value, _ => Localizer["NotSet"].Value };
         <div class="card border-0 shadow-sm mb-3"><div class="card-body">
             <div class="d-flex flex-wrap justify-content-between gap-2">
@@ -30,11 +30,11 @@
             </div>
             <p>@ticket.Description</p>
             <p class="small text-muted">@Localizer["Priority"]: @priority · @Localizer["CreatedAt"]: @ticket.CreatedAt.ToLocalTime().ToString("g")</p>
-            @if (ticket.Status == 1)
+            @if (ticket.Status == 1 || ticket.Status == 5)
             {
                 @if (ticket.AssignedAgentId is null)
                 {
-                    <div class="small text-muted mb-2">@Localizer["WaitingInDepartmentQueue"]</div>
+                    <div class="small text-muted mb-2">@(ticket.Status == 5 ? Localizer["Escalated"].Value : Localizer["WaitingInDepartmentQueue"].Value)</div>
                 }
                 <form asp-action="Start" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@ticket.Id" /><button class="btn btn-primary">@Localizer["StartWork"]</button></form>
             }
