@@ -62,7 +62,6 @@ public sealed class AgentTicketsController : ControllerBase
 
         if (!isLivePriority)
         {
-        {
             var liveWaiting = await _db.Tickets.AnyAsync(t => t.DepartmentId == departmentId &&
                 t.AssignedAgentId == null && t.Status == TicketStatus.Open &&
                 t.ApprovalStatus == TicketApprovalStatus.Approved &&
