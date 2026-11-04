@@ -324,4 +324,17 @@
   <data name="AccountId" xml:space="preserve"><value>Account ID</value></data>
   <data name="RequestId" xml:space="preserve"><value>Request ID</value></data>
   <data name="PrivacyPolicyBody" xml:space="preserve"><value>Use this page to detail your site's privacy policy.</value></data>
+  <data name="JoinChat" xml:space="preserve"><value>Join chat</value></data>
+  <data name="WaitingInDepartmentQueue" xml:space="preserve"><value>Waiting in your department queue</value></data>
+  <data name="OpenLiveChat" xml:space="preserve"><value>Open live chat</value></data>
+  <data name="ConnectingToChat" xml:space="preserve"><value>Connecting to chat…</value></data>
+  <data name="AgentConnected" xml:space="preserve"><value>An agent has joined the chat.</value></data>
+  <data name="CustomerConnected" xml:space="preserve"><value>The customer is in the chat.</value></data>
+  <data name="ChatLoadError" xml:space="preserve"><value>Could not open this chat. Refresh the page and try again.</value></data>
+  <data name="ChatSendError" xml:space="preserve"><value>Your message could not be sent. Check your connection and try again.</value></data>
+  <data name="You" xml:space="preserve"><value>You</value></data>
+  <data name="NoMessagesYet" xml:space="preserve"><value>No messages yet. Send the first message when the agent joins.</value></data>
+  <data name="ChatInputPlaceholder" xml:space="preserve"><value>Type your message…</value></data>
+  <data name="Send" xml:space="preserve"><value>Send</value></data>
+  <data name="BackToTickets" xml:space="preserve"><value>Back to tickets</value></data>
 </root>
