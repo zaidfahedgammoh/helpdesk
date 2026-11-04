@@ -20,6 +20,8 @@ public sealed class ProblemDetailsMiddleware
                 ConflictException => StatusCodes.Status409Conflict,
                 ForbiddenException => StatusCodes.Status403Forbidden,
                 UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                InvalidOperationException => StatusCodes.Status409Conflict,
+                ArgumentException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
             if (status == StatusCodes.Status500InternalServerError)
