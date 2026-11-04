@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace HelpDeskLive.MVC.Controllers;
 
@@ -8,7 +9,8 @@ public sealed class AdminAccountsController : Controller
 {
     private readonly IHttpClientFactory _clients;
     private readonly IConfiguration _configuration;
-    public AdminAccountsController(IHttpClientFactory clients, IConfiguration configuration) { _clients = clients; _configuration = configuration; }
+    private readonly IStringLocalizer<SharedResource> _localizer;
+    public AdminAccountsController(IHttpClientFactory clients, IConfiguration configuration, IStringLocalizer<SharedResource> localizer) { _clients = clients; _configuration = configuration; _localizer = localizer; }
 
     [HttpGet]
     public async Task<IActionResult> Index(string role = "Customer", CancellationToken ct = default)
@@ -32,7 +34,7 @@ public sealed class AdminAccountsController : Controller
     {
         if (!ModelState.IsValid || (model.Role == "Agent" && model.DepartmentId is null))
         {
-            TempData["AccountError"] = "Complete all fields and choose a department for the Agent.";
+            TempData["AccountError"] = _localizer["CompleteAccountFields"].Value;
             return RedirectToAction(nameof(Index), new { role = model.Role });
         }
         var client = CreateClient();
@@ -40,9 +42,9 @@ public sealed class AdminAccountsController : Controller
         var response = await client.PostAsJsonAsync("api/admin/accounts", new
         { model.Name, model.Email, model.Password, model.Role, model.DepartmentId }, ct);
         TempData[response.IsSuccessStatusCode ? "AccountSuccess" : "AccountError"] =
-            response.IsSuccessStatusCode ? $"{model.Role} account created." :
-            response.StatusCode == System.Net.HttpStatusCode.Conflict ? "That email address is already registered." :
-            "Account could not be created. Check the entered details and department.";
+            response.IsSuccessStatusCode ? _localizer["AccountCreated"].Value :
+            response.StatusCode == System.Net.HttpStatusCode.Conflict ? _localizer["EmailAlreadyRegistered"].Value :
+            _localizer["AccountCreateFailed"].Value;
         return RedirectToAction(nameof(Index), new { role = model.Role });
     }
 
@@ -52,7 +54,7 @@ public sealed class AdminAccountsController : Controller
         var client = CreateClient();
         if (client is null) return RedirectToAction("Login", "Account");
         var response = await client.PutAsJsonAsync($"api/admin/accounts/{id}/department", new { DepartmentId = departmentId }, ct);
-        TempData[response.IsSuccessStatusCode ? "AccountSuccess" : "AccountError"] = response.IsSuccessStatusCode ? "Agent department updated." : "Could not update Agent department.";
+        TempData[response.IsSuccessStatusCode ? "AccountSuccess" : "AccountError"] = response.IsSuccessStatusCode ? _localizer["AgentDepartmentUpdated"].Value : _localizer["AgentDepartmentUpdateFailed"].Value;
         return RedirectToAction(nameof(Index), new { role = "Agent" });
     }
 
