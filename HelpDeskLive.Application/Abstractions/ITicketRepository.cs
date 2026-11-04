@@ -6,6 +6,8 @@ namespace HelpDeskLive.Application.Abstractions;
 
 public interface ITicketRepository
 {
+    Task<int?> GetDepartmentIdByTicketIdAsync(int ticketId, CancellationToken cancellationToken);
+
     Task AddAsync(
         Ticket ticket,
         CancellationToken cancellationToken);
