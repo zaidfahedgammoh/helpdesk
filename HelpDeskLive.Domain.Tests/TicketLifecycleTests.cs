@@ -37,7 +37,7 @@ public sealed class TicketLifecycleTests
         ticket.AssignToAgent(21);
         ticket.ChangeStatus(TicketStatus.InProgress);
         Assert.Equal(TicketStatus.InProgress, ticket.Status);
-        Assert.Equal(21, ticket.AssignedAgentId);
+        Assert.Equal((int?)21, ticket.AssignedAgentId);
     }
 
     [Fact]
