@@ -51,18 +51,17 @@ public sealed class AgentTicketsController : ControllerBase
         if (ticket is null) return NotFound(new { message = "This ticket is no longer waiting in your department." });
 
         var isLivePriority = ticket.Priority is TicketPriority.High or TicketPriority.Critical;
+        var activeLiveChat = await _db.Tickets.AnyAsync(t => t.AssignedAgentId == agentId &&
+            t.Status == TicketStatus.InProgress && t.ApprovalStatus == TicketApprovalStatus.Approved &&
+            (t.Priority == TicketPriority.High || t.Priority == TicketPriority.Critical), ct);
+        if (activeLiveChat) return Conflict(new { message = "Finish your current live chat before starting another ticket." });
+
         var activeTickets = await _db.Tickets.CountAsync(t => t.AssignedAgentId == agentId &&
             t.Status == TicketStatus.InProgress && t.ApprovalStatus == TicketApprovalStatus.Approved, ct);
         if (activeTickets >= 5) return Conflict(new { message = "You have reached the five-ticket workload limit." });
 
-        if (isLivePriority)
+        if (!isLivePriority)
         {
-            var activeLiveChat = await _db.Tickets.AnyAsync(t => t.AssignedAgentId == agentId &&
-                t.Status == TicketStatus.InProgress && t.ApprovalStatus == TicketApprovalStatus.Approved &&
-                (t.Priority == TicketPriority.High || t.Priority == TicketPriority.Critical), ct);
-            if (activeLiveChat) return Conflict(new { message = "Finish your current live chat before starting another." });
-        }
-        else
         {
             var liveWaiting = await _db.Tickets.AnyAsync(t => t.DepartmentId == departmentId &&
                 t.AssignedAgentId == null && t.Status == TicketStatus.Open &&
