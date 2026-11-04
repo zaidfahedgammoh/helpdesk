@@ -29,7 +29,7 @@ public sealed class AgentTicketsController : ControllerBase
                 t.ApprovalStatus == TicketApprovalStatus.Approved &&
                 t.Status != TicketStatus.Closed && t.Status != TicketStatus.Resolved &&
                 (t.AssignedAgentId == null || t.AssignedAgentId == agentId))
-            .OrderByDescending(t => t.Priority >= TicketPriority.High)
+            .OrderByDescending(t => t.Priority == TicketPriority.High || t.Priority == TicketPriority.Critical)
             .ThenBy(t => t.CreatedAt)
             .Select(t => new { t.Id, t.Title, t.Description, t.Status, t.Priority, t.DepartmentId, t.CreatedAt, t.AssignedAgentId })
             .ToListAsync(ct);
@@ -84,29 +84,8 @@ public sealed class AgentTicketsController : ControllerBase
         if (_currentUser.UserId is not int agentId) return Unauthorized();
         var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId && t.AssignedAgentId == agentId, ct);
         if (ticket is null) return NotFound();
-        var departmentId = ticket.DepartmentId;
         ticket.ChangeStatus(TicketStatus.Resolved);
         await _db.SaveChangesAsync(ct);
-
-        if (departmentId is int deptId)
-        {
-            var waiting = await _db.Tickets
-                .Where(t => t.DepartmentId == deptId && t.AssignedAgentId == null &&
-                    t.Status == TicketStatus.Open && t.ApprovalStatus == TicketApprovalStatus.Approved)
-                .OrderBy(t => t.CreatedAt)
-                .FirstOrDefaultAsync(ct);
-            if (waiting is not null)
-            {
-                var available = await _db.Users
-                    .Where(u => u.Role == UserRole.Agent && u.DepartmentId == deptId)
-                    .Select(u => new { User = u, Load = _db.Tickets.Count(t => t.AssignedAgentId == u.Id && t.Status == TicketStatus.InProgress && t.ApprovalStatus == TicketApprovalStatus.Approved) })
-                    .Where(x => x.Load < 5)
-                    .OrderBy(x => x.Load).ThenBy(x => x.User.Id)
-                    .FirstOrDefaultAsync(ct);
-                if (available is not null) waiting.AssignToAgent(available.User.Id);
-                await _db.SaveChangesAsync(ct);
-            }
-        }
         return NoContent();
     }
 
