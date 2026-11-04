@@ -34,7 +34,20 @@ public sealed class AgentTicketsController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public Task<IActionResult> Close(int id, CancellationToken ct) => Send(id, "close", ct);
     [HttpPost, ValidateAntiForgeryToken]
-    public Task<IActionResult> Escalate(int id, CancellationToken ct) => Send(id, "escalate", ct);
+    public async Task<IActionResult> Escalate(int id, string reason, CancellationToken ct)
+    {
+        var client = Client();
+        if (client is null) return RedirectToAction("Login", "Account");
+        if (string.IsNullOrWhiteSpace(reason) || reason.Trim().Length > 1000)
+        {
+            TempData["AgentTicketError"] = _localizer["EscalationReasonRequired"].Value;
+            return RedirectToAction(nameof(Chat), new { id });
+        }
+        var response = await client.PostAsJsonAsync($"api/agent/tickets/{id}/escalate", new { Reason = reason }, ct);
+        TempData[response.IsSuccessStatusCode ? "AgentTicketSuccess" : "AgentTicketError"] =
+            response.IsSuccessStatusCode ? _localizer["TicketEscalated"].Value : _localizer["TicketCouldNotBeUpdated"].Value;
+        return RedirectToAction(nameof(Index));
+    }
 
     [HttpGet]
     public async Task<IActionResult> Chat(int id, CancellationToken ct)
