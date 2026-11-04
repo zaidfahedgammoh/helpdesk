@@ -1,31 +1,119 @@
+:root {
+  --bs-primary: #7c3aed;
+  --bs-primary-rgb: 124, 58, 237;
+  --bs-link-color: #6d28d9;
+  --bs-link-hover-color: #5b21b6;
+  --helpdesk-purple: #7c3aed;
+  --helpdesk-purple-dark: #5b21b6;
+  --helpdesk-purple-soft: #f5f3ff;
+  --helpdesk-border: #e9e2f8;
+}
+
 html {
   font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
   position: relative;
   min-height: 100%;
 }
 
+@media (min-width: 768px) {
+  html { font-size: 16px; }
+}
+
 body {
   margin-bottom: 60px;
+  background: #faf9ff;
+  color: #29243a;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+a { color: var(--bs-link-color); }
+a:hover { color: var(--bs-link-hover-color); }
+
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:active {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--helpdesk-purple);
+  --bs-btn-border-color: var(--helpdesk-purple);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--helpdesk-purple-dark);
+  --bs-btn-hover-border-color: var(--helpdesk-purple-dark);
+  --bs-btn-active-bg: var(--helpdesk-purple-dark);
+  --bs-btn-active-border-color: var(--helpdesk-purple-dark);
+  --bs-btn-disabled-bg: #b9a0f5;
+  --bs-btn-disabled-border-color: #b9a0f5;
+  background-color: var(--helpdesk-purple);
+  border-color: var(--helpdesk-purple);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--helpdesk-purple);
+  --bs-btn-border-color: var(--helpdesk-purple);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--helpdesk-purple);
+  --bs-btn-hover-border-color: var(--helpdesk-purple);
+}
+
+.btn-link { color: var(--helpdesk-purple); }
+.text-primary { color: var(--helpdesk-purple) !important; }
+.bg-primary { background-color: var(--helpdesk-purple) !important; }
+.border-primary { border-color: var(--helpdesk-purple) !important; }
+
+.btn:focus-visible,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 0.15rem #fff, 0 0 0 0.28rem rgba(124, 58, 237, .28);
+  border-color: #a78bfa;
+}
+
+.card {
+  border-color: var(--helpdesk-border);
+  border-radius: 1rem;
+  background-color: #fff;
+}
+
+.navbar {
+  background: #fff !important;
+  border-color: var(--helpdesk-border) !important;
+}
+
+.navbar-brand {
+  color: var(--helpdesk-purple-dark);
+  font-weight: 750;
+}
+
+.form-control,
+.form-select {
+  border-color: #ded6ed;
+  border-radius: .65rem;
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
-  text-align: end;
+  text-align: start;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+.badge.text-bg-primary { background-color: var(--helpdesk-purple) !important; }
+.progress-bar { background-color: var(--helpdesk-purple); }
+
+html[dir="rtl"] body { text-align: right; }
+html[dir="rtl"] .text-start { text-align: right !important; }
+html[dir="rtl"] .text-end { text-align: left !important; }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+  background: #fff;
+  border-color: var(--helpdesk-border) !important;
 }
