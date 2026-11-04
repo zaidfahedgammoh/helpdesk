@@ -340,4 +340,9 @@
   <data name="DepartmentQueue" xml:space="preserve"><value>Department ticket queue</value></data>
   <data name="DepartmentQueueDescription" xml:space="preserve"><value>Waiting high-priority customers are shown first. Start a ticket when you are ready to handle it.</value></data>
   <data name="ChatReady" xml:space="preserve"><value>You are connected to this ticket chat.</value></data>
+  <data name="EscalateAndLeaveChat" xml:space="preserve"><value>Escalate & leave chat</value></data>
+  <data name="CloseMyTicket" xml:space="preserve"><value>Close my ticket</value></data>
+  <data name="TicketClosedByCustomer" xml:space="preserve"><value>Your ticket has been closed.</value></data>
+  <data name="ConfirmCloseTicket" xml:space="preserve"><value>Are you sure you want to close this ticket?</value></data>
+  <data name="ConfirmEscalateTicket" xml:space="preserve"><value>Escalate this ticket and return it to the department queue?</value></data>
 </root>
