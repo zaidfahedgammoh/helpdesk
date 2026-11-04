@@ -323,4 +323,6 @@
   <data name="LearnAboutAspNet" xml:space="preserve"><value>تعرّف على بناء تطبيقات الويب باستخدام ASP.NET Core.</value></data>
   <data name="ManageRegisteredAccounts" xml:space="preserve"><value>إنشاء الحسابات وعرض الحسابات المسجلة.</value></data>
   <data name="AccountId" xml:space="preserve"><value>رقم الحساب</value></data>
+  <data name="RequestId" xml:space="preserve"><value>معرّف الطلب</value></data>
+  <data name="PrivacyPolicyBody" xml:space="preserve"><value>استخدم هذه الصفحة لعرض سياسة الخصوصية الخاصة بموقعك.</value></data>
 </root>
