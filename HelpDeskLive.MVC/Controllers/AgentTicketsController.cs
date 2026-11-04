@@ -1,4 +1,8 @@
 using System.Net.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
+using HelpDeskLive.MVC.Models;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -30,14 +34,51 @@ public sealed class AgentTicketsController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public Task<IActionResult> Close(int id, CancellationToken ct) => Send(id, "close", ct);
 
+    [HttpGet]
+    public async Task<IActionResult> Chat(int id, CancellationToken ct)
+    {
+        var client = Client();
+        if (client is null) return RedirectToAction("Login", "Account");
+        var token = HttpContext.Session.GetString("AccessToken")!;
+        var response = await client.GetAsync($"api/chat/{id}/messages", ct);
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["AgentTicketError"] = _localizer["ChatLoadError"].Value;
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View("~/Views/Shared/TicketChat.cshtml", new ChatPageViewModel
+        {
+            TicketId = id,
+            CurrentUserId = ReadUserId(token),
+            AccessToken = token,
+            ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty,
+            IsAgent = true
+        });
+    }
+
     private async Task<IActionResult> Send(int id, string action, CancellationToken ct)
     {
         var client = Client();
         if (client is null) return RedirectToAction("Login", "Account");
         var response = await client.PostAsync($"api/agent/tickets/{id}/{action}", null, ct);
+        if (response.IsSuccessStatusCode && action == "start")
+        {
+            using var result = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: ct);
+            if (result?.RootElement.TryGetProperty("isLiveChat", out var isLiveChat) == true && isLiveChat.GetBoolean())
+                return RedirectToAction(nameof(Chat), new { id });
+        }
+
         TempData[response.IsSuccessStatusCode ? "AgentTicketSuccess" : "AgentTicketError"] =
             response.IsSuccessStatusCode ? _localizer["TicketUpdatedShort"].Value : _localizer["TicketCouldNotBeUpdated"].Value;
         return RedirectToAction(nameof(Index));
+    }
+
+    private static int ReadUserId(string token)
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var value = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "nameid" || c.Type == "sub")?.Value;
+        return int.TryParse(value, out var id) ? id : 0;
     }
 
     private HttpClient? Client()
@@ -61,4 +102,5 @@ public sealed class AgentTicketRow
     public int? Priority { get; init; }
     public int? DepartmentId { get; init; }
     public DateTime CreatedAt { get; init; }
+    public int? AssignedAgentId { get; init; }
 }
