@@ -55,25 +55,25 @@
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Open"]</span><strong>@Model.OpenTickets</strong></div>
                         <div class="progress" role="progressbar" aria-label="Open tickets" aria-valuenow="@(Model.TotalTickets == 0 ? 0 : Model.OpenTickets * 100 / Model.TotalTickets)" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-primary" style="width:@(Model.TotalTickets == 0 ? 0 : Model.OpenTickets * 100 / Model.TotalTickets)%"></div>
+                            <div class="progress-bar bg-primary" data-progress="@(Model.TotalTickets == 0 ? 0 : Model.OpenTickets * 100 / Model.TotalTickets)"></div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["InProgress"]</span><strong>@Model.InProgressTickets</strong></div>
                         <div class="progress" role="progressbar" aria-label="In progress tickets" aria-valuenow="@(Model.TotalTickets == 0 ? 0 : Model.InProgressTickets * 100 / Model.TotalTickets)" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-info" style="width:@(Model.TotalTickets == 0 ? 0 : Model.InProgressTickets * 100 / Model.TotalTickets)%"></div>
+                            <div class="progress-bar bg-info" data-progress="@(Model.TotalTickets == 0 ? 0 : Model.InProgressTickets * 100 / Model.TotalTickets)"></div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Resolved"]</span><strong>@Model.ResolvedTickets</strong></div>
                         <div class="progress" role="progressbar" aria-label="Resolved tickets" aria-valuenow="@(Model.TotalTickets == 0 ? 0 : Model.ResolvedTickets * 100 / Model.TotalTickets)" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-success" style="width:@(Model.TotalTickets == 0 ? 0 : Model.ResolvedTickets * 100 / Model.TotalTickets)%"></div>
+                            <div class="progress-bar bg-success" data-progress="@(Model.TotalTickets == 0 ? 0 : Model.ResolvedTickets * 100 / Model.TotalTickets)"></div>
                         </div>
                     </div>
                     <div>
                         <div class="d-flex justify-content-between small mb-1"><span>@Localizer["Closed"]</span><strong>@Model.ClosedTickets</strong></div>
                         <div class="progress" role="progressbar" aria-label="Closed tickets" aria-valuenow="@(Model.TotalTickets == 0 ? 0 : Model.ClosedTickets * 100 / Model.TotalTickets)" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-secondary" style="width:@(Model.TotalTickets == 0 ? 0 : Model.ClosedTickets * 100 / Model.TotalTickets)%"></div>
+                            <div class="progress-bar bg-secondary" data-progress="@(Model.TotalTickets == 0 ? 0 : Model.ClosedTickets * 100 / Model.TotalTickets)"></div>
                         </div>
                     </div>
                 </div>
