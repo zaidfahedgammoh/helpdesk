@@ -15,6 +15,6 @@ public sealed class GetMyTicketsQueryHandler : IRequestHandler<GetMyTicketsQuery
         if (_currentUser.UserId is not int customerId || _currentUser.Role != "Customer")
             throw new UnauthorizedAccessException("Only authenticated customers can view their tickets.");
         var tickets = await _ticketRepository.GetByCustomerIdAsync(customerId, ct);
-        return tickets.Select(t => new TicketListItemDto(t.Id, t.Title, t.Status, t.Priority, t.ApprovalStatus, t.CreatedAt)).ToList();
+        return tickets.Select(t => new TicketListItemDto(t.Id, t.Title, t.Status, t.Priority, t.ApprovalStatus, t.CreatedAt, t.AssignedAgentId)).ToList();
     }
 }
