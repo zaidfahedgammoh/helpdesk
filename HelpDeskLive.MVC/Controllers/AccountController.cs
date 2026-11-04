@@ -59,10 +59,27 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
-        HttpContext.Session.Clear();
+        var baseUrl = _configuration["ApiSettings:BaseUrl"];
+        if (!string.IsNullOrWhiteSpace(baseUrl) &&
+            Request.Cookies.TryGetValue("helpdesk_refresh", out var refreshToken))
+        {
+            try
+            {
+                using var client = _httpClientFactory.CreateClient();
+                using var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl.TrimEnd('/')}/api/auth/logout");
+                request.Headers.Add("Cookie", $"helpdesk_refresh={refreshToken}");
+                await client.SendAsync(request, cancellationToken);
+            }
+            catch (HttpRequestException)
+            {
+                // Local session is still cleared; the refresh cookie expires naturally if the API is unavailable.
+            }
+        }
 
+        HttpContext.Session.Clear();
+        Response.Cookies.Delete("helpdesk_refresh", new CookieOptions { Path = "/", HttpOnly = true, Secure = Request.IsHttps, SameSite = SameSiteMode.Strict });
         return RedirectToAction("Login", "Account");
     }
 
@@ -140,7 +157,15 @@ public class AccountController : Controller
                 return View();
             }
 
-            // Store the access token in the session
+            // Forward the API's HttpOnly refresh cookie to the browser. The API remains
+            // the only component that can read or rotate the refresh token.
+            if (response.Headers.TryGetValues("Set-Cookie", out var setCookies))
+            {
+                foreach (var setCookie in setCookies.Where(value => value.StartsWith("helpdesk_refresh=", StringComparison.Ordinal)))
+                    Response.Headers.Append("Set-Cookie", setCookie);
+            }
+
+            // Store the short-lived access token server-side in the MVC session.
             HttpContext.Session.SetString("AccessToken", accessToken);
             HttpContext.Session.SetString("UserRole", role);
 
