@@ -1,4 +1,6 @@
 using System.Net.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Net.Http.Json;
 using HelpDeskLive.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +102,41 @@ public sealed class CustomerController : Controller
 
         TempData["TicketSuccess"] = model.IssueTypeId is null ? _localizer["CustomRequestPending"].Value : _localizer["TicketCreatedSuccessfully"].Value;
         return RedirectToAction(nameof(Index));
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> Chat(int id, CancellationToken cancellationToken)
+    {
+        var token = HttpContext.Session.GetString("AccessToken");
+        if (string.IsNullOrWhiteSpace(token)) return RedirectToAction("Login", "Account");
+        if (HttpContext.Session.GetString("UserRole") != "Customer") return Forbid();
+
+        var client = CreateApiClient(token);
+        if (client is null) return StatusCode(500, _localizer["ApiBaseUrlMissing"].Value);
+        var response = await client.GetAsync($"api/chat/{id}/messages", cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["TicketError"] = _localizer["ChatLoadError"].Value;
+            return RedirectToAction(nameof(Index));
+        }
+
+        var currentUserId = ReadUserId(token);
+        return View("~/Views/Shared/TicketChat.cshtml", new ChatPageViewModel
+        {
+            TicketId = id,
+            CurrentUserId = currentUserId,
+            AccessToken = token,
+            ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty,
+            IsAgent = false
+        });
+    }
+
+    private static int ReadUserId(string token)
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var value = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier || c.Type == "nameid" || c.Type == "sub")?.Value;
+        return int.TryParse(value, out var id) ? id : 0;
     }
 
     private HttpClient? CreateApiClient(string token)
