@@ -75,12 +75,29 @@ public class Ticket
         {
             (TicketStatus.Open, TicketStatus.InProgress) => true,
             (TicketStatus.InProgress, TicketStatus.Resolved) => true,
+            (TicketStatus.InProgress, TicketStatus.Closed) => true,
             (TicketStatus.Resolved, TicketStatus.Closed) => true,
             _ => false
         };
         if (!valid) throw new InvalidOperationException($"Cannot change ticket status from {Status} to {newStatus}.");
         Status = newStatus;
         if (newStatus == TicketStatus.Closed) ClosedAt = DateTime.UtcNow;
+    }
+
+    public void EscalateToQueue()
+    {
+        if (ApprovalStatus != TicketApprovalStatus.Approved || Status != TicketStatus.InProgress)
+            throw new InvalidOperationException("Only an active approved ticket can be escalated.");
+        Status = TicketStatus.Open;
+        AssignedAgentId = null;
+    }
+
+    public void CloseByCustomer()
+    {
+        if (ApprovalStatus != TicketApprovalStatus.Approved || Status == TicketStatus.Closed)
+            throw new InvalidOperationException("This ticket cannot be closed by the customer.");
+        Status = TicketStatus.Closed;
+        ClosedAt = DateTime.UtcNow;
     }
 
     public void AssignToAgent(int agentId)
