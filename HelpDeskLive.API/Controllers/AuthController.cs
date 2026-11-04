@@ -128,7 +128,7 @@ public sealed class AuthController : ControllerBase
             SameSite = SameSiteMode.Strict,
             Expires = DateTimeOffset.UtcNow.Add(RefreshLifetime),
             IsEssential = true,
-            Path = "/api/auth"
+            Path = "/"
         });
     }
 
@@ -138,6 +138,6 @@ public sealed class AuthController : ControllerBase
             HttpOnly = true,
             Secure = !_environment.IsDevelopment() || Request.IsHttps,
             SameSite = SameSiteMode.Strict,
-            Path = "/api/auth"
+            Path = "/"
         });
 }
