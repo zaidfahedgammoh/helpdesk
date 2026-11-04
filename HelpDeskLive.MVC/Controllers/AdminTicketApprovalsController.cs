@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace HelpDeskLive.MVC.Controllers;
 
@@ -8,7 +9,8 @@ public sealed class AdminTicketApprovalsController : Controller
 {
     private readonly IHttpClientFactory _clients;
     private readonly IConfiguration _configuration;
-    public AdminTicketApprovalsController(IHttpClientFactory clients, IConfiguration configuration) { _clients = clients; _configuration = configuration; }
+    private readonly IStringLocalizer<HelpDeskLive.MVC.SharedResource> _localizer;
+    public AdminTicketApprovalsController(IHttpClientFactory clients, IConfiguration configuration, IStringLocalizer<HelpDeskLive.MVC.SharedResource> localizer) { _clients = clients; _configuration = configuration; _localizer = localizer; }
 
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -31,7 +33,7 @@ public sealed class AdminTicketApprovalsController : Controller
         var client = Client();
         if (client is null) return RedirectToAction("Login", "Account");
         var response = await client.PostAsJsonAsync($"api/admin/ticket-approvals/{id}/approve", new { Priority = priority, DepartmentId = departmentId }, ct);
-        TempData[response.IsSuccessStatusCode ? "ApprovalSuccess" : "ApprovalError"] = response.IsSuccessStatusCode ? "Request approved." : "Could not approve the request.";
+        TempData[response.IsSuccessStatusCode ? "ApprovalSuccess" : "ApprovalError"] = response.IsSuccessStatusCode ? _localizer["RequestApproved"].Value : _localizer["CouldNotApproveRequest"].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -41,7 +43,7 @@ public sealed class AdminTicketApprovalsController : Controller
         var client = Client();
         if (client is null) return RedirectToAction("Login", "Account");
         var response = await client.PostAsync($"api/admin/ticket-approvals/{id}/reject", null, ct);
-        TempData[response.IsSuccessStatusCode ? "ApprovalSuccess" : "ApprovalError"] = response.IsSuccessStatusCode ? "Request rejected." : "Could not reject the request.";
+        TempData[response.IsSuccessStatusCode ? "ApprovalSuccess" : "ApprovalError"] = response.IsSuccessStatusCode ? _localizer["RequestRejected"].Value : _localizer["CouldNotRejectRequest"].Value;
         return RedirectToAction(nameof(Index));
     }
 
