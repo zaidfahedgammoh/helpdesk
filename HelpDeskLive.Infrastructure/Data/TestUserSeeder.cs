@@ -40,6 +40,7 @@ public static class TestUserSeeder
                 "Test Admin",
                 "admin@helpdesklive.local",
                 UserRole.Admin,
+                null,
                 testPassword),
 
             CreateUser(
@@ -55,6 +56,7 @@ public static class TestUserSeeder
                 "Test Customer",
                 "customer@helpdesklive.local",
                 UserRole.Customer,
+                null,
                 testPassword)
         };
 
