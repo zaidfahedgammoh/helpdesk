@@ -33,7 +33,8 @@ public sealed class ChatController : ControllerBase
         if (!isCustomer && !isAssignedAgent) return Forbid();
 
         if (ticket.ApprovalStatus != TicketApprovalStatus.Approved ||
-            ticket.Priority is not (TicketPriority.High or TicketPriority.Critical))
+            ticket.Priority is not (TicketPriority.High or TicketPriority.Critical) ||
+            ticket.Status is TicketStatus.Resolved or TicketStatus.Closed)
             return Conflict(new { message = "Live chat is available only for approved High and Critical tickets." });
 
         var messages = await (
