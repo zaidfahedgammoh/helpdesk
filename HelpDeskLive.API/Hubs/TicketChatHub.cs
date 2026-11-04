@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Domain.Enums;
+using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -66,7 +67,7 @@ public sealed class TicketChatHub : Hub
         return userId;
     }
 
-    private bool CanAccess(Domain.Entities.Ticket ticket, int userId)
+    private bool CanAccess(Ticket ticket, int userId)
     {
         var role = Context.User?.FindFirstValue(ClaimTypes.Role);
         return role == UserRole.Customer.ToString()
@@ -74,7 +75,7 @@ public sealed class TicketChatHub : Hub
             : role == UserRole.Agent.ToString() && ticket.AssignedAgentId == userId;
     }
 
-    private static bool IsChatTicket(Domain.Entities.Ticket ticket) =>
+    private static bool IsChatTicket(Ticket ticket) =>
         ticket.ApprovalStatus == TicketApprovalStatus.Approved &&
         ticket.Priority is TicketPriority.High or TicketPriority.Critical &&
         ticket.Status is not (TicketStatus.Resolved or TicketStatus.Closed);
