@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -12,13 +13,16 @@ public class AccountController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public AccountController(
         IHttpClientFactory httpClientFactory,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IStringLocalizer<SharedResource> localizer)
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
+        _localizer = localizer;
     }
 
     [HttpPost]
@@ -78,7 +82,7 @@ public class AccountController : Controller
         if (string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(password))
         {
-            ViewBag.Error = "Please enter your email and password.";
+            ViewBag.Error = _localizer["PleaseEnterCredentials"].Value;
             return View();
         }
 
@@ -86,7 +90,7 @@ public class AccountController : Controller
 
         if (string.IsNullOrWhiteSpace(baseUrl))
         {
-            ViewBag.Error = "API URL is not configured.";
+            ViewBag.Error = _localizer["ApiNotConfigured"].Value;
             return View();
         }
 
@@ -101,7 +105,7 @@ public class AccountController : Controller
 
             if (!response.IsSuccessStatusCode)
             {
-                ViewBag.Error = "Invalid email or password.";
+                ViewBag.Error = _localizer["LoginInvalidCredentials"].Value;
                 return View();
             }
 
@@ -115,7 +119,7 @@ public class AccountController : Controller
 
             if (string.IsNullOrWhiteSpace(accessToken))
             {
-                ViewBag.Error = "The API did not return an access token.";
+                ViewBag.Error = _localizer["ApiDidNotReturnToken"].Value;
                 return View();
             }
 
@@ -132,7 +136,7 @@ public class AccountController : Controller
 
             if (string.IsNullOrWhiteSpace(role))
             {
-                ViewBag.Error = "The access token does not contain a user role.";
+                ViewBag.Error = _localizer["TokenMissingRole"].Value;
                 return View();
             }
 
@@ -151,17 +155,17 @@ public class AccountController : Controller
         }
         catch (HttpRequestException)
         {
-            ViewBag.Error = "Could not connect to the API. Make sure it is running.";
+            ViewBag.Error = _localizer["ApiConnectionFailed"].Value;
             return View();
         }
         catch (JsonException)
         {
-            ViewBag.Error = "The API returned an invalid response.";
+            ViewBag.Error = _localizer["ApiInvalidResponse"].Value;
             return View();
         }
         catch (ArgumentException)
         {
-            ViewBag.Error = "The API returned an invalid access token.";
+            ViewBag.Error = _localizer["ApiReturnedInvalidToken"].Value;
             return View();
         }
     }
