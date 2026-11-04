@@ -1,14 +1,22 @@
 @model HelpDeskLive.MVC.Models.ChatPageViewModel
-@using System.Text.Json
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<SharedResource> Localizer
 @{
     ViewData["Title"] = Localizer["LiveChat"];
-    var tokenJson = JsonSerializer.Serialize(Model.AccessToken);
-    var apiUrlJson = JsonSerializer.Serialize(Model.ApiBaseUrl.TrimEnd('/'));
-    var isAgentJson = JsonSerializer.Serialize(Model.IsAgent);
 }
-<div class="container py-4" id="ticket-chat">
+<div class="container py-4 ticket-chat" id="ticket-chat"
+     data-ticket-id="@Model.TicketId"
+     data-token="@Model.AccessToken"
+     data-api-base-url="@Model.ApiBaseUrl.TrimEnd('/')"
+     data-is-agent="@Model.IsAgent.ToString().ToLowerInvariant()"
+     data-current-user-id="@Model.CurrentUserId"
+     data-waiting="@Localizer["WaitingForAgent"]"
+     data-agent-connected="@Localizer["AgentConnected"]"
+     data-customer-connected="@Localizer["CustomerConnected"]"
+     data-chat-ready="@Localizer["ChatReady"]"
+     data-load-error="@Localizer["ChatLoadError"]"
+     data-send-error="@Localizer["ChatSendError"]"
+     data-you="@Localizer["You"]">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <div><h2 class="mb-1">@Localizer["LiveChat"] — #@Model.TicketId</h2><p class="text-muted mb-0" id="chat-status">@Localizer["ConnectingToChat"]</p></div>
         @if (Model.IsAgent) { <a asp-controller="AgentTickets" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a> }
@@ -36,7 +44,7 @@
     </div>
     <div class="card border-0 shadow-sm">
         <div class="card-body">
-            <div id="chat-messages" class="d-flex flex-column gap-2 mb-3" style="height: min(55vh, 520px); overflow-y: auto;" aria-live="polite">
+            <div id="chat-messages" class="chat-messages d-flex flex-column gap-2 mb-3" aria-live="polite">
                 <p class="text-muted text-center my-auto" id="chat-empty">@Localizer["NoMessagesYet"]</p>
             </div>
             <form id="chat-form" class="d-flex gap-2">
@@ -47,109 +55,11 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@10.0.0/dist/browser/signalr.min.js"></script>
-<script>
-(() => {
-    const ticketId = @Model.TicketId;
-    const token = @Html.Raw(tokenJson);
-    const apiBaseUrl = @Html.Raw(apiUrlJson);
-    const isAgent = @Html.Raw(isAgentJson);
-    const currentUserId = @Model.CurrentUserId;
-    const status = document.getElementById("chat-status");
-    const messages = document.getElementById("chat-messages");
-    const empty = document.getElementById("chat-empty");
-    const form = document.getElementById("chat-form");
-    const input = document.getElementById("chat-input");
-    const error = document.getElementById("chat-error");
-    const seen = new Set();
-    const text = {
-        waiting: @Html.Raw(JsonSerializer.Serialize(Localizer["WaitingForAgent"].Value)),
-        agentConnected: @Html.Raw(JsonSerializer.Serialize(Localizer["AgentConnected"].Value)),
-        customerConnected: @Html.Raw(JsonSerializer.Serialize(Localizer["CustomerConnected"].Value)),
-        chatReady: @Html.Raw(JsonSerializer.Serialize(Localizer["ChatReady"].Value)),
-        loadError: @Html.Raw(JsonSerializer.Serialize(Localizer["ChatLoadError"].Value)),
-        sendError: @Html.Raw(JsonSerializer.Serialize(Localizer["ChatSendError"].Value)),
-        you: @Html.Raw(JsonSerializer.Serialize(Localizer["You"].Value))
-    };
+@section Styles {
+    <link rel="stylesheet" href="~/css/ticket-chat.css" asp-append-version="true" />
+}
 
-    function renderMessage(message) {
-        if (seen.has(message.id)) return;
-        seen.add(message.id);
-        if (empty) empty.remove();
-        const mine = Number(message.senderId) === Number(currentUserId);
-        const wrapper = document.createElement("div");
-        wrapper.className = "align-self-" + (mine ? "end" : "start");
-        wrapper.style.maxWidth = "85%";
-        const bubble = document.createElement("div");
-        bubble.className = "rounded-3 px-3 py-2 " + (mine ? "text-white" : "bg-light");
-        if (mine) bubble.style.backgroundColor = "#7c3aed";
-        const author = document.createElement("div");
-        author.className = "small fw-semibold mb-1";
-        author.textContent = mine ? text.you : (message.senderName || "");
-        const body = document.createElement("div");
-        body.style.whiteSpace = "pre-wrap";
-        body.textContent = message.content;
-        const time = document.createElement("div");
-        time.className = "small mt-1 " + (mine ? "text-white-50" : "text-muted");
-        time.textContent = new Date(message.sentAt).toLocaleTimeString();
-        bubble.append(author, body, time);
-        wrapper.appendChild(bubble);
-        messages.appendChild(wrapper);
-        messages.scrollTop = messages.scrollHeight;
-    }
-
-    async function loadHistory() {
-        const response = await fetch(apiBaseUrl + "/api/chat/" + ticketId + "/messages", {
-            headers: { Authorization: "Bearer " + token }
-        });
-        if (!response.ok) throw new Error(text.loadError);
-        const data = await response.json();
-        data.messages.forEach(renderMessage);
-        status.textContent = isAgent ? text.chatReady : (data.waitingForAgent ? text.waiting : text.agentConnected);
-    }
-
-    async function start() {
-        if (!window.signalR) throw new Error(text.loadError);
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl(apiBaseUrl + "/hubs/chat", { accessTokenFactory: () => token })
-            .withAutomaticReconnect()
-            .build();
-
-        connection.on("ReceiveMessage", renderMessage);
-        connection.on("ChatParticipantJoined", participant => {
-            if (!isAgent && participant.role === "Agent") status.textContent = text.agentConnected;
-            else if (isAgent && participant.role === "Customer") status.textContent = text.customerConnected;
-        });
-        connection.onreconnected(async () => {
-            await connection.invoke("JoinTicket", ticketId);
-            status.textContent = isAgent ? text.chatReady : text.agentConnected;
-        });
-
-        await connection.start();
-        await connection.invoke("JoinTicket", ticketId);
-        await loadHistory();
-
-        form.addEventListener("submit", async event => {
-            event.preventDefault();
-            const content = input.value.trim();
-            if (!content) return;
-            input.disabled = true;
-            try {
-                await connection.invoke("SendMessage", ticketId, content);
-                input.value = "";
-                error.textContent = "";
-            } catch {
-                error.textContent = text.sendError;
-            } finally {
-                input.disabled = false;
-                input.focus();
-            }
-        });
-    }
-
-    start().catch(() => {
-        status.textContent = text.waiting;
-        error.textContent = text.loadError;
-    });
-})();
-</script>
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js" asp-append-version="true"></script>
+    <script src="~/js/ticket-chat.js" asp-append-version="true"></script>
+}
