@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="7.2.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
+    <PackageReference Include="MessagePack" Version="3.1.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HelpDeskLive.Domain\HelpDeskLive.Domain.csproj" />
+    <ProjectReference Include="..\HelpDeskLive.Application\HelpDeskLive.Application.csproj" />
+    <ProjectReference Include="..\HelpDeskLive.Infrastructure\HelpDeskLive.Infrastructure.csproj" />
+    <ProjectReference Include="..\HelpDeskLive.API\HelpDeskLive.API.csproj" />
+    <ProjectReference Include="..\HelpDeskLive.MVC\HelpDeskLive.MVC.csproj" />
+    <ProjectReference Include="..\HelpDeskLive.NotificationAPI\HelpDeskLive.NotificationAPI.csproj" />
+  </ItemGroup>
+
+</Project>
