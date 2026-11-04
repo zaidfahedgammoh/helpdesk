@@ -32,11 +32,19 @@
             <p class="small text-muted">@Localizer["Priority"]: @priority · @Localizer["CreatedAt"]: @ticket.CreatedAt.ToLocalTime().ToString("g")</p>
             @if (ticket.Status == 1)
             {
+                @if (ticket.AssignedAgentId is null)
+                {
+                    <div class="small text-muted mb-2">@Localizer["WaitingInDepartmentQueue"]</div>
+                }
                 <form asp-action="Start" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@ticket.Id" /><button class="btn btn-primary">@Localizer["StartWork"]</button></form>
             }
             @if (ticket.Status == 2)
             {
-                <form asp-action="Resolve" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@ticket.Id" /><button class="btn btn-success">@Localizer["MarkResolved"]</button></form>
+                @if (ticket.Priority is 3 or 4)
+                {
+                    <a asp-action="Chat" asp-route-id="@ticket.Id" class="btn btn-primary">@Localizer["OpenLiveChat"]</a>
+                }
+                <form asp-action="Resolve" method="post" class="d-inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@ticket.Id" /><button class="btn btn-success">@Localizer["MarkResolved"]</button></form>
             }
             @if (ticket.Status == 3)
             {
