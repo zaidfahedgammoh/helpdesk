@@ -341,4 +341,9 @@
   <data name="DepartmentQueue" xml:space="preserve"><value>قائمة انتظار تذاكر القسم</value></data>
   <data name="DepartmentQueueDescription" xml:space="preserve"><value>تظهر طلبات العملاء ذات الأولوية العالية أولاً. ابدأ التذكرة عندما تكون مستعداً لمعالجتها.</value></data>
   <data name="ChatReady" xml:space="preserve"><value>أنت متصل بمحادثة هذه التذكرة.</value></data>
+  <data name="EscalateAndLeaveChat" xml:space="preserve"><value>تصعيد التذكرة ومغادرة المحادثة</value></data>
+  <data name="CloseMyTicket" xml:space="preserve"><value>إغلاق تذكرتي</value></data>
+  <data name="TicketClosedByCustomer" xml:space="preserve"><value>تم إغلاق تذكرتك.</value></data>
+  <data name="ConfirmCloseTicket" xml:space="preserve"><value>هل أنت متأكد من رغبتك في إغلاق هذه التذكرة؟</value></data>
+  <data name="ConfirmEscalateTicket" xml:space="preserve"><value>هل تريد تصعيد هذه التذكرة وإعادتها إلى قائمة انتظار القسم؟</value></data>
 </root>
