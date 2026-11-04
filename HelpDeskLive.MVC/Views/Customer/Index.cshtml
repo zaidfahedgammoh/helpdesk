@@ -191,7 +191,17 @@
                             <option value="">@Localizer["OtherCustomRequest"]</option>
                             @foreach (var issue in Model.IssueTypes)
                             {
-                                <option value="@issue.Id">@issue.Name</option>
+                                var optionKey = issue.Name switch
+                                {
+                                    "Password or Account Access" => "PasswordAccountAccess",
+                                    "Software Problem" => "SoftwareProblem",
+                                    "Computer or Hardware Problem" => "ComputerHardwareProblem",
+                                    "Network or Wi-Fi Problem" => "NetworkWifiProblem",
+                                    "Accounts and Billing Question" => "AccountsBillingQuestion",
+                                    "Facilities or Office Problem" => "FacilitiesOfficeProblem",
+                                    _ => string.Empty
+                                };
+                                <option value="@issue.Id">@(string.IsNullOrEmpty(optionKey) ? issue.Name : Localizer[optionKey].Value)</option>
                             }
                         </select>
                     </div>
