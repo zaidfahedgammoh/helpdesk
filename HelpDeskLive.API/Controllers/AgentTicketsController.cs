@@ -87,6 +87,18 @@ public sealed class AgentTicketsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("{ticketId:int}/escalate")]
+    public async Task<IActionResult> Escalate(int ticketId, CancellationToken ct)
+    {
+        if (_currentUser.UserId is not int agentId) return Unauthorized();
+        var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId && t.AssignedAgentId == agentId &&
+            t.Status == TicketStatus.InProgress, ct);
+        if (ticket is null) return NotFound();
+        ticket.EscalateToQueue();
+        await _db.SaveChangesAsync(ct);
+        return NoContent();
+    }
+
     [HttpPost("{ticketId:int}/close")]
     public async Task<IActionResult> Close(int ticketId, CancellationToken ct)
     {
