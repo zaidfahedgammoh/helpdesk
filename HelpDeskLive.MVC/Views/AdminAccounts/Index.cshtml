@@ -1,95 +1,49 @@
 @model HelpDeskLive.MVC.Controllers.AdminAccountsPageModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> Localizer
 @{
-    ViewData["Title"] = "Manage " + (Model.Role == "Agent" ? "Agents" : "Customers");
+    var roleLabel = Model.Role == "Agent" ? Localizer["Agent"].Value : Localizer["Customer"].Value;
+    var rolePlural = Model.Role == "Agent" ? Localizer["ManageAgents"].Value : Localizer["ManageCustomers"].Value;
+    ViewData["Title"] = rolePlural;
 }
-
 <div class="container py-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-        <div>
-            <h2 class="mb-1">Manage @(Model.Role == "Agent" ? "Agents" : "Customers")</h2>
-            <p class="text-muted mb-0">Create accounts and view registered @(Model.Role.ToLowerInvariant()) accounts.</p>
-        </div>
-        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary">Back to dashboard</a>
+        <div><h2 class="mb-1">@rolePlural</h2><p class="text-muted mb-0">@Localizer["ManageRegisteredAccounts"]</p></div>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToDashboard"]</a>
     </div>
-
-    @if (TempData["AccountSuccess"] is string success)
-    {
-        <div class="alert alert-success">@success</div>
-    }
-    @if (TempData["AccountError"] is string error)
-    {
-        <div class="alert alert-danger">@error</div>
-    }
-
-    <div class="btn-group mb-4" role="group" aria-label="Account type">
-        <a asp-action="Index" asp-route-role="Customer" class="btn @(Model.Role == "Customer" ? "btn-primary" : "btn-outline-primary")">Customers</a>
-        <a asp-action="Index" asp-route-role="Agent" class="btn @(Model.Role == "Agent" ? "btn-primary" : "btn-outline-primary")">Agents</a>
+    @if (TempData["AccountSuccess"] is string success) { <div class="alert alert-success">@success</div> }
+    @if (TempData["AccountError"] is string error) { <div class="alert alert-danger">@error</div> }
+    <div class="btn-group mb-4" role="group" aria-label="@Localizer["AccountType"]">
+        <a asp-action="Index" asp-route-role="Customer" class="btn @(Model.Role == "Customer" ? "btn-primary" : "btn-outline-primary")">@Localizer["ManageCustomers"]</a>
+        <a asp-action="Index" asp-route-role="Agent" class="btn @(Model.Role == "Agent" ? "btn-primary" : "btn-outline-primary")">@Localizer["ManageAgents"]</a>
     </div>
-
     <div class="row g-4">
-        <div class="col-lg-7">
-            <section class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5 class="mb-3">@(Model.Role == "Agent" ? "Agents" : "Customers") (@Model.Accounts.Count)</h5>
-                    @if (Model.Accounts.Count == 0)
-                    {
-                        <p class="text-muted mb-0">No accounts found.</p>
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table align-middle mb-0">
-                                <thead><tr><th>Name</th><th>Email</th><th>Account ID</th>@if (Model.Role == "Agent") { <th>Department</th> }</tr></thead>
-                                <tbody>
-                                @foreach (var account in Model.Accounts)
-                                {
-                                    <tr>
-                                        <td class="fw-semibold">@account.Name</td>
-                                        <td>@account.Email</td>
-                                        <td class="text-muted">#@account.Id</td>@if (Model.Role == "Agent") { <td><form asp-action="ChangeDepartment" method="post" class="d-flex gap-2">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@account.Id"/><select name="departmentId" class="form-select form-select-sm" required>@foreach (var department in Model.Departments) { <option value="@department.Id" selected="@(department.Id == account.DepartmentId)">@department.Name</option> }</select><button class="btn btn-sm btn-outline-primary" type="submit">Save</button></form></td> }
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                </div>
-            </section>
-        </div>
-        <div class="col-lg-5">
-            <section class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5 class="mb-3">Create @(Model.Role == "Agent" ? "Agent" : "Customer") account</h5>
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="Role" value="@Model.Role" />
-                        <div class="mb-3">
-                            <label class="form-label" for="Name">Full name</label>
-                            <input class="form-control" id="Name" name="Name" maxlength="100" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="Email">Email</label>
-                            <input class="form-control" type="email" id="Email" name="Email" maxlength="256" required />
-                        </div>
-                        @if (Model.Role == "Agent")
-                        {
-                            <div class="mb-3">
-                                <label class="form-label" for="DepartmentId">Department</label>
-                                <select class="form-select" id="DepartmentId" name="DepartmentId" required>
-                                    <option value="">Select department</option>
-                                    @foreach (var department in Model.Departments) { <option value="@department.Id">@department.Name</option> }
-                                </select>
-                            </div>
-                        }
-                        <div class="mb-3">
-                            <label class="form-label" for="Password">Temporary password</label>
-                            <input class="form-control" type="password" id="Password" name="Password" minlength="8" autocomplete="new-password" required />
-                            <div class="form-text">At least 8 characters. Share it securely with the new account holder.</div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Create account</button>
-                    </form>
-                </div>
-            </section>
-        </div>
+        <div class="col-lg-7"><section class="card border-0 shadow-sm"><div class="card-body">
+            <h5 class="mb-3">@rolePlural (@Model.Accounts.Count)</h5>
+            @if (Model.Accounts.Count == 0) { <p class="text-muted mb-0">@Localizer["NoAccountsFound"]</p> }
+            else {
+                <div class="table-responsive"><table class="table align-middle mb-0">
+                    <thead><tr><th>@Localizer["Name"]</th><th>@Localizer["Email"]</th><th>@Localizer["AccountId"]</th>@if (Model.Role == "Agent") { <th>@Localizer["Department"]</th> }</tr></thead>
+                    <tbody>@foreach (var account in Model.Accounts) {
+                        <tr><td class="fw-semibold">@account.Name</td><td>@account.Email</td><td class="text-muted">#@account.Id</td>
+                        @if (Model.Role == "Agent") { <td><form asp-action="ChangeDepartment" method="post" class="d-flex gap-2">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@account.Id"/><select name="departmentId" class="form-select form-select-sm" required>@foreach (var department in Model.Departments) { <option value="@department.Id" selected="@(department.Id == account.DepartmentId)">@department.Name</option> }</select><button class="btn btn-sm btn-outline-primary" type="submit">@Localizer["Save"]</button></form></td> }
+                        </tr>
+                    }</tbody>
+                </table></div>
+            }
+        </div></section></div>
+        <div class="col-lg-5"><section class="card border-0 shadow-sm"><div class="card-body">
+            <h5 class="mb-3">@Localizer["Create"] @roleLabel @Localizer["User"]</h5>
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()<input type="hidden" name="Role" value="@Model.Role"/>
+                <div class="mb-3"><label class="form-label" for="Name">@Localizer["FullName"]</label><input class="form-control" id="Name" name="Name" maxlength="100" required/></div>
+                <div class="mb-3"><label class="form-label" for="Email">@Localizer["Email"]</label><input class="form-control" type="email" id="Email" name="Email" maxlength="256" required/></div>
+                @if (Model.Role == "Agent") {
+                    <div class="mb-3"><label class="form-label" for="DepartmentId">@Localizer["Department"]</label><select class="form-select" id="DepartmentId" name="DepartmentId" required><option value="">@Localizer["SelectDepartment"]</option>@foreach (var department in Model.Departments) { <option value="@department.Id">@department.Name</option> }</select></div>
+                }
+                <div class="mb-3"><label class="form-label" for="Password">@Localizer["TemporaryPassword"]</label><input class="form-control" type="password" id="Password" name="Password" minlength="8" autocomplete="new-password" required/><div class="form-text">@Localizer["TemporaryPasswordHint"]</div></div>
+                <button type="submit" class="btn btn-primary">@Localizer["CreateAccount"]</button>
+            </form>
+        </div></section></div>
     </div>
 </div>
