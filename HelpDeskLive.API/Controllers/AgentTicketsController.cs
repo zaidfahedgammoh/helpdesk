@@ -108,16 +108,19 @@ public sealed class AgentTicketsController : ControllerBase
     }
 
     [HttpPost("{ticketId:int}/escalate")]
-    public async Task<IActionResult> Escalate(int ticketId, CancellationToken ct)
+    public async Task<IActionResult> Escalate(int ticketId, [FromBody] EscalateTicketRequest request, CancellationToken ct)
     {
         if (_currentUser.UserId is not int agentId) return Unauthorized();
+        if (string.IsNullOrWhiteSpace(request.Reason) || request.Reason.Trim().Length > 1000)
+            return BadRequest(new { message = "Provide an escalation reason of up to 1000 characters." });
         var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId && t.AssignedAgentId == agentId &&
             t.Status == TicketStatus.InProgress, ct);
         if (ticket is null) return NotFound();
 
         var departmentId = ticket.DepartmentId;
         ticket.EscalateToQueue();
-        _db.ChatMessages.Add(new ChatMessage(ticketId, agentId, "Ticket escalated by the assigned agent and returned to the department escalation queue."));
+        _db.TicketEscalations.Add(new TicketEscalation(ticketId, agentId, request.Reason));
+        _db.ChatMessages.Add(new ChatMessage(ticketId, agentId, $"Ticket escalated: {request.Reason.Trim()}"));
         await _db.SaveChangesAsync(ct);
 
         await _chatHub.Clients.Group(TicketGroup(ticketId)).SendAsync("TicketEscalated", new
@@ -147,3 +150,5 @@ public sealed class AgentTicketsController : ControllerBase
     private static string TicketGroup(int ticketId) => $"ticket-{ticketId}";
     private static string DepartmentGroup(int departmentId) => $"department-{departmentId}";
 }
+
+public sealed record EscalateTicketRequest(string Reason);
