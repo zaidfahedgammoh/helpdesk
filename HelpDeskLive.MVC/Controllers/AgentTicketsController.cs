@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace HelpDeskLive.MVC.Controllers;
 
@@ -8,7 +9,8 @@ public sealed class AgentTicketsController : Controller
 {
     private readonly IHttpClientFactory _clients;
     private readonly IConfiguration _configuration;
-    public AgentTicketsController(IHttpClientFactory clients, IConfiguration configuration) { _clients = clients; _configuration = configuration; }
+    private readonly IStringLocalizer<HelpDeskLive.MVC.SharedResource> _localizer;
+    public AgentTicketsController(IHttpClientFactory clients, IConfiguration configuration, IStringLocalizer<HelpDeskLive.MVC.SharedResource> localizer) { _clients = clients; _configuration = configuration; _localizer = localizer; }
 
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -34,7 +36,7 @@ public sealed class AgentTicketsController : Controller
         if (client is null) return RedirectToAction("Login", "Account");
         var response = await client.PostAsync($"api/agent/tickets/{id}/{action}", null, ct);
         TempData[response.IsSuccessStatusCode ? "AgentTicketSuccess" : "AgentTicketError"] =
-            response.IsSuccessStatusCode ? "Ticket updated." : "Ticket could not be updated. Check its current status and your workload limit.";
+            response.IsSuccessStatusCode ? _localizer["TicketUpdatedShort"].Value : _localizer["TicketCouldNotBeUpdated"].Value;
         return RedirectToAction(nameof(Index));
     }
 
