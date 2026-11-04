@@ -34,6 +34,7 @@
     const token = @Html.Raw(tokenJson);
     const apiBaseUrl = @Html.Raw(apiUrlJson);
     const isAgent = @Html.Raw(isAgentJson);
+    const currentUserId = @Model.CurrentUserId;
     const status = document.getElementById("chat-status");
     const messages = document.getElementById("chat-messages");
     const empty = document.getElementById("chat-empty");
@@ -54,7 +55,7 @@
         if (seen.has(message.id)) return;
         seen.add(message.id);
         if (empty) empty.remove();
-        const mine = Number(message.senderId) === Number(@Html.Raw(JsonSerializer.Serialize(int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var currentUserId) ? currentUserId : 0)));
+        const mine = Number(message.senderId) === Number(currentUserId);
         const wrapper = document.createElement("div");
         wrapper.className = "align-self-" + (mine ? "end" : "start");
         wrapper.style.maxWidth = "85%";
