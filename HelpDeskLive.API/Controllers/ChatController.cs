@@ -26,16 +26,20 @@ public sealed class ChatController : ControllerBase
     {
         if (_currentUser.UserId is not int userId) return Unauthorized();
 
-        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId, ct);
+        var ticket = await _db.Tickets.AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == ticketId, ct);
         if (ticket is null) return NotFound();
-        var isCustomer = _currentUser.Role == UserRole.Customer.ToString() && ticket.CustomerId == userId;
-        var isAssignedAgent = _currentUser.Role == UserRole.Agent.ToString() && ticket.AssignedAgentId == userId;
+
+        var isCustomer = _currentUser.Role == UserRole.Customer.ToString() &&
+                         ticket.CustomerId == userId;
+        var isAssignedAgent = _currentUser.Role == UserRole.Agent.ToString() &&
+                              ticket.AssignedAgentId == userId;
         if (!isCustomer && !isAssignedAgent) return Forbid();
 
         if (ticket.ApprovalStatus != TicketApprovalStatus.Approved ||
             ticket.Priority is not (TicketPriority.High or TicketPriority.Critical) ||
-            ticket.Status is TicketStatus.Resolved or TicketStatus.Closed)
-            return Conflict(new { message = "Live chat is available only for approved High and Critical tickets." });
+            ticket.Status is not (TicketStatus.Open or TicketStatus.InProgress))
+            return Conflict(new { message = "Live chat is available only for approved High and Critical tickets that are waiting or in progress." });
 
         var messages = await (
             from message in _db.ChatMessages.AsNoTracking()
