@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace HelpDeskLive.MVC.Controllers;
 
@@ -8,13 +9,16 @@ public sealed class AdminIssueTypesController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public AdminIssueTypesController(
         IHttpClientFactory httpClientFactory,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IStringLocalizer<SharedResource> localizer)
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -22,7 +26,7 @@ public sealed class AdminIssueTypesController : Controller
     {
         var client = CreateAdminClient();
         if (client is null)
-            return StatusCode(500, "API base URL is not configured.");
+            return StatusCode(500, _localizer["ApiBaseUrlMissing"].Value);
 
         var issueTypesResponse = await client.GetAsync("api/issue-types", cancellationToken);
         if (!issueTypesResponse.IsSuccessStatusCode)
@@ -66,9 +70,9 @@ public sealed class AdminIssueTypesController : Controller
             cancellationToken);
 
         if (!response.IsSuccessStatusCode)
-            TempData["IssueTypeError"] = "The issue type could not be created. Check the details and try again.";
+            TempData["IssueTypeError"] = _localizer["IssueTypeCreateFailed"].Value;
         else
-            TempData["IssueTypeSuccess"] = "Issue type created successfully.";
+            TempData["IssueTypeSuccess"] = _localizer["IssueTypeCreated"].Value;
 
         return RedirectToAction(nameof(Index));
     }
