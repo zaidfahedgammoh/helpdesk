@@ -278,4 +278,13 @@
   <data name="Other" xml:space="preserve"><value>أخرى</value></data>
   <data name="CustomRequestPending" xml:space="preserve"><value>طلبك المخصص بانتظار موافقة المدير.</value></data>
   <data name="TicketCreatedSuccessfully" xml:space="preserve"><value>تم إنشاء تذكرتك بنجاح.</value></data>
+  <data name="ViewMyAssignedTickets" xml:space="preserve"><value>عرض التذاكر المسندة إليّ</value></data>
+  <data name="ManageCustomers" xml:space="preserve"><value>إدارة العملاء</value></data>
+  <data name="ManageAgents" xml:space="preserve"><value>إدارة موظفي الدعم</value></data>
+  <data name="ReviewCustomRequests" xml:space="preserve"><value>مراجعة الطلبات المخصصة</value></data>
+  <data name="ManageIssueTypesAction" xml:space="preserve"><value>إدارة أنواع المشكلات</value></data>
+  <data name="OpenTicketsAria" xml:space="preserve"><value>التذاكر المفتوحة</value></data>
+  <data name="InProgressTicketsAria" xml:space="preserve"><value>التذاكر قيد التنفيذ</value></data>
+  <data name="ResolvedTicketsAria" xml:space="preserve"><value>التذاكر التي تم حلها</value></data>
+  <data name="ClosedTicketsAria" xml:space="preserve"><value>التذاكر المغلقة</value></data>
 </root>
