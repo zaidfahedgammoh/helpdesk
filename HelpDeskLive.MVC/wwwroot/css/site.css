@@ -172,3 +172,20 @@ a:hover { color: #5b21b6; }
 .navbar { background-color: #fff !important; }
 html[dir="rtl"] body { text-align: right; }
 html[dir="rtl"] .form-floating > .form-control::placeholder { text-align: right; }
+
+
+.btn-info, .btn-info:hover, .btn-info:focus {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--hd-purple);
+  --bs-btn-border-color: var(--hd-purple);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--hd-purple-dark);
+  --bs-btn-hover-border-color: var(--hd-purple-dark);
+}
+.btn-outline-info {
+  --bs-btn-color: var(--hd-purple-dark);
+  --bs-btn-border-color: var(--hd-purple);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--hd-purple);
+  --bs-btn-hover-border-color: var(--hd-purple);
+}
