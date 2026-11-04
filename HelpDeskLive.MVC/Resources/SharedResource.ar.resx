@@ -346,4 +346,6 @@
   <data name="TicketClosedByCustomer" xml:space="preserve"><value>تم إغلاق تذكرتك.</value></data>
   <data name="ConfirmCloseTicket" xml:space="preserve"><value>هل أنت متأكد من رغبتك في إغلاق هذه التذكرة؟</value></data>
   <data name="ConfirmEscalateTicket" xml:space="preserve"><value>هل تريد تصعيد هذه التذكرة وإعادتها إلى قائمة انتظار القسم؟</value></data>
+  <data name="EscalationReasonRequired" xml:space="preserve"><value>يرجى توضيح سبب تصعيد هذه التذكرة.</value></data>
+  <data name="TicketEscalated" xml:space="preserve"><value>تم تصعيد التذكرة وإعادتها إلى قائمة انتظار القسم.</value></data>
 </root>
