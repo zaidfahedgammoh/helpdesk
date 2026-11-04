@@ -130,6 +130,14 @@
                                             <div class="small text-muted mt-1">@Localizer["WaitingForAgent"]</div>
                                         }
                                     }
+                                    @if (ticket.ApprovalStatus == 2 && ticket.Status != 4)
+                                    {
+                                        <form asp-controller="Customer" asp-action="CloseTicket" method="post" class="mt-1" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@ticket.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["CloseMyTicket"]</button>
+                                        </form>
+                                    }
                                     else if (ticket.ApprovalStatus == 1)
                                     {
                                         <span class="small text-muted">@Localizer["PendingAdminApproval"]</span>
