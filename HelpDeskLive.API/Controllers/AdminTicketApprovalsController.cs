@@ -35,19 +35,10 @@ public sealed class AdminTicketApprovalsController : ControllerBase
         if (!departmentExists) return BadRequest(new { message = "Select a valid department." });
 
         ticket.Approve(request.Priority, request.DepartmentId);
-        var agent = await _db.Users
-            .Where(u => u.Role == UserRole.Agent && u.DepartmentId == request.DepartmentId)
-            .Select(u => new { User = u, Load = _db.Tickets.Count(t =>
-                t.AssignedAgentId == u.Id && t.Status == TicketStatus.InProgress &&
-                t.ApprovalStatus == TicketApprovalStatus.Approved) })
-            .Where(x => x.Load < 5)
-            .OrderBy(x => x.Load)
-            .ThenBy(x => x.User.Id)
-            .FirstOrDefaultAsync(ct);
-        if (agent is not null) ticket.AssignToAgent(agent.User.Id);
+
 
         await _db.SaveChangesAsync(ct);
-        return Ok(new { ticket.Id, AssignedAgentId = agent == null ? (int?)null : agent.User.Id });
+        return Ok(new { ticket.Id, AssignedAgentId = (int?)null });
     }
 
     [HttpPost("{ticketId:int}/reject")]
