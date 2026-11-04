@@ -67,6 +67,21 @@
             .build();
 
         connection.on("ReceiveMessage", renderMessage);
+        connection.on("TicketEscalated", notification => {
+            status.textContent = notification.message || "Ticket escalated";
+            input.disabled = true;
+            const sendButton = document.getElementById("chat-send");
+            if (sendButton) sendButton.disabled = true;
+            error.textContent = notification.message || "This ticket has been escalated. Chat is now read-only.";
+        });
+        connection.on("TicketStatusChanged", update => {
+            if (update.status === "Resolved" || update.status === "Closed") {
+                status.textContent = update.status;
+                input.disabled = true;
+                const sendButton = document.getElementById("chat-send");
+                if (sendButton) sendButton.disabled = true;
+            }
+        });
         connection.on("ChatParticipantJoined", participant => {
             if (!isAgent && participant.role === "Agent") status.textContent = text.agentConnected;
             else if (isAgent && participant.role === "Customer") status.textContent = text.customerConnected;
