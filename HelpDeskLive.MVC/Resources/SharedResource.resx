@@ -337,4 +337,6 @@
   <data name="ChatInputPlaceholder" xml:space="preserve"><value>Type your message…</value></data>
   <data name="Send" xml:space="preserve"><value>Send</value></data>
   <data name="BackToTickets" xml:space="preserve"><value>Back to tickets</value></data>
+  <data name="DepartmentQueue" xml:space="preserve"><value>Department ticket queue</value></data>
+  <data name="DepartmentQueueDescription" xml:space="preserve"><value>Waiting high-priority customers are shown first. Start a ticket when you are ready to handle it.</value></data>
 </root>
