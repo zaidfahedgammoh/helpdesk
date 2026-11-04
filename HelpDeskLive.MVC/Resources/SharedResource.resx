@@ -345,4 +345,6 @@
   <data name="TicketClosedByCustomer" xml:space="preserve"><value>Your ticket has been closed.</value></data>
   <data name="ConfirmCloseTicket" xml:space="preserve"><value>Are you sure you want to close this ticket?</value></data>
   <data name="ConfirmEscalateTicket" xml:space="preserve"><value>Escalate this ticket and return it to the department queue?</value></data>
+  <data name="EscalationReasonRequired" xml:space="preserve"><value>Provide a reason for escalating this ticket.</value></data>
+  <data name="TicketEscalated" xml:space="preserve"><value>The ticket was escalated and returned to the department queue.</value></data>
 </root>
