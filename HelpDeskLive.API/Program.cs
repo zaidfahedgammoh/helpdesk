@@ -1,6 +1,7 @@
 using System.Text;
 using HelpDeskLive.API.Authentication;
 using HelpDeskLive.API.Hubs;
+using HelpDeskLive.API.Middleware;
 using HelpDeskLive.API.Services;
 using HelpDeskLive.Application;
 using HelpDeskLive.Application.Abstractions;
@@ -83,6 +84,8 @@ using (var scope = app.Services.CreateScope())
     if (app.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("SeedTestUsers:Enabled"))
         await TestUserSeeder.SeedAsync(dbContext, builder.Configuration);
 }
+
+app.UseMiddleware<ProblemDetailsMiddleware>();
 
 if (!app.Environment.IsDevelopment())
 {
