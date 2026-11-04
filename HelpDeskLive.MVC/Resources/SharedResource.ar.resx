@@ -253,4 +253,29 @@
 <data name="AccountsBillingQuestionDesc" xml:space="preserve"><value>استفسارات حول رسوم الحساب أو الفواتير أو سجلات الفوترة.</value></data>
 <data name="FacilitiesOfficeProblem" xml:space="preserve"><value>مشكلة في المرافق أو المكتب</value></data>
 <data name="FacilitiesOfficeProblemDesc" xml:space="preserve"><value>مشكلات في مساحة المكتب أو الأثاث أو الإضاءة أو مرافق المبنى.</value></data>
+  <data name="PendingCustomRequests" xml:space="preserve"><value>طلبات مخصصة بانتظار الموافقة</value></data>
+  <data name="BackToDashboard" xml:space="preserve"><value>العودة إلى لوحة التحكم</value></data>
+  <data name="NoPendingCustomRequests" xml:space="preserve"><value>لا توجد طلبات مخصصة بانتظار الموافقة.</value></data>
+  <data name="ChooseDepartment" xml:space="preserve"><value>اختر القسم</value></data>
+  <data name="Approve" xml:space="preserve"><value>موافقة</value></data>
+  <data name="RejectRequest" xml:space="preserve"><value>رفض الطلب</value></data>
+  <data name="RequestApproved" xml:space="preserve"><value>تمت الموافقة على الطلب.</value></data>
+  <data name="CouldNotApproveRequest" xml:space="preserve"><value>تعذرت الموافقة على الطلب.</value></data>
+  <data name="CouldNotRejectRequest" xml:space="preserve"><value>تعذر رفض الطلب.</value></data>
+  <data name="MyAssignedTickets" xml:space="preserve"><value>التذاكر المسندة إليّ</value></data>
+  <data name="TicketsAssignedToYou" xml:space="preserve"><value>التذاكر المسندة إليك من قسمك.</value></data>
+  <data name="NoAssignedTickets" xml:space="preserve"><value>لا توجد تذاكر مسندة إليك حالياً.</value></data>
+  <data name="StartWork" xml:space="preserve"><value>بدء العمل</value></data>
+  <data name="MarkResolved" xml:space="preserve"><value>تم حل المشكلة</value></data>
+  <data name="CloseTicket" xml:space="preserve"><value>إغلاق التذكرة</value></data>
+  <data name="TicketCouldNotBeUpdated" xml:space="preserve"><value>تعذر تحديث التذكرة. تحقق من حالتها الحالية والحد الأقصى لعبء العمل.</value></data>
+  <data name="TicketUpdatedShort" xml:space="preserve"><value>تم تحديث التذكرة.</value></data>
+  <data name="LiveChat" xml:space="preserve"><value>محادثة مباشرة</value></data>
+  <data name="WaitingForAgent" xml:space="preserve"><value>بانتظار توفر موظف دعم</value></data>
+  <data name="WaitingQueue" xml:space="preserve"><value>قائمة الانتظار</value></data>
+  <data name="EscalateTicket" xml:space="preserve"><value>تصعيد التذكرة</value></data>
+  <data name="Escalated" xml:space="preserve"><value>تم التصعيد</value></data>
+  <data name="Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="CustomRequestPending" xml:space="preserve"><value>طلبك المخصص بانتظار موافقة المدير.</value></data>
+  <data name="TicketCreatedSuccessfully" xml:space="preserve"><value>تم إنشاء تذكرتك بنجاح.</value></data>
 </root>
