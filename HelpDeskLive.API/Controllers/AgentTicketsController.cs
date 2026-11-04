@@ -29,7 +29,7 @@ public sealed class AgentTicketsController : ControllerBase
                 t.ApprovalStatus == TicketApprovalStatus.Approved &&
                 t.Status != TicketStatus.Closed && t.Status != TicketStatus.Resolved &&
                 (t.AssignedAgentId == null || t.AssignedAgentId == agentId))
-            .OrderByDescending(t => t.Priority == TicketPriority.High || t.Priority == TicketPriority.Critical)
+            .OrderByDescending(t => t.Priority)
             .ThenBy(t => t.CreatedAt)
             .Select(t => new { t.Id, t.Title, t.Description, t.Status, t.Priority, t.DepartmentId, t.CreatedAt, t.AssignedAgentId })
             .ToListAsync(ct);
