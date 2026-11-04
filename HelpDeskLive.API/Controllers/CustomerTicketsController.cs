@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using HelpDeskLive.API.Hubs;
 
 namespace HelpDeskLive.API.Controllers;
 
@@ -17,12 +19,14 @@ public sealed class CustomerTicketsController : ControllerBase
     private readonly ISender _sender;
     private readonly HelpDeskDbContext _db;
     private readonly ICurrentUser _currentUser;
+    private readonly IHubContext<TicketChatHub> _chatHub;
 
-    public CustomerTicketsController(ISender sender, HelpDeskDbContext db, ICurrentUser currentUser)
+    public CustomerTicketsController(ISender sender, HelpDeskDbContext db, ICurrentUser currentUser, IHubContext<TicketChatHub> chatHub)
     {
         _sender = sender;
         _db = db;
         _currentUser = currentUser;
+        _chatHub = chatHub;
     }
 
     [HttpGet]
@@ -47,6 +51,8 @@ public sealed class CustomerTicketsController : ControllerBase
 
         ticket.CloseByCustomer();
         await _db.SaveChangesAsync(ct);
+        await _chatHub.Clients.Group($"ticket-{ticketId}").SendAsync(
+            "TicketStatusChanged", new { ticketId, status = TicketStatus.Closed.ToString() }, ct);
         return NoContent();
     }
 }
