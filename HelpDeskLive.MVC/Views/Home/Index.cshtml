@@ -1,8 +1,10 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["HomePageTitle"];
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center py-5">
+    <h1 class="display-4">@Localizer["Welcome"]</h1>
+    <p>@Localizer["LearnAboutAspNet"] <a href="https://learn.microsoft.com/aspnet/core">ASP.NET Core</a>.</p>
+    <a asp-controller="Account" asp-action="Login" class="btn btn-primary">@Localizer["SignIn"]</a>
 </div>
