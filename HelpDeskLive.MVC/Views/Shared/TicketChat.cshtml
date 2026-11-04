@@ -14,6 +14,26 @@
         @if (Model.IsAgent) { <a asp-controller="AgentTickets" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a> }
         else { <a asp-controller="Customer" asp-action="Index" class="btn btn-outline-secondary">@Localizer["BackToTickets"]</a> }
     </div>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        @if (Model.IsAgent)
+        {
+            <form asp-controller="AgentTickets" asp-action="Close" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
+                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                <button type="submit" class="btn btn-outline-danger">@Localizer["CloseTicket"]</button>
+            </form>
+            <form asp-controller="AgentTickets" asp-action="Escalate" method="post" onsubmit="return confirm('@Localizer["ConfirmEscalateTicket"]')">
+                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                <button type="submit" class="btn btn-warning">@Localizer["EscalateAndLeaveChat"]</button>
+            </form>
+        }
+        else
+        {
+            <form asp-controller="Customer" asp-action="CloseTicket" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
+                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                <button type="submit" class="btn btn-outline-danger">@Localizer["CloseMyTicket"]</button>
+            </form>
+        }
+    </div>
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <div id="chat-messages" class="d-flex flex-column gap-2 mb-3" style="height: min(55vh, 520px); overflow-y: auto;" aria-live="polite">
