@@ -74,6 +74,7 @@ public class Ticket
         bool valid = (Status, newStatus) switch
         {
             (TicketStatus.Open, TicketStatus.InProgress) => true,
+            (TicketStatus.Escalated, TicketStatus.InProgress) => true,
             (TicketStatus.InProgress, TicketStatus.Resolved) => true,
             (TicketStatus.InProgress, TicketStatus.Closed) => true,
             (TicketStatus.Resolved, TicketStatus.Closed) => true,
@@ -88,15 +89,17 @@ public class Ticket
     {
         if (ApprovalStatus != TicketApprovalStatus.Approved || Status != TicketStatus.InProgress)
             throw new InvalidOperationException("Only an active approved ticket can be escalated.");
-        Status = TicketStatus.Open;
+        Status = TicketStatus.Escalated;
         AssignedAgentId = null;
     }
 
     public void CloseByCustomer()
     {
-        if (ApprovalStatus != TicketApprovalStatus.Approved || Status == TicketStatus.Closed)
+        if (ApprovalStatus != TicketApprovalStatus.Approved ||
+            Status is TicketStatus.Closed or TicketStatus.Resolved)
             throw new InvalidOperationException("This ticket cannot be closed by the customer.");
         Status = TicketStatus.Closed;
+        AssignedAgentId = null;
         ClosedAt = DateTime.UtcNow;
     }
 
@@ -105,7 +108,10 @@ public class Ticket
         if (ApprovalStatus != TicketApprovalStatus.Approved || DepartmentId is null)
             throw new InvalidOperationException("Only approved tickets with a department can be assigned.");
         if (agentId <= 0) throw new ArgumentOutOfRangeException(nameof(agentId));
-        if (Status != TicketStatus.Open) throw new InvalidOperationException("Only open tickets can be assigned.");
+        if (Status is not (TicketStatus.Open or TicketStatus.Escalated))
+            throw new InvalidOperationException("Only open or escalated tickets can be assigned.");
+        if (AssignedAgentId is not null && AssignedAgentId != agentId)
+            throw new InvalidOperationException("This ticket is already assigned to another agent.");
         AssignedAgentId = agentId;
     }
 
