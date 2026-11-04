@@ -24,7 +24,8 @@ public class AccountController : Controller
         _localizer = localizer;
     }
 
-    [HttpGet]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     [Route("/account/chat-token")]
     public async Task<IActionResult> GetChatToken(CancellationToken cancellationToken)
     {
@@ -95,7 +96,7 @@ public class AccountController : Controller
         {
             try
             {
-                using var client = _httpClientFactory.CreateClient();
+                using var client = _httpClientFactory.CreateClient(HelpDeskLive.MVC.Services.TokenRefreshingHandler.RefreshClientName);
                 using var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl.TrimEnd('/')}/api/auth/logout");
                 request.Headers.Add("Cookie", $"helpdesk_refresh={refreshToken}");
                 await client.SendAsync(request, cancellationToken);
@@ -229,7 +230,7 @@ public class AccountController : Controller
 
         try
         {
-            using var client = _httpClientFactory.CreateClient();
+            using var client = _httpClientFactory.CreateClient(HelpDeskLive.MVC.Services.TokenRefreshingHandler.RefreshClientName);
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl.TrimEnd('/')}/api/auth/refresh");
             request.Headers.Add("Cookie", $"helpdesk_refresh={refreshToken}");
 

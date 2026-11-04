@@ -16,6 +16,7 @@ builder.Services
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<TokenRefreshingHandler>();
+builder.Services.AddHttpClient(TokenRefreshingHandler.RefreshClientName);
 builder.Services.AddHttpClient(string.Empty)
     .AddHttpMessageHandler<TokenRefreshingHandler>();
 
