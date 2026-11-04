@@ -291,4 +291,33 @@
   <data name="CheckIssueDescription" xml:space="preserve"><value>Please check the issue and description.</value></data>
   <data name="TicketCreateFailed" xml:space="preserve"><value>Your ticket could not be created. Please try again.</value></data>
   <data name="ApiBaseUrlMissing" xml:space="preserve"><value>API base URL is not configured.</value></data>
+  <data name="AccountType" xml:space="preserve"><value>Account type</value></data>
+  <data name="NoAccountsFound" xml:space="preserve"><value>No accounts found.</value></data>
+  <data name="CreateAgentAccount" xml:space="preserve"><value>Create Agent account</value></data>
+  <data name="CreateCustomerAccount" xml:space="preserve"><value>Create Customer account</value></data>
+  <data name="TemporaryPassword" xml:space="preserve"><value>Temporary password</value></data>
+  <data name="TemporaryPasswordHint" xml:space="preserve"><value>At least 8 characters. Share it securely with the new account holder.</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Create account</value></data>
+  <data name="AccountCreated" xml:space="preserve"><value>account created.</value></data>
+  <data name="EmailAlreadyRegistered" xml:space="preserve"><value>That email address is already registered.</value></data>
+  <data name="AccountCreateFailed" xml:space="preserve"><value>Account could not be created. Check the entered details and department.</value></data>
+  <data name="AgentDepartmentUpdated" xml:space="preserve"><value>Agent department updated.</value></data>
+  <data name="AgentDepartmentUpdateFailed" xml:space="preserve"><value>Could not update Agent department.</value></data>
+  <data name="CompleteAccountFields" xml:space="preserve"><value>Complete all fields and choose a department for the Agent.</value></data>
+  <data name="ManageIssueTypesTitle" xml:space="preserve"><value>Manage issue types</value></data>
+  <data name="IssueTypesDescription" xml:space="preserve"><value>Control the predefined issues customers can select when creating tickets.</value></data>
+  <data name="ActiveIssueTypes" xml:space="preserve"><value>Active issue types</value></data>
+  <data name="NoActiveIssueTypes" xml:space="preserve"><value>No active issue types were found.</value></data>
+  <data name="AddIssueType" xml:space="preserve"><value>Add issue type</value></data>
+  <data name="CreateDepartmentsFirst" xml:space="preserve"><value>Create departments before adding issue types.</value></data>
+  <data name="DefaultPriority" xml:space="preserve"><value>Default priority</value></data>
+  <data name="IssueTypeCreated" xml:space="preserve"><value>Issue type created successfully.</value></data>
+  <data name="IssueTypeCreateFailed" xml:space="preserve"><value>The issue type could not be created. Check the details and try again.</value></data>
+  <data name="PleaseEnterCredentials" xml:space="preserve"><value>Please enter your email and password.</value></data>
+  <data name="LoginInvalidCredentials" xml:space="preserve"><value>Invalid email or password.</value></data>
+  <data name="ApiDidNotReturnToken" xml:space="preserve"><value>The API did not return an access token.</value></data>
+  <data name="TokenMissingRole" xml:space="preserve"><value>The access token does not contain a user role.</value></data>
+  <data name="ApiReturnedInvalidToken" xml:space="preserve"><value>The API returned an invalid access token.</value></data>
+  <data name="HomePageTitle" xml:space="preserve"><value>Home page</value></data>
+  <data name="LearnAboutAspNet" xml:space="preserve"><value>Learn about building web apps with ASP.NET Core.</value></data>
 </root>
