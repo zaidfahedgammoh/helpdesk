@@ -105,6 +105,21 @@ public sealed class CustomerController : Controller
     }
 
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CloseTicket(int id, CancellationToken cancellationToken)
+    {
+        var token = HttpContext.Session.GetString("AccessToken");
+        if (string.IsNullOrWhiteSpace(token)) return RedirectToAction("Login", "Account");
+        if (HttpContext.Session.GetString("UserRole") != "Customer") return Forbid();
+        var client = CreateApiClient(token);
+        if (client is null) return StatusCode(500, _localizer["ApiBaseUrlMissing"].Value);
+        var response = await client.PostAsync($"api/customer/tickets/{id}/close", null, cancellationToken);
+        TempData[response.IsSuccessStatusCode ? "TicketSuccess" : "TicketError"] =
+            response.IsSuccessStatusCode ? _localizer["TicketClosedByCustomer"].Value : _localizer["TicketCouldNotBeUpdated"].Value;
+        return RedirectToAction(nameof(Index));
+    }
+
     [HttpGet]
     public async Task<IActionResult> Chat(int id, CancellationToken cancellationToken)
     {
