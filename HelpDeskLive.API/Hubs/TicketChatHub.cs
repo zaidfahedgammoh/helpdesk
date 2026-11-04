@@ -22,6 +22,21 @@ public sealed class TicketChatHub : Hub
         _ticketRepository = ticketRepository;
     }
 
+    public override async Task OnConnectedAsync()
+    {
+        var role = Context.User?.FindFirstValue(ClaimTypes.Role);
+        if (role == UserRole.Agent.ToString() && int.TryParse(Context.User?.FindFirstValue(ClaimTypes.NameIdentifier), out var agentId))
+        {
+            var departmentId = await _db.Users.AsNoTracking()
+                .Where(user => user.Id == agentId && user.Role == UserRole.Agent)
+                .Select(user => user.DepartmentId)
+                .FirstOrDefaultAsync();
+            if (departmentId.HasValue)
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"department-{departmentId.Value}");
+        }
+        await base.OnConnectedAsync();
+    }
+
     public async Task JoinTicket(int ticketId)
     {
         var userId = GetUserId();
