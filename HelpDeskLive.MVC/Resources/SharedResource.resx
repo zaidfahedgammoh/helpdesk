@@ -252,4 +252,29 @@
 <data name="AccountsBillingQuestionDesc" xml:space="preserve"><value>Questions about account charges, invoices, or billing records.</value></data>
 <data name="FacilitiesOfficeProblem" xml:space="preserve"><value>Facilities or Office Problem</value></data>
 <data name="FacilitiesOfficeProblemDesc" xml:space="preserve"><value>Problems with office space, furniture, lighting, or building facilities.</value></data>
+  <data name="PendingCustomRequests" xml:space="preserve"><value>Pending custom requests</value></data>
+  <data name="BackToDashboard" xml:space="preserve"><value>Back to dashboard</value></data>
+  <data name="NoPendingCustomRequests" xml:space="preserve"><value>There are no pending custom requests.</value></data>
+  <data name="ChooseDepartment" xml:space="preserve"><value>Choose department</value></data>
+  <data name="Approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="RejectRequest" xml:space="preserve"><value>Reject request</value></data>
+  <data name="RequestApproved" xml:space="preserve"><value>Request approved.</value></data>
+  <data name="CouldNotApproveRequest" xml:space="preserve"><value>Could not approve the request.</value></data>
+  <data name="CouldNotRejectRequest" xml:space="preserve"><value>Could not reject the request.</value></data>
+  <data name="MyAssignedTickets" xml:space="preserve"><value>My assigned tickets</value></data>
+  <data name="TicketsAssignedToYou" xml:space="preserve"><value>Tickets assigned to you from your department.</value></data>
+  <data name="NoAssignedTickets" xml:space="preserve"><value>No tickets are currently assigned to you.</value></data>
+  <data name="StartWork" xml:space="preserve"><value>Start work</value></data>
+  <data name="MarkResolved" xml:space="preserve"><value>Mark resolved</value></data>
+  <data name="CloseTicket" xml:space="preserve"><value>Close ticket</value></data>
+  <data name="TicketCouldNotBeUpdated" xml:space="preserve"><value>Ticket could not be updated. Check its current status and your workload limit.</value></data>
+  <data name="TicketUpdatedShort" xml:space="preserve"><value>Ticket updated.</value></data>
+  <data name="LiveChat" xml:space="preserve"><value>Live chat</value></data>
+  <data name="WaitingForAgent" xml:space="preserve"><value>Waiting for an available agent</value></data>
+  <data name="WaitingQueue" xml:space="preserve"><value>Waiting queue</value></data>
+  <data name="EscalateTicket" xml:space="preserve"><value>Escalate ticket</value></data>
+  <data name="Escalated" xml:space="preserve"><value>Escalated</value></data>
+  <data name="Other" xml:space="preserve"><value>Other</value></data>
+  <data name="CustomRequestPending" xml:space="preserve"><value>Your custom request is waiting for Admin approval.</value></data>
+  <data name="TicketCreatedSuccessfully" xml:space="preserve"><value>Your ticket has been created successfully.</value></data>
 </root>
