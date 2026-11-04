@@ -20,6 +20,7 @@ public sealed class CustomerTicketViewModel
     public int? Priority { get; init; }
     public int ApprovalStatus { get; init; }
     public DateTime CreatedAt { get; init; }
+    public int? AssignedAgentId { get; init; }
 }
 
 public sealed class CustomerIssueTypeViewModel
