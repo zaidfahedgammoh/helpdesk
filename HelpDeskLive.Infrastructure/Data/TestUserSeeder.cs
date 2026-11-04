@@ -3,6 +3,7 @@ using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace HelpDeskLive.Infrastructure.Data.Seeding;
 
@@ -10,6 +11,7 @@ public static class TestUserSeeder
 {
     public static async Task SeedAsync(
         HelpDeskDbContext dbContext,
+        IConfiguration configuration,
         CancellationToken cancellationToken = default)
     {
         var defaultDepartmentId = await dbContext.Departments.Select(d => (int?)d.Id).FirstOrDefaultAsync(cancellationToken);
@@ -25,6 +27,10 @@ public static class TestUserSeeder
             return;
         }
 
+        var testPassword = configuration["SeedTestUsers:Password"];
+        if (string.IsNullOrWhiteSpace(testPassword) || testPassword.Length < 12)
+            throw new InvalidOperationException("Set SeedTestUsers__Password (at least 12 characters) before enabling test-user seeding.");
+
         var passwordHasher = new PasswordHasher<User>();
 
         var users = new[]
@@ -33,20 +39,23 @@ public static class TestUserSeeder
                 passwordHasher,
                 "Test Admin",
                 "admin@helpdesklive.local",
-                UserRole.Admin),
+                UserRole.Admin,
+                testPassword),
 
             CreateUser(
                 passwordHasher,
                 "Test Agent",
                 "agent@helpdesklive.local",
                 UserRole.Agent,
-                defaultDepartmentId),
+                defaultDepartmentId,
+                testPassword),
 
             CreateUser(
                 passwordHasher,
                 "Test Customer",
                 "customer@helpdesklive.local",
-                UserRole.Customer)
+                UserRole.Customer,
+                testPassword)
         };
 
         await dbContext.Users.AddRangeAsync(users, cancellationToken);
@@ -58,10 +67,9 @@ public static class TestUserSeeder
         string name,
         string email,
         UserRole role,
-        int? departmentId = null)
+        int? departmentId,
+        string testPassword)
     {
-        const string testPassword = "HelpDeskTest!2026";
-
         var user = new User(
             name,
             email,
