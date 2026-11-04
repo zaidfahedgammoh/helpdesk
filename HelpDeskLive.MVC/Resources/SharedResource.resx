@@ -339,4 +339,5 @@
   <data name="BackToTickets" xml:space="preserve"><value>Back to tickets</value></data>
   <data name="DepartmentQueue" xml:space="preserve"><value>Department ticket queue</value></data>
   <data name="DepartmentQueueDescription" xml:space="preserve"><value>Waiting high-priority customers are shown first. Start a ticket when you are ready to handle it.</value></data>
+  <data name="ChatReady" xml:space="preserve"><value>You are connected to this ticket chat.</value></data>
 </root>
