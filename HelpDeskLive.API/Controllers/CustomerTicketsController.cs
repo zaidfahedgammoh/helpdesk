@@ -1,13 +1,12 @@
-using HelpDeskLive.Application.Tickets.GetMyTickets;
+using HelpDeskLive.API.Hubs;
 using HelpDeskLive.Application.Abstractions;
+using HelpDeskLive.Application.Tickets.Customer;
+using HelpDeskLive.Application.Tickets.GetMyTickets;
 using HelpDeskLive.Domain.Enums;
-using HelpDeskLive.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using HelpDeskLive.API.Hubs;
 
 namespace HelpDeskLive.API.Controllers;
 
@@ -17,14 +16,15 @@ namespace HelpDeskLive.API.Controllers;
 public sealed class CustomerTicketsController : ControllerBase
 {
     private readonly ISender _sender;
-    private readonly HelpDeskDbContext _db;
     private readonly ICurrentUser _currentUser;
     private readonly IHubContext<TicketChatHub> _chatHub;
 
-    public CustomerTicketsController(ISender sender, HelpDeskDbContext db, ICurrentUser currentUser, IHubContext<TicketChatHub> chatHub)
+    public CustomerTicketsController(
+        ISender sender,
+        ICurrentUser currentUser,
+        IHubContext<TicketChatHub> chatHub)
     {
         _sender = sender;
-        _db = db;
         _currentUser = currentUser;
         _chatHub = chatHub;
     }
@@ -41,18 +41,24 @@ public sealed class CustomerTicketsController : ControllerBase
     {
         if (_currentUser.UserId is not int customerId) return Unauthorized();
 
-        var ticket = await _db.Tickets.FirstOrDefaultAsync(
-            t => t.Id == ticketId && t.CustomerId == customerId, ct);
-        if (ticket is null) return NotFound();
+        try
+        {
+            await _sender.Send(new CloseCustomerTicketCommand(ticketId, customerId), ct);
 
-        if (ticket.ApprovalStatus != TicketApprovalStatus.Approved ||
-            ticket.Status is TicketStatus.Resolved or TicketStatus.Closed)
-            return Conflict(new { message = "Only an approved, unresolved ticket can be closed by its customer." });
+            await _chatHub.Clients.Group($"ticket-{ticketId}").SendAsync(
+                "TicketStatusChanged",
+                new { ticketId, status = TicketStatus.Closed.ToString() },
+                ct);
 
-        ticket.CloseByCustomer();
-        await _db.SaveChangesAsync(ct);
-        await _chatHub.Clients.Group($"ticket-{ticketId}").SendAsync(
-            "TicketStatusChanged", new { ticketId, status = TicketStatus.Closed.ToString() }, ct);
-        return NoContent();
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new ProblemDetails { Status = StatusCodes.Status409Conflict, Title = "Conflict", Detail = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new ProblemDetails { Status = StatusCodes.Status404NotFound, Title = "Not Found", Detail = ex.Message });
+        }
     }
 }

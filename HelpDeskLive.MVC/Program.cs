@@ -1,4 +1,5 @@
 using System.Globalization;
+using HelpDeskLive.MVC.Services;
 using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,9 +14,19 @@ builder.Services
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<TokenRefreshingHandler>();
+builder.Services.AddHttpClient(string.Empty)
+    .AddHttpMessageHandler<TokenRefreshingHandler>();
+
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.IdleTimeout = TimeSpan.FromHours(2);
+});
 
 var app = builder.Build();
 

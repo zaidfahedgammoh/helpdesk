@@ -1,9 +1,7 @@
-using HelpDeskLive.Application.Abstractions;
-using HelpDeskLive.Domain.Enums;
-using HelpDeskLive.Infrastructure.Data;
+using HelpDeskLive.Application.Chat;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HelpDeskLive.API.Controllers;
 
@@ -12,57 +10,47 @@ namespace HelpDeskLive.API.Controllers;
 [Authorize]
 public sealed class ChatController : ControllerBase
 {
-    private readonly HelpDeskDbContext _db;
-    private readonly ICurrentUser _currentUser;
+    private readonly ISender _sender;
 
-    public ChatController(HelpDeskDbContext db, ICurrentUser currentUser)
+    public ChatController(ISender sender)
     {
-        _db = db;
-        _currentUser = currentUser;
+        _sender = sender;
     }
 
     [HttpGet("{ticketId:int}/messages")]
     public async Task<IActionResult> Messages(int ticketId, CancellationToken ct)
     {
-        if (_currentUser.UserId is not int userId) return Unauthorized();
-
-        var ticket = await _db.Tickets.AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Id == ticketId, ct);
-        if (ticket is null) return NotFound();
-
-        var isCustomer = _currentUser.Role == UserRole.Customer.ToString() &&
-                         ticket.CustomerId == userId;
-        var isAssignedAgent = _currentUser.Role == UserRole.Agent.ToString() &&
-                              ticket.AssignedAgentId == userId;
-        if (!isCustomer && !isAssignedAgent) return Forbid();
-
-        if (ticket.ApprovalStatus != TicketApprovalStatus.Approved ||
-            ticket.Priority is not (TicketPriority.High or TicketPriority.Critical) ||
-            ticket.Status is not (TicketStatus.Open or TicketStatus.InProgress))
-            return Conflict(new { message = "Live chat is available only for approved High and Critical tickets that are waiting or in progress." });
-
-        var messages = await (
-            from message in _db.ChatMessages.AsNoTracking()
-            join user in _db.Users.AsNoTracking() on message.SenderId equals user.Id
-            where message.TicketId == ticketId
-            orderby message.SentAt
-            select new
-            {
-                id = message.Id,
-                ticketId = message.TicketId,
-                senderId = message.SenderId,
-                senderName = user.Name,
-                content = message.Content,
-                sentAt = message.SentAt
-            }).ToListAsync(ct);
-
-        return Ok(new
+        try
         {
-            ticketId,
-            status = ticket.Status.ToString(),
-            assignedAgentId = ticket.AssignedAgentId,
-            waitingForAgent = ticket.AssignedAgentId is null,
-            messages
-        });
+            var result = await _sender.Send(new GetChatMessagesQuery(ticketId), ct);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new ProblemDetails
+            {
+                Status = StatusCodes.Status409Conflict,
+                Title = "Conflict",
+                Detail = ex.Message
+            });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new ProblemDetails
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Not Found",
+                Detail = ex.Message
+            });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails
+            {
+                Status = StatusCodes.Status403Forbidden,
+                Title = "Forbidden",
+                Detail = ex.Message
+            });
+        }
     }
 }

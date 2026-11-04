@@ -24,6 +24,7 @@ public sealed class AgentTicketsController : Controller
         var response = await client.GetAsync("api/agent/tickets", ct);
         if (!response.IsSuccessStatusCode) return StatusCode((int)response.StatusCode);
         var rows = await response.Content.ReadFromJsonAsync<List<AgentTicketRow>>(cancellationToken: ct) ?? [];
+        ViewBag.ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty;
         return View(rows);
     }
 
@@ -45,17 +46,42 @@ public sealed class AgentTicketsController : Controller
         var response = await client.GetAsync($"api/chat/{id}/messages", ct);
         if (!response.IsSuccessStatusCode)
         {
-            TempData["AgentTicketError"] = _localizer["ChatLoadError"].Value;
+            var errorMessage = _localizer["ChatLoadError"].Value;
+            try
+            {
+                using var doc = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: ct);
+                if (doc?.RootElement.TryGetProperty("detail", out var detailProp) == true &&
+                    !string.IsNullOrWhiteSpace(detailProp.GetString()))
+                {
+                    errorMessage = detailProp.GetString()!;
+                }
+            }
+            catch { }
+
+            TempData["AgentTicketError"] = errorMessage;
             return RedirectToAction(nameof(Index));
         }
+
+        var jsonDoc = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: ct);
+        var statusStr = jsonDoc?.RootElement.TryGetProperty("status", out var s) == true ? s.GetString() : null;
+        var status = statusStr switch
+        {
+            "Open" => 1,
+            "InProgress" => 2,
+            "Resolved" => 3,
+            "Closed" => 4,
+            "Escalated" => 5,
+            _ => 2
+        };
 
         return View("~/Views/Shared/TicketChat.cshtml", new ChatPageViewModel
         {
             TicketId = id,
             CurrentUserId = ReadUserId(token),
-            AccessToken = token,
+            AccessToken = string.Empty,
             ApiBaseUrl = _configuration["ApiSettings:BaseUrl"] ?? string.Empty,
-            IsAgent = true
+            IsAgent = true,
+            TicketStatus = status
         });
     }
 
@@ -64,15 +90,38 @@ public sealed class AgentTicketsController : Controller
         var client = Client();
         if (client is null) return RedirectToAction("Login", "Account");
         var response = await client.PostAsync($"api/agent/tickets/{id}/{action}", null, ct);
-        if (response.IsSuccessStatusCode && action == "start")
+        if (response.IsSuccessStatusCode)
         {
-            using var result = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: ct);
-            if (result?.RootElement.TryGetProperty("isLiveChat", out var isLiveChat) == true && isLiveChat.GetBoolean())
-                return RedirectToAction(nameof(Chat), new { id });
+            if (action == "start")
+            {
+                using var result = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: ct);
+                if (result?.RootElement.TryGetProperty("isLiveChat", out var isLiveChat) == true && isLiveChat.GetBoolean())
+                    return RedirectToAction(nameof(Chat), new { id });
+            }
+
+            TempData["AgentTicketSuccess"] = _localizer["TicketUpdatedShort"].Value;
+            return RedirectToAction(nameof(Index));
         }
 
-        TempData[response.IsSuccessStatusCode ? "AgentTicketSuccess" : "AgentTicketError"] =
-            response.IsSuccessStatusCode ? _localizer["TicketUpdatedShort"].Value : _localizer["TicketCouldNotBeUpdated"].Value;
+        var errorMessage = _localizer["TicketCouldNotBeUpdated"].Value;
+        try
+        {
+            using var doc = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: ct);
+            if (doc?.RootElement.TryGetProperty("detail", out var detailProp) == true &&
+                !string.IsNullOrWhiteSpace(detailProp.GetString()))
+            {
+                errorMessage = detailProp.GetString()!;
+            }
+        }
+        catch { }
+
+        TempData["AgentTicketError"] = errorMessage;
+
+        if (Request.Headers.Referer.ToString().Contains("/Chat/", StringComparison.OrdinalIgnoreCase))
+        {
+            return RedirectToAction(nameof(Chat), new { id });
+        }
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -98,8 +147,8 @@ public sealed class AgentTicketsController : Controller
 public sealed class AgentTicketRow
 {
     public int Id { get; init; }
-    public string Title { get; init; } = "";
-    public string Description { get; init; } = "";
+    public string Title { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
     public int Status { get; init; }
     public int? Priority { get; init; }
     public int? DepartmentId { get; init; }

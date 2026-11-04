@@ -1,6 +1,7 @@
-﻿
 using System.Reflection;
 using FluentValidation;
+using HelpDeskLive.Application.Common.Behaviors;
+using HelpDeskLive.Application.Common.Mappings;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,9 +15,18 @@ public static class DependencyInjection
         var assembly = Assembly.GetExecutingAssembly();
 
         services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(assembly));
+        {
+            cfg.RegisterServicesFromAssembly(assembly);
+            cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
 
         services.AddValidatorsFromAssembly(assembly);
+
+        services.AddAutoMapper(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
 
         return services;
     }

@@ -1,4 +1,3 @@
-﻿
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -23,6 +22,35 @@ public class AccountController : Controller
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
         _localizer = localizer;
+    }
+
+    [HttpGet]
+    [Route("/account/chat-token")]
+    public async Task<IActionResult> GetChatToken(CancellationToken cancellationToken)
+    {
+        var token = HttpContext.Session.GetString("AccessToken");
+        if (string.IsNullOrWhiteSpace(token))
+            return Unauthorized(new { message = "You must be signed in to access chat." });
+
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+
+            if (jwt.ValidTo <= DateTime.UtcNow.AddSeconds(30))
+            {
+                var refreshed = await TryRefreshTokenAsync(cancellationToken);
+                if (!refreshed)
+                    return Unauthorized(new { message = "Session expired. Please sign in again." });
+                token = HttpContext.Session.GetString("AccessToken")!;
+            }
+
+            return Ok(new { token });
+        }
+        catch
+        {
+            return Unauthorized(new { message = "Invalid token session." });
+        }
     }
 
     [HttpPost]
@@ -74,7 +102,6 @@ public class AccountController : Controller
             }
             catch (HttpRequestException)
             {
-                // Local session is still cleared; the refresh cookie expires naturally if the API is unavailable.
             }
         }
 
@@ -140,7 +167,6 @@ public class AccountController : Controller
                 return View();
             }
 
-            // Read the user's role from the JWT
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(accessToken);
 
@@ -157,19 +183,15 @@ public class AccountController : Controller
                 return View();
             }
 
-            // Forward the API's HttpOnly refresh cookie to the browser. The API remains
-            // the only component that can read or rotate the refresh token.
             if (response.Headers.TryGetValues("Set-Cookie", out var setCookies))
             {
                 foreach (var setCookie in setCookies.Where(value => value.StartsWith("helpdesk_refresh=", StringComparison.Ordinal)))
                     Response.Headers.Append("Set-Cookie", setCookie);
             }
 
-            // Store the short-lived access token server-side in the MVC session.
             HttpContext.Session.SetString("AccessToken", accessToken);
             HttpContext.Session.SetString("UserRole", role);
 
-            // Redirect according to the user's role
             return role switch
             {
                 "Admin" => RedirectToAction("Index", "Admin"),
@@ -192,6 +214,48 @@ public class AccountController : Controller
         {
             ViewBag.Error = _localizer["ApiReturnedInvalidToken"].Value;
             return View();
+        }
+    }
+
+    private async Task<bool> TryRefreshTokenAsync(CancellationToken cancellationToken)
+    {
+        var baseUrl = _configuration["ApiSettings:BaseUrl"];
+        if (string.IsNullOrWhiteSpace(baseUrl) ||
+            !Request.Cookies.TryGetValue("helpdesk_refresh", out var refreshToken) ||
+            string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return false;
+        }
+
+        try
+        {
+            using var client = _httpClientFactory.CreateClient();
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl.TrimEnd('/')}/api/auth/refresh");
+            request.Headers.Add("Cookie", $"helpdesk_refresh={refreshToken}");
+
+            var response = await client.SendAsync(request, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            using var doc = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: cancellationToken);
+            var newAccessToken = doc?.RootElement.GetProperty("accessToken").GetString();
+            if (string.IsNullOrWhiteSpace(newAccessToken))
+                return false;
+
+            if (response.Headers.TryGetValues("Set-Cookie", out var setCookies))
+            {
+                foreach (var setCookie in setCookies.Where(value => value.StartsWith("helpdesk_refresh=", StringComparison.Ordinal)))
+                {
+                    Response.Headers.Append("Set-Cookie", setCookie);
+                }
+            }
+
+            HttpContext.Session.SetString("AccessToken", newAccessToken);
+            return true;
+        }
+        catch
+        {
+            return false;
         }
     }
 }

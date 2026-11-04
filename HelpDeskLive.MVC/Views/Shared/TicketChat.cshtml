@@ -6,7 +6,6 @@
 }
 <div class="container py-4 ticket-chat" id="ticket-chat"
      data-ticket-id="@Model.TicketId"
-     data-token="@Model.AccessToken"
      data-api-base-url="@Model.ApiBaseUrl.TrimEnd('/')"
      data-is-agent="@Model.IsAgent.ToString().ToLowerInvariant()"
      data-current-user-id="@Model.CurrentUserId"
@@ -25,14 +24,24 @@
     <div class="d-flex flex-wrap gap-2 mb-3">
         @if (Model.IsAgent)
         {
-            <form asp-controller="AgentTickets" asp-action="Close" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
-                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
-                <button type="submit" class="btn btn-outline-danger">@Localizer["CloseTicket"]</button>
-            </form>
-            <form asp-controller="AgentTickets" asp-action="Escalate" method="post" onsubmit="return confirm('@Localizer["ConfirmEscalateTicket"]')">
-                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
-                <button type="submit" class="btn btn-warning">@Localizer["EscalateAndLeaveChat"]</button>
-            </form>
+            @if (Model.TicketStatus != 3)
+            {
+                <form asp-controller="AgentTickets" asp-action="Resolve" method="post" onsubmit="return confirm('@Localizer["ConfirmResolveTicket"]')">
+                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                    <button type="submit" class="btn btn-success">@Localizer["MarkResolved"]</button>
+                </form>
+                <form asp-controller="AgentTickets" asp-action="Escalate" method="post" onsubmit="return confirm('@Localizer["ConfirmEscalateTicket"]')">
+                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                    <button type="submit" class="btn btn-warning">@Localizer["EscalateAndLeaveChat"]</button>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="AgentTickets" asp-action="Close" method="post" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
+                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.TicketId" />
+                    <button type="submit" class="btn btn-outline-danger">@Localizer["CloseTicket"]</button>
+                </form>
+            }
         }
         else
         {

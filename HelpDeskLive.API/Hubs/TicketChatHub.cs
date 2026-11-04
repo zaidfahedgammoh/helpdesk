@@ -1,24 +1,31 @@
 using System.Security.Claims;
+using HelpDeskLive.Application.Abstractions;
+using HelpDeskLive.Application.Chat;
+using HelpDeskLive.Application.Departments;
 using HelpDeskLive.Domain.Entities;
 using HelpDeskLive.Domain.Enums;
-using HelpDeskLive.Infrastructure.Data;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 
 namespace HelpDeskLive.API.Hubs;
 
 [Authorize]
 public sealed class TicketChatHub : Hub
 {
-    private readonly HelpDeskDbContext _db;
+    private readonly ISender _sender;
+    private readonly ITicketRepository _ticketRepository;
 
-    public TicketChatHub(HelpDeskDbContext db) => _db = db;
+    public TicketChatHub(ISender sender, ITicketRepository ticketRepository)
+    {
+        _sender = sender;
+        _ticketRepository = ticketRepository;
+    }
 
     public async Task JoinTicket(int ticketId)
     {
         var userId = GetUserId();
-        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
+        var ticket = await _ticketRepository.GetByIdAsync(ticketId);
         if (ticket is null || !CanAccess(ticket, userId) || !IsChatTicket(ticket))
             throw new HubException("You are not allowed to join this ticket chat.");
 
@@ -36,10 +43,38 @@ public sealed class TicketChatHub : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupName(ticketId));
     }
 
+    [Authorize(Roles = "Agent")]
+    public async Task JoinDepartment(int departmentId)
+    {
+        var agentId = GetUserId();
+        var agentDeptId = await _sender.Send(new GetAgentDepartmentQuery(agentId));
+        if (agentDeptId is null || agentDeptId.Value != departmentId)
+            throw new HubException("You do not belong to this department.");
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, DepartmentGroupName(departmentId));
+    }
+
+    [Authorize(Roles = "Agent")]
+    public async Task JoinMyDepartment()
+    {
+        var agentId = GetUserId();
+        var agentDeptId = await _sender.Send(new GetAgentDepartmentQuery(agentId));
+        if (agentDeptId is not int departmentId)
+            throw new HubException("You do not have an assigned department.");
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, DepartmentGroupName(departmentId));
+    }
+
+    [Authorize(Roles = "Agent")]
+    public async Task LeaveDepartment(int departmentId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, DepartmentGroupName(departmentId));
+    }
+
     public async Task UserTyping(int ticketId)
     {
         var userId = GetUserId();
-        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
+        var ticket = await _ticketRepository.GetByIdAsync(ticketId);
         if (ticket is null || !CanAccess(ticket, userId) || !IsChatTicket(ticket))
             throw new HubException("You are not allowed to use this ticket chat.");
 
@@ -49,7 +84,7 @@ public sealed class TicketChatHub : Hub
     public async Task StopTyping(int ticketId)
     {
         var userId = GetUserId();
-        var ticket = await _db.Tickets.AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
+        var ticket = await _ticketRepository.GetByIdAsync(ticketId);
         if (ticket is null || !CanAccess(ticket, userId) || !IsChatTicket(ticket))
             throw new HubException("You are not allowed to use this ticket chat.");
 
@@ -62,26 +97,15 @@ public sealed class TicketChatHub : Hub
         if (string.IsNullOrWhiteSpace(content) || content.Trim().Length > 5000)
             throw new HubException("Messages must contain between 1 and 5000 characters.");
 
-        var ticket = await _db.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
-        if (ticket is null || !CanAccess(ticket, userId) || !IsChatTicket(ticket))
-            throw new HubException("You are not allowed to send messages in this chat.");
-
-        var sender = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
-        if (sender is null) throw new HubException("Your account could not be found.");
-
-        var message = new ChatMessage(ticketId, userId, content);
-        _db.ChatMessages.Add(message);
-        await _db.SaveChangesAsync();
-
-        await Clients.Group(GroupName(ticketId)).SendAsync("ReceiveMessage", new
+        try
         {
-            id = message.Id,
-            ticketId,
-            senderId = userId,
-            senderName = sender.Name,
-            content = message.Content,
-            sentAt = message.SentAt
-        });
+            var messageDto = await _sender.Send(new SendChatMessageCommand(ticketId, userId, content));
+            await Clients.Group(GroupName(ticketId)).SendAsync("ReceiveMessage", messageDto);
+        }
+        catch (Exception ex) when (ex is not HubException)
+        {
+            throw new HubException(ex.Message);
+        }
     }
 
     private int GetUserId()
@@ -106,4 +130,5 @@ public sealed class TicketChatHub : Hub
         ticket.Status is TicketStatus.Open or TicketStatus.InProgress;
 
     private static string GroupName(int ticketId) => $"ticket-{ticketId}";
+    private static string DepartmentGroupName(int departmentId) => $"department-{departmentId}";
 }

@@ -2,7 +2,6 @@
     const root = document.getElementById("ticket-chat");
     if (!root) return;
     const ticketId = Number(root.dataset.ticketId);
-    const token = root.dataset.token;
     const apiBaseUrl = root.dataset.apiBaseUrl;
     const isAgent = root.dataset.isAgent === "true";
     const currentUserId = Number(root.dataset.currentUserId);
@@ -22,6 +21,18 @@
         sendError: root.dataset.sendError,
         you: root.dataset.you
     };
+
+    async function getChatToken() {
+        const response = await fetch("/account/chat-token", {
+            method: "GET",
+            headers: { "Accept": "application/json" }
+        });
+        if (!response.ok) {
+            throw new Error("Unable to obtain authenticated chat session token.");
+        }
+        const data = await response.json();
+        return data.token;
+    }
 
     function renderMessage(message) {
         if (seen.has(message.id)) return;
@@ -50,6 +61,7 @@
     }
 
     async function loadHistory() {
+        const token = await getChatToken();
         const response = await fetch(apiBaseUrl + "/api/chat/" + ticketId + "/messages", {
             headers: { Authorization: "Bearer " + token }
         });
@@ -62,7 +74,9 @@
     async function start() {
         if (!window.signalR) throw new Error(text.loadError);
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl(apiBaseUrl + "/hubs/chat", { accessTokenFactory: () => token })
+            .withUrl(apiBaseUrl + "/hubs/chat", {
+                accessTokenFactory: async () => await getChatToken()
+            })
             .withAutomaticReconnect()
             .build();
 
@@ -80,6 +94,23 @@
                 input.disabled = true;
                 const sendButton = document.getElementById("chat-send");
                 if (sendButton) sendButton.disabled = true;
+
+                if (!document.getElementById("status-notice-banner")) {
+                    const banner = document.createElement("div");
+                    banner.id = "status-notice-banner";
+                    banner.className = "alert alert-success d-flex align-items-center justify-content-between mt-3 mb-0 shadow-sm";
+                    banner.innerHTML = `
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                            <div>
+                                <strong>${update.status === "Resolved" ? "This ticket has been marked as resolved by the agent." : "This ticket has been closed."}</strong>
+                                <div class="small text-muted">The live chat session has concluded.</div>
+                            </div>
+                        </div>
+                        <a href="/Customer/Index" class="btn btn-sm btn-outline-success ms-3 text-nowrap">Back to Tickets</a>`;
+                    const cardBody = document.querySelector(".card-body");
+                    if (cardBody) cardBody.appendChild(banner);
+                }
             }
         });
         connection.on("ChatParticipantJoined", participant => {
@@ -113,7 +144,8 @@
         });
     }
 
-    start().catch(() => {
+    start().catch(err => {
+        console.error("Ticket chat connection error:", err);
         status.textContent = text.waiting;
         error.textContent = text.loadError;
     });

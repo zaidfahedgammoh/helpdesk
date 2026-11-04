@@ -16,6 +16,9 @@ public class Ticket
     public DateTime CreatedAt { get; private set; }
     public DateTime? ClosedAt { get; private set; }
 
+    private readonly List<TicketEscalation> _escalations = new();
+    public IReadOnlyCollection<TicketEscalation> Escalations => _escalations.AsReadOnly();
+
     private Ticket() { }
 
     public Ticket(string title, string description, TicketPriority priority, int departmentId, int customerId)
@@ -76,7 +79,6 @@ public class Ticket
             (TicketStatus.Open, TicketStatus.InProgress) => true,
             (TicketStatus.Escalated, TicketStatus.InProgress) => true,
             (TicketStatus.InProgress, TicketStatus.Resolved) => true,
-            (TicketStatus.InProgress, TicketStatus.Closed) => true,
             (TicketStatus.Resolved, TicketStatus.Closed) => true,
             _ => false
         };
@@ -85,12 +87,23 @@ public class Ticket
         if (newStatus == TicketStatus.Closed) ClosedAt = DateTime.UtcNow;
     }
 
-    public void EscalateToQueue()
+    public TicketEscalation EscalateToQueue(string? reason = null)
     {
         if (ApprovalStatus != TicketApprovalStatus.Approved || Status != TicketStatus.InProgress)
             throw new InvalidOperationException("Only an active approved ticket can be escalated.");
+        var previousAgentId = AssignedAgentId ?? 0;
+        if (previousAgentId <= 0)
+            throw new InvalidOperationException("An agent must be assigned to escalate this ticket.");
+
+        var escalationReason = string.IsNullOrWhiteSpace(reason)
+            ? "Ticket escalated by the assigned agent and returned to the department escalation queue."
+            : reason.Trim();
+
         Status = TicketStatus.Escalated;
         AssignedAgentId = null;
+        var escalation = new TicketEscalation(Id, previousAgentId, escalationReason);
+        _escalations.Add(escalation);
+        return escalation;
     }
 
     public void CloseByCustomer()
@@ -112,6 +125,13 @@ public class Ticket
             throw new InvalidOperationException("Only open or escalated tickets can be assigned.");
         if (AssignedAgentId is not null && AssignedAgentId != agentId)
             throw new InvalidOperationException("This ticket is already assigned to another agent.");
+
+        if (Status == TicketStatus.Escalated)
+        {
+            var pendingEscalation = _escalations.LastOrDefault(e => e.NewAgentId == null);
+            pendingEscalation?.AssignNewAgent(agentId);
+        }
+
         AssignedAgentId = agentId;
     }
 

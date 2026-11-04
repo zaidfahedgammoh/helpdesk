@@ -1,4 +1,3 @@
-﻿
 using HelpDeskLive.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,4 +29,5 @@ public class HelpDeskDbContext : DbContext
     public DbSet<IssueType> IssueTypes => Set<IssueType>();
 
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<TicketEscalation> TicketEscalations => Set<TicketEscalation>();
 }

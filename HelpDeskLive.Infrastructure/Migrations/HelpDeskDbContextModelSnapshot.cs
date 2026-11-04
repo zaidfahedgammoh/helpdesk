@@ -150,6 +150,9 @@ namespace HelpDeskLive.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ApprovalStatus")
+                        .HasColumnType("int");
+
                     b.Property<int?>("AssignedAgentId")
                         .HasColumnType("int");
 
@@ -169,9 +172,6 @@ namespace HelpDeskLive.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ApprovalStatus")
-                        .HasColumnType("int");
 
                     b.Property<int?>("Priority")
                         .HasColumnType("int");
@@ -197,6 +197,45 @@ namespace HelpDeskLive.Infrastructure.Migrations
                     b.ToTable("Tickets", (string)null);
                 });
 
+            modelBuilder.Entity("HelpDeskLive.Domain.Entities.TicketEscalation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EscalatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("NewAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PreviousAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ReassignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewAgentId");
+
+                    b.HasIndex("PreviousAgentId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketEscalations", (string)null);
+                });
+
             modelBuilder.Entity("HelpDeskLive.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -204,6 +243,9 @@ namespace HelpDeskLive.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -219,9 +261,6 @@ namespace HelpDeskLive.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
 
                     b.Property<int>("PreferredLanguage")
                         .HasColumnType("int");
@@ -291,12 +330,37 @@ namespace HelpDeskLive.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("HelpDeskLive.Domain.Entities.TicketEscalation", b =>
+                {
+                    b.HasOne("HelpDeskLive.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("NewAgentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("HelpDeskLive.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("PreviousAgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HelpDeskLive.Domain.Entities.Ticket", null)
+                        .WithMany("Escalations")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HelpDeskLive.Domain.Entities.User", b =>
                 {
                     b.HasOne("HelpDeskLive.Domain.Entities.Department", null)
                         .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("HelpDeskLive.Domain.Entities.Ticket", b =>
+                {
+                    b.Navigation("Escalations");
                 });
 #pragma warning restore 612, 618
         }

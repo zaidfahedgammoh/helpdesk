@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Net.Http.Json;
+using System.Text.Json;
 using HelpDeskLive.MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -115,8 +116,26 @@ public sealed class CustomerController : Controller
         var client = CreateApiClient(token);
         if (client is null) return StatusCode(500, _localizer["ApiBaseUrlMissing"].Value);
         var response = await client.PostAsync($"api/customer/tickets/{id}/close", null, cancellationToken);
-        TempData[response.IsSuccessStatusCode ? "TicketSuccess" : "TicketError"] =
-            response.IsSuccessStatusCode ? _localizer["TicketClosedByCustomer"].Value : _localizer["TicketCouldNotBeUpdated"].Value;
+        if (response.IsSuccessStatusCode)
+        {
+            TempData["TicketSuccess"] = _localizer["TicketClosedByCustomer"].Value;
+            return RedirectToAction(nameof(Index));
+        }
+
+        var errorMessage = _localizer["TicketCouldNotBeUpdated"].Value;
+        try
+        {
+            using var doc = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: cancellationToken);
+            if (doc?.RootElement.TryGetProperty("detail", out var detailProp) == true &&
+                !string.IsNullOrWhiteSpace(detailProp.GetString()))
+            {
+                errorMessage = detailProp.GetString()!;
+            }
+        }
+        catch { }
+
+        TempData["TicketError"] = errorMessage;
+
         return RedirectToAction(nameof(Index));
     }
 
@@ -132,7 +151,19 @@ public sealed class CustomerController : Controller
         var response = await client.GetAsync($"api/chat/{id}/messages", cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
-            TempData["TicketError"] = _localizer["ChatLoadError"].Value;
+            var errorMessage = _localizer["ChatLoadError"].Value;
+            try
+            {
+                using var doc = await response.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: cancellationToken);
+                if (doc?.RootElement.TryGetProperty("detail", out var detailProp) == true &&
+                    !string.IsNullOrWhiteSpace(detailProp.GetString()))
+                {
+                    errorMessage = detailProp.GetString()!;
+                }
+            }
+            catch { }
+
+            TempData["TicketError"] = errorMessage;
             return RedirectToAction(nameof(Index));
         }
 

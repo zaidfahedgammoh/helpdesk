@@ -104,6 +104,7 @@
                                 2 => Localizer["InProgress"].Value,
                                 3 => Localizer["Resolved"].Value,
                                 4 => Localizer["Closed"].Value,
+                                5 => Localizer["Escalated"].Value,
                                 _ => ticket.Status.ToString()
                                 }
                             };
@@ -118,11 +119,20 @@
                             <tr>
                                 <td class="text-muted">#@ticket.Id</td>
                                 <td class="fw-medium">@ticket.Title</td>
-                                <td><span class="badge rounded-pill text-bg-light">@statusLabel</span></td>
+                                <td>
+                                    @if (ticket.Status == 5 && ticket.ApprovalStatus == 2)
+                                    {
+                                        <span class="badge rounded-pill text-bg-warning">@statusLabel</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-light">@statusLabel</span>
+                                    }
+                                </td>
                                 <td>@priorityLabel</td>
                                 <td class="text-muted">@ticket.CreatedAt.ToLocalTime().ToString("g")</td>
                                 <td>
-                                    @if (ticket.ApprovalStatus == 2 && (ticket.Priority is 3 or 4) && (ticket.Status is not (3 or 4)))
+                                    @if (ticket.ApprovalStatus == 2 && (ticket.Priority is 3 or 4) && (ticket.Status is 1 or 2))
                                     {
                                         <a asp-controller="Customer" asp-action="Chat" asp-route-id="@ticket.Id" class="btn btn-sm btn-primary">@Localizer["JoinChat"]</a>
                                         @if (ticket.AssignedAgentId is null)
@@ -130,7 +140,13 @@
                                             <div class="small text-muted mt-1">@Localizer["WaitingForAgent"]</div>
                                         }
                                     }
-                                    @if (ticket.ApprovalStatus == 2 && ticket.Status != 4)
+                                    else if (ticket.Status == 5)
+                                    {
+                                        <div class="small text-warning fw-semibold mb-1">
+                                            <i class="bi bi-arrow-up-right-circle me-1"></i>@Localizer["TicketEscalatedNotice"]
+                                        </div>
+                                    }
+                                    @if (ticket.ApprovalStatus == 2 && ticket.Status is not (3 or 4))
                                     {
                                         <form asp-controller="Customer" asp-action="CloseTicket" method="post" class="mt-1" onsubmit="return confirm('@Localizer["ConfirmCloseTicket"]')">
                                             @Html.AntiForgeryToken()

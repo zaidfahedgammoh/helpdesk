@@ -1,6 +1,7 @@
 using System.Text;
 using HelpDeskLive.API.Authentication;
 using HelpDeskLive.API.Hubs;
+using HelpDeskLive.API.Middleware;
 using HelpDeskLive.API.Services;
 using HelpDeskLive.Application;
 using HelpDeskLive.Application.Abstractions;
@@ -14,7 +15,12 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddSignalR();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+builder.Services.AddSignalR()
+    .AddMessagePackProtocol();
+
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 if (allowedOrigins.Length == 0)
@@ -75,8 +81,12 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+app.UseExceptionHandler();
+
+var applyMigrations = app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup", app.Environment.IsDevelopment());
+if (applyMigrations)
 {
+    using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<HelpDeskDbContext>();
     await dbContext.Database.MigrateAsync();
     await ReferenceDataSeeder.SeedAsync(dbContext);
@@ -98,3 +108,8 @@ app.MapControllers();
 app.MapHub<TicketChatHub>("/hubs/chat").RequireAuthorization();
 
 app.Run();
+
+namespace HelpDeskLive.API
+{
+    public class ApiMarker { }
+}
