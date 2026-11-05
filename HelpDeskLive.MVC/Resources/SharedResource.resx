@@ -945,4 +945,19 @@
   <data name="AgentPerformance" xml:space="preserve">
     <value>Agent Performance &amp; Workload</value>
   </data>
+  <data name="AgentName" xml:space="preserve">
+    <value>Agent Name</value>
+  </data>
+  <data name="ActiveTickets" xml:space="preserve">
+    <value>Active Tickets</value>
+  </data>
+  <data name="TotalHandled" xml:space="preserve">
+    <value>Total Handled</value>
+  </data>
+  <data name="LiveConnected" xml:space="preserve">
+    <value>Live Connected</value>
+  </data>
+  <data name="LiveUpdates" xml:space="preserve">
+    <value>Live Updates</value>
+  </data>
 </root>

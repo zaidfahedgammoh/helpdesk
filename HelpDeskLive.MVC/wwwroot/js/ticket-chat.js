@@ -53,8 +53,31 @@
         return data.token;
     }
 
-    function renderMessage(message) {
-        if (!message || seen.has(message.id)) return;
+    function normalizeMessage(raw) {
+        if (!raw) return null;
+        if (Array.isArray(raw)) {
+            return {
+                id: raw[0],
+                ticketId: raw[1],
+                senderId: raw[2],
+                senderName: raw[3],
+                content: raw[4],
+                sentAt: raw[5]
+            };
+        }
+        return {
+            id: raw.id ?? raw.Id ?? raw[0] ?? raw["0"],
+            ticketId: raw.ticketId ?? raw.TicketId ?? raw[1] ?? raw["1"],
+            senderId: raw.senderId ?? raw.SenderId ?? raw[2] ?? raw["2"],
+            senderName: raw.senderName ?? raw.SenderName ?? raw[3] ?? raw["3"],
+            content: raw.content ?? raw.Content ?? raw[4] ?? raw["4"],
+            sentAt: raw.sentAt ?? raw.SentAt ?? raw[5] ?? raw["5"]
+        };
+    }
+
+    function renderMessage(rawMessage) {
+        const message = normalizeMessage(rawMessage);
+        if (!message || !message.id || seen.has(message.id)) return;
         seen.add(message.id);
 
         if (empty && empty.parentNode) {
@@ -254,7 +277,10 @@
             if (sendButton) sendButton.disabled = true;
 
             try {
-                await connection.invoke("SendMessage", ticketId, content);
+                const sentMsg = await connection.invoke("SendMessage", ticketId, content);
+                if (sentMsg) {
+                    renderMessage(sentMsg);
+                }
                 input.value = "";
                 error.textContent = "";
             } catch (err) {

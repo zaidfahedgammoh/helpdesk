@@ -74,8 +74,9 @@
             await connection.invoke("JoinMyDepartment");
 
             if (liveBadge) {
+                const liveConnectedText = liveBadge.dataset.liveConnected || "Live Connected";
                 liveBadge.className = "badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small";
-                liveBadge.innerHTML = '<i class="bi bi-broadcast me-1"></i>Live Connected';
+                liveBadge.innerHTML = `<i class="bi bi-broadcast me-1"></i>${liveConnectedText}`;
             }
         } catch {
             window.setTimeout(() => window.location.reload(), 15000);

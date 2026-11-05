@@ -945,4 +945,19 @@
   <data name="AgentPerformance" xml:space="preserve">
     <value>أداء وعبء الموظفين</value>
   </data>
+  <data name="AgentName" xml:space="preserve">
+    <value>اسم الموظف</value>
+  </data>
+  <data name="ActiveTickets" xml:space="preserve">
+    <value>التذاكر النشطة</value>
+  </data>
+  <data name="TotalHandled" xml:space="preserve">
+    <value>إجمالي المنجز</value>
+  </data>
+  <data name="LiveConnected" xml:space="preserve">
+    <value>متصل مباشر</value>
+  </data>
+  <data name="LiveUpdates" xml:space="preserve">
+    <value>تحديثات مباشرة</value>
+  </data>
 </root>

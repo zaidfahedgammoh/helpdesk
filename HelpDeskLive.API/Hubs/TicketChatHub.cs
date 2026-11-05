@@ -109,7 +109,7 @@ public sealed class TicketChatHub : Hub
         await Clients.OthersInGroup(GroupName(ticketId)).SendAsync("StopTyping", new { userId });
     }
 
-    public async Task SendMessage(int ticketId, string content)
+    public async Task<ChatMessageDto> SendMessage(int ticketId, string content)
     {
         var userId = GetUserId();
         if (string.IsNullOrWhiteSpace(content) || content.Trim().Length > 5000)
@@ -119,6 +119,7 @@ public sealed class TicketChatHub : Hub
         {
             var messageDto = await _sender.Send(new SendChatMessageCommand(ticketId, userId, content));
             await Clients.Group(GroupName(ticketId)).SendAsync("ReceiveMessage", messageDto);
+            return messageDto;
         }
         catch (InvalidOperationException ex)
         {
