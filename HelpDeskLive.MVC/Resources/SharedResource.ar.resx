@@ -960,4 +960,25 @@
   <data name="LiveUpdates" xml:space="preserve">
     <value>تحديثات مباشرة</value>
   </data>
+  <data name="BasedOnResolvedTickets" xml:space="preserve">
+    <value>بناءً على {0} تذاكر محلولة</value>
+  </data>
+  <data name="BasedOnClosedTickets" xml:space="preserve">
+    <value>بناءً على {0} تذاكر مغلقة</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>ساعة</value>
+  </data>
+  <data name="TotalEscalations" xml:space="preserve">
+    <value>إجمالي التصعيدات</value>
+  </data>
+  <data name="CurrentlyEscalatedWaiting" xml:space="preserve">
+    <value>{0} في قائمة الانتظار</value>
+  </data>
+  <data name="ReassignedEscalations" xml:space="preserve">
+    <value>التصعيدات المُعاد تعيينها</value>
+  </data>
+  <data name="AvgHrsToResolve" xml:space="preserve">
+    <value>متوسط {0} ساعة للحل</value>
+  </data>
 </root>

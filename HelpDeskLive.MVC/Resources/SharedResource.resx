@@ -960,4 +960,25 @@
   <data name="LiveUpdates" xml:space="preserve">
     <value>Live Updates</value>
   </data>
+  <data name="BasedOnResolvedTickets" xml:space="preserve">
+    <value>Based on {0} resolved tickets</value>
+  </data>
+  <data name="BasedOnClosedTickets" xml:space="preserve">
+    <value>Based on {0} closed tickets</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>hrs</value>
+  </data>
+  <data name="TotalEscalations" xml:space="preserve">
+    <value>Total Escalations</value>
+  </data>
+  <data name="CurrentlyEscalatedWaiting" xml:space="preserve">
+    <value>{0} waiting in queue</value>
+  </data>
+  <data name="ReassignedEscalations" xml:space="preserve">
+    <value>Reassigned Escalations</value>
+  </data>
+  <data name="AvgHrsToResolve" xml:space="preserve">
+    <value>Avg {0} hrs to resolve</value>
+  </data>
 </root>

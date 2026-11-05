@@ -21,11 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IChatRepository, ChatRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IAdminReportingService, AdminReportingService>();
-        services.AddHttpClient<ITicketNotificationService, TicketNotificationService>()
-            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            });
+        services.AddScoped<ITicketNotificationService, TicketNotificationService>();
 
         if (configuration.GetValue<bool>("Database:UseInMemoryDatabase"))
         {

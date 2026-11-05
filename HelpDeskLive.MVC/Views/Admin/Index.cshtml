@@ -1,4 +1,4 @@
-﻿@model HelpDeskLive.MVC.Models.AdminDashboardViewModel
+@model HelpDeskLive.MVC.Models.AdminDashboardViewModel
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<SharedResource> Localizer
 
@@ -50,36 +50,36 @@
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 bg-light">
                 <div class="card-body">
-                    <div class="text-muted small">Average Resolution Time</div>
-                    <div class="fs-2 fw-bold text-success">@Model.PerformanceStats.AverageResolutionTimeHours <span class="fs-6 fw-normal text-muted">hrs</span></div>
-                    <div class="small text-muted">Based on @Model.PerformanceStats.TotalResolvedSample resolved tickets</div>
+                    <div class="text-muted small">@Localizer["AverageResolutionTime"]</div>
+                    <div class="fs-2 fw-bold text-success">@Model.PerformanceStats.AverageResolutionTimeHours <span class="fs-6 fw-normal text-muted">@Localizer["Hours"]</span></div>
+                    <div class="small text-muted">@string.Format(Localizer["BasedOnResolvedTickets"], Model.PerformanceStats.TotalResolvedSample)</div>
                 </div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 bg-light">
                 <div class="card-body">
-                    <div class="text-muted small">Average Closing Time</div>
-                    <div class="fs-2 fw-bold text-secondary">@Model.PerformanceStats.AverageClosingTimeHours <span class="fs-6 fw-normal text-muted">hrs</span></div>
-                    <div class="small text-muted">Based on @Model.PerformanceStats.TotalClosedSample closed tickets</div>
+                    <div class="text-muted small">@Localizer["AverageClosingTime"]</div>
+                    <div class="fs-2 fw-bold text-secondary">@Model.PerformanceStats.AverageClosingTimeHours <span class="fs-6 fw-normal text-muted">@Localizer["Hours"]</span></div>
+                    <div class="small text-muted">@string.Format(Localizer["BasedOnClosedTickets"], Model.PerformanceStats.TotalClosedSample)</div>
                 </div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 bg-light">
                 <div class="card-body">
-                    <div class="text-muted small">Total Escalations</div>
+                    <div class="text-muted small">@Localizer["TotalEscalations"]</div>
                     <div class="fs-2 fw-bold text-warning">@Model.EscalatedStats.TotalEscalations</div>
-                    <div class="small text-muted">@Model.EscalatedStats.CurrentlyEscalatedTickets waiting in queue</div>
+                    <div class="small text-muted">@string.Format(Localizer["CurrentlyEscalatedWaiting"], Model.EscalatedStats.CurrentlyEscalatedTickets)</div>
                 </div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 bg-light">
                 <div class="card-body">
-                    <div class="text-muted small">Reassigned Escalations</div>
+                    <div class="text-muted small">@Localizer["ReassignedEscalations"]</div>
                     <div class="fs-2 fw-bold text-info">@Model.EscalatedStats.ReassignedEscalations</div>
-                    <div class="small text-muted">Avg @Model.EscalatedStats.AverageResolutionAfterEscalationHours hrs to resolve</div>
+                    <div class="small text-muted">@string.Format(Localizer["AvgHrsToResolve"], Model.EscalatedStats.AverageResolutionAfterEscalationHours)</div>
                 </div>
             </div>
         </div>
