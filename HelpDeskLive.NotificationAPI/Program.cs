@@ -16,7 +16,6 @@ app.MapPost("/api/notifications/ticket-closed", async (
     ILogger<Program> logger,
     CancellationToken ct) =>
 {
-    // 1. Authenticate caller via API Key
     if (!request.Headers.TryGetValue("X-Api-Key", out var apiKey) ||
         !string.Equals(apiKey.ToString(), configuredApiKey, StringComparison.Ordinal))
     {
@@ -24,7 +23,6 @@ app.MapPost("/api/notifications/ticket-closed", async (
         return Results.Unauthorized();
     }
 
-    // 2. Enforce maximum request body size
     if (request.ContentLength.HasValue && request.ContentLength.Value > maxBodySize)
     {
         logger.LogWarning("Request body exceeded maximum size: {Length} bytes.", request.ContentLength.Value);
@@ -37,7 +35,6 @@ app.MapPost("/api/notifications/ticket-closed", async (
         syncIOFeature.MaxRequestBodySize = maxBodySize;
     }
 
-    // 3. Read binary MessagePack body
     using var ms = new MemoryStream();
     await request.Body.CopyToAsync(ms, ct);
     var bytes = ms.ToArray();
@@ -52,7 +49,6 @@ app.MapPost("/api/notifications/ticket-closed", async (
         return Results.StatusCode(StatusCodes.Status413PayloadTooLarge);
     }
 
-    // 4. MessagePack Deserialization
     TicketClosedNotificationDto payload;
     try
     {
@@ -64,14 +60,12 @@ app.MapPost("/api/notifications/ticket-closed", async (
         return Results.BadRequest(new { error = "Malformed binary MessagePack payload." });
     }
 
-    // 5. Payload Validation
     if (payload.TicketId <= 0 || string.IsNullOrWhiteSpace(payload.Title) || payload.ClosedAt == default)
     {
         logger.LogWarning("Invalid payload data: TicketId={TicketId}, Title='{Title}'", payload.TicketId, payload.Title);
         return Results.BadRequest(new { error = "Payload contains invalid ticket closure data." });
     }
 
-    // 6. Meaningful notification delivery simulation & logging
     logger.LogInformation(
         "Successfully delivered ticket closure notification. Ticket #{TicketId} ('{Title}') closed at {ClosedAt}. Notified Customer #{CustomerId} and Agent #{AgentId}.",
         payload.TicketId,
@@ -80,7 +74,6 @@ app.MapPost("/api/notifications/ticket-closed", async (
         payload.CustomerId,
         payload.AgentId);
 
-    // 7. Return JSON response confirming delivery
     return Results.Ok(new
     {
         status = "Delivered",

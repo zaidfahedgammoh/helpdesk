@@ -10,7 +10,10 @@ builder.Services.AddLocalization(options =>
 });
 
 builder.Services
-    .AddControllersWithViews()
+    .AddControllersWithViews(options =>
+    {
+        options.Filters.Add<ApiExceptionFilter>();
+    })
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
@@ -48,9 +51,10 @@ app.UseRequestLocalization(localizationOptions);
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseExceptionHandler("/Home/Error");
 
 app.UseHttpsRedirection();
 app.UseRouting();

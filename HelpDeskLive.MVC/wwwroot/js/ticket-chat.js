@@ -172,7 +172,6 @@
             })
             .withAutomaticReconnect([0, 1000, 3000, 5000, 10000]);
 
-        // Enable MessagePack Hub Protocol if available
         if (window.signalR.protocols && window.signalR.protocols.msgpack && window.signalR.protocols.msgpack.MessagePackHubProtocol) {
             builder = builder.withHubProtocol(new window.signalR.protocols.msgpack.MessagePackHubProtocol());
         }
@@ -180,7 +179,6 @@
         const connection = builder.build();
         hubConnection = connection;
 
-        // SignalR Event Handlers
         connection.on("ReceiveMessage", renderMessage);
 
         connection.on("UserTyping", data => {
@@ -232,12 +230,10 @@
             status.textContent = "Chat disconnected.";
         });
 
-        // Start connection
         await connection.start();
         await connection.invoke("JoinTicket", ticketId);
         await loadHistory();
 
-        // Wire Typing event on input
         input.addEventListener("input", triggerTyping);
         input.addEventListener("blur", () => {
             if (isCurrentlyTyping) {
@@ -249,7 +245,6 @@
             }
         });
 
-        // Wire Send Message Form
         form.addEventListener("submit", async event => {
             event.preventDefault();
             const content = input.value.trim();

@@ -1,9 +1,8 @@
 <Solution>
-  <Project Path="HelpDeskLive.API/HelpDeskLive.API.csproj" Id="f48cc18d-4302-418f-ba61-d229d68ced1c" />
-  <Project Path="HelpDeskLive.Application/HelpDeskLive.Application.csproj" Id="50ef42a7-4b2d-4c30-b6fc-e13ccd1d242c" />
-  <Project Path="HelpDeskLive.Domain/HelpDeskLive.Domain.csproj" Id="83d0be9c-8479-46ab-a4dc-379609003c31" />
-  <Project Path="HelpDeskLive.Infrastructure/HelpDeskLive.Infrastructure.csproj" Id="f653b6b0-6c62-4b94-93fe-6b4ec1a3f748" />
-  <Project Path="HelpDeskLive.MVC/HelpDeskLive.MVC.csproj" Id="fa0e9617-6593-40f5-8185-371d87401a02" />
-  <Project Path="HelpDeskLive.NotificationAPI/HelpDeskLive.NotificationAPI.csproj" Id="b71457f1-5ca1-482f-8703-912ab0a93410" />
-  <Project Path="HelpDeskLive.Tests/HelpDeskLive.Tests.csproj" Id="c927f8a1-7d12-4e63-a249-1658b90710ef" />
+  <Project Path="HelpDeskLive.API/HelpDeskLive.API.csproj" />
+  <Project Path="HelpDeskLive.Application/HelpDeskLive.Application.csproj" />
+  <Project Path="HelpDeskLive.Domain/HelpDeskLive.Domain.csproj" />
+  <Project Path="HelpDeskLive.Infrastructure/HelpDeskLive.Infrastructure.csproj" />
+  <Project Path="HelpDeskLive.MVC/HelpDeskLive.MVC.csproj" />
+  <Project Path="HelpDeskLive.NotificationAPI/HelpDeskLive.NotificationAPI.csproj" />
 </Solution>

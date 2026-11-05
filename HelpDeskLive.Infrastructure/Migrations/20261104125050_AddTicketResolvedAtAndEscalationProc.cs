@@ -5,26 +5,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HelpDeskLive.Infrastructure.Migrations
 {
-    /// <inheritdoc />
     public partial class AddTicketResolvedAtAndEscalationProc : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "ResolvedAt",
-                table: "Tickets",
-                type: "datetime2",
-                nullable: true);
-
-            // Backfill ResolvedAt for existing resolved/closed tickets safely
             migrationBuilder.Sql(@"
-                UPDATE Tickets 
-                SET ResolvedAt = COALESCE(ClosedAt, CreatedAt)
-                WHERE Status IN (3, 4) AND ResolvedAt IS NULL;
+                IF COL_LENGTH(N'dbo.Tickets', N'ResolvedAt') IS NULL
+                BEGIN
+                    ALTER TABLE [dbo].[Tickets] ADD [ResolvedAt] datetime2 NULL;
+                END
             ");
 
-            // Manage sp_GetEscalationStats stored procedure via migration
+            migrationBuilder.Sql(@"
+                UPDATE [dbo].[Tickets] 
+                SET [ResolvedAt] = COALESCE([ClosedAt], [CreatedAt])
+                WHERE [Status] IN (3, 4) AND [ResolvedAt] IS NULL;
+            ");
+
             migrationBuilder.Sql(@"
                 CREATE OR ALTER PROCEDURE [dbo].[sp_GetEscalationStats]
                 AS
@@ -40,14 +37,16 @@ namespace HelpDeskLive.Infrastructure.Migrations
             ");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("DROP PROCEDURE IF EXISTS [dbo].[sp_GetEscalationStats];");
 
-            migrationBuilder.DropColumn(
-                name: "ResolvedAt",
-                table: "Tickets");
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH(N'dbo.Tickets', N'ResolvedAt') IS NOT NULL
+                BEGIN
+                    ALTER TABLE [dbo].[Tickets] DROP COLUMN [ResolvedAt];
+                END
+            ");
         }
     }
 }

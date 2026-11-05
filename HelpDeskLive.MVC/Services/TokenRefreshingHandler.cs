@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -34,7 +35,6 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        // 1. Buffer request body if present and not already retrying, so we can re-send on 401
         byte[]? bufferedContent = null;
         MediaTypeHeaderValue? contentType = null;
         if (request.Content != null && !request.Headers.Contains(RetryHeaderName))
@@ -48,14 +48,20 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
             }
         }
 
-        // 2. Capture the initial authorization token
         var initialToken = request.Headers.Authorization?.Parameter;
 
-        // 3. Send initial request
-        var response = await base.SendAsync(request, cancellationToken);
+        HttpResponseMessage response;
+        try
+        {
+            response = await base.SendAsync(request, cancellationToken);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogWarning(ex, "API backend at {RequestUri} is unreachable.", request.RequestUri);
+            return CreateServiceUnavailableResponse();
+        }
 
-        // 4. If not 401 Unauthorized, or if already a retry attempt, return immediately
-        if (response.StatusCode != System.Net.HttpStatusCode.Unauthorized ||
+        if (response.StatusCode != HttpStatusCode.Unauthorized ||
             request.Headers.Contains(RetryHeaderName))
         {
             return response;
@@ -69,11 +75,9 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
 
         string? refreshedAccessToken = null;
 
-        // 5. Concurrency protection: serialize refresh attempts
         await RefreshLock.WaitAsync(cancellationToken);
         try
         {
-            // Check if another concurrent thread already refreshed the token
             var currentSessionToken = httpContext.Session.GetString("AccessToken");
             if (!string.IsNullOrWhiteSpace(currentSessionToken) &&
                 !string.Equals(currentSessionToken, initialToken, StringComparison.Ordinal))
@@ -82,7 +86,6 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
             }
             else
             {
-                // Attempt refresh via dedicated non-recursive named client
                 if (!httpContext.Request.Cookies.TryGetValue("helpdesk_refresh", out var refreshToken) ||
                     string.IsNullOrWhiteSpace(refreshToken))
                 {
@@ -103,36 +106,47 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
                 using var refreshReq = new HttpRequestMessage(HttpMethod.Post, refreshUri);
                 refreshReq.Headers.Add("Cookie", $"helpdesk_refresh={refreshToken}");
 
-                using var refreshRes = await refreshClient.SendAsync(refreshReq, cancellationToken);
-
-                if (refreshRes.IsSuccessStatusCode)
+                HttpResponseMessage refreshRes;
+                try
                 {
-                    using var doc = await refreshRes.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: cancellationToken);
-                    var newAccessToken = doc?.RootElement.GetProperty("accessToken").GetString();
-
-                    if (!string.IsNullOrWhiteSpace(newAccessToken))
-                    {
-                        refreshedAccessToken = newAccessToken;
-                        httpContext.Session.SetString("AccessToken", newAccessToken);
-
-                        // Propagate rotated refresh cookie to the user's browser
-                        if (refreshRes.Headers.TryGetValues("Set-Cookie", out var setCookies))
-                        {
-                            foreach (var cookie in setCookies.Where(c => c.StartsWith("helpdesk_refresh=", StringComparison.OrdinalIgnoreCase)))
-                            {
-                                httpContext.Response.Headers.Append("Set-Cookie", cookie);
-                            }
-                        }
-
-                        _logger.LogInformation("Successfully refreshed and rotated access token.");
-                    }
+                    refreshRes = await refreshClient.SendAsync(refreshReq, cancellationToken);
                 }
-                else
+                catch (HttpRequestException ex)
                 {
-                    _logger.LogWarning("Refresh token request failed with status {StatusCode}. Terminating session.", refreshRes.StatusCode);
-                    httpContext.Session.Clear();
-                    httpContext.Response.Cookies.Delete("helpdesk_refresh");
+                    _logger.LogWarning(ex, "Refresh token request to {RefreshUri} failed because server is unreachable.", refreshUri);
                     return response;
+                }
+
+                using (refreshRes)
+                {
+                    if (refreshRes.IsSuccessStatusCode)
+                    {
+                        using var doc = await refreshRes.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken: cancellationToken);
+                        var newAccessToken = doc?.RootElement.GetProperty("accessToken").GetString();
+
+                        if (!string.IsNullOrWhiteSpace(newAccessToken))
+                        {
+                            refreshedAccessToken = newAccessToken;
+                            httpContext.Session.SetString("AccessToken", newAccessToken);
+
+                            if (refreshRes.Headers.TryGetValues("Set-Cookie", out var setCookies))
+                            {
+                                foreach (var cookie in setCookies.Where(c => c.StartsWith("helpdesk_refresh=", StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    httpContext.Response.Headers.Append("Set-Cookie", cookie);
+                                }
+                            }
+
+                            _logger.LogInformation("Successfully refreshed and rotated access token.");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Refresh token request failed with status {StatusCode}. Terminating session.", refreshRes.StatusCode);
+                        httpContext.Session.Clear();
+                        httpContext.Response.Cookies.Delete("helpdesk_refresh");
+                        return response;
+                    }
                 }
             }
         }
@@ -141,10 +155,8 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
             RefreshLock.Release();
         }
 
-        // 6. Safe retry of original request with updated token
         if (!string.IsNullOrWhiteSpace(refreshedAccessToken))
         {
-            // Dispose the 401 response before retrying
             response.Dispose();
 
             using var retryReq = new HttpRequestMessage(request.Method, request.RequestUri);
@@ -169,9 +181,28 @@ public sealed class TokenRefreshingHandler : DelegatingHandler
                 }
             }
 
-            return await base.SendAsync(retryReq, cancellationToken);
+            try
+            {
+                return await base.SendAsync(retryReq, cancellationToken);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogWarning(ex, "Retry request to {RequestUri} failed because server is unreachable.", request.RequestUri);
+                return CreateServiceUnavailableResponse();
+            }
         }
 
         return response;
+    }
+
+    private static HttpResponseMessage CreateServiceUnavailableResponse()
+    {
+        return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
+        {
+            Content = new StringContent(
+                "{\"status\":503,\"title\":\"Service Unavailable\",\"detail\":\"Unable to connect to the backend service. Ensure HelpDeskLive.API is running.\"}",
+                System.Text.Encoding.UTF8,
+                "application/problem+json")
+        };
     }
 }

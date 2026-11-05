@@ -165,13 +165,13 @@ public sealed class AdminReportingService : IAdminReportingService
                 var closedAt = isClosedAtNull ? (DateTime?)null : reader.GetDateTime(3);
                 var status = reader.GetInt32(4);
 
-                if (status == 3) // Resolved
+                if (status == 3)
                 {
                     resolvedCount++;
                     var resTime = resolvedAt ?? closedAt ?? DateTime.UtcNow;
                     totalResolvedMinutes += (resTime - createdAt).TotalMinutes;
                 }
-                else if (status == 4) // Closed
+                else if (status == 4)
                 {
                     if (resolvedAt.HasValue)
                     {
