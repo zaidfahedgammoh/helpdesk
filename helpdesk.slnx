@@ -4,5 +4,4 @@
   <Project Path="HelpDeskLive.Domain/HelpDeskLive.Domain.csproj" />
   <Project Path="HelpDeskLive.Infrastructure/HelpDeskLive.Infrastructure.csproj" />
   <Project Path="HelpDeskLive.MVC/HelpDeskLive.MVC.csproj" />
-  <Project Path="HelpDeskLive.NotificationAPI/HelpDeskLive.NotificationAPI.csproj" />
 </Solution>

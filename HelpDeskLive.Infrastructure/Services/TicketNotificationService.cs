@@ -22,7 +22,7 @@ public sealed class TicketNotificationService : ITicketNotificationService
     {
         _httpClient = httpClient;
         _logger = logger;
-        _notificationUrl = configuration["NotificationApi:Url"] ?? "http://localhost:5005/api/notifications/ticket-closed";
+        _notificationUrl = configuration["NotificationApi:Url"] ?? "https://localhost:7076/api/notifications/ticket-closed";
         _apiKey = configuration["NotificationApi:ApiKey"] ?? "HelpDeskLive-Notification-Secret-Key-2026";
     }
 
