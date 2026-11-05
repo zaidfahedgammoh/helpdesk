@@ -41,19 +41,79 @@ public sealed class AdminReportingService : IAdminReportingService
 
     public async Task<IReadOnlyList<DepartmentTicketStatsDto>> GetDepartmentTicketStatsViaLinqAsync(CancellationToken ct = default)
     {
-        return await _dbContext.Departments.AsNoTracking()
-            .Select(dept => new DepartmentTicketStatsDto(
-                dept.Id,
-                dept.Name,
-                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved),
-                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Open),
-                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.InProgress),
-                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Resolved),
-                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Closed),
-                _dbContext.Tickets.Count(t => t.DepartmentId == dept.Id && t.ApprovalStatus == TicketApprovalStatus.Approved && t.Status == TicketStatus.Escalated)
-            ))
-            .OrderBy(d => d.DepartmentName)
+        var departments = await _dbContext.Departments.AsNoTracking()
+            .OrderBy(d => d.Name)
             .ToListAsync(ct);
+
+        Dictionary<int, (int Total, int Open, int InProgress, int Resolved, int Closed, int Escalated)> statsLookup;
+
+        try
+        {
+            var aggregated = await _dbContext.Tickets.AsNoTracking()
+                .Where(t => t.DepartmentId != null && t.ApprovalStatus == TicketApprovalStatus.Approved)
+                .GroupBy(t => t.DepartmentId!.Value)
+                .Select(g => new
+                {
+                    DepartmentId = g.Key,
+                    TotalTickets = g.Count(),
+                    OpenTickets = g.Sum(t => t.Status == TicketStatus.Open ? 1 : 0),
+                    InProgressTickets = g.Sum(t => t.Status == TicketStatus.InProgress ? 1 : 0),
+                    ResolvedTickets = g.Sum(t => t.Status == TicketStatus.Resolved ? 1 : 0),
+                    ClosedTickets = g.Sum(t => t.Status == TicketStatus.Closed ? 1 : 0),
+                    EscalatedTickets = g.Sum(t => t.Status == TicketStatus.Escalated ? 1 : 0)
+                })
+                .ToListAsync(ct);
+
+            statsLookup = aggregated.ToDictionary(
+                s => s.DepartmentId,
+                s => (s.TotalTickets, s.OpenTickets, s.InProgressTickets, s.ResolvedTickets, s.ClosedTickets, s.EscalatedTickets)
+            );
+        }
+        catch
+        {
+            var tickets = await _dbContext.Tickets.AsNoTracking()
+                .Where(t => t.DepartmentId != null && t.ApprovalStatus == TicketApprovalStatus.Approved)
+                .Select(t => new { t.DepartmentId, t.Status })
+                .ToListAsync(ct);
+
+            statsLookup = tickets
+                .GroupBy(t => t.DepartmentId!.Value)
+                .ToDictionary(
+                    g => g.Key,
+                    g => (
+                        Total: g.Count(),
+                        Open: g.Count(t => t.Status == TicketStatus.Open),
+                        InProgress: g.Count(t => t.Status == TicketStatus.InProgress),
+                        Resolved: g.Count(t => t.Status == TicketStatus.Resolved),
+                        Closed: g.Count(t => t.Status == TicketStatus.Closed),
+                        Escalated: g.Count(t => t.Status == TicketStatus.Escalated)
+                    )
+                );
+        }
+
+        var result = new List<DepartmentTicketStatsDto>(departments.Count);
+        foreach (var d in departments)
+        {
+            if (statsLookup.TryGetValue(d.Id, out var s))
+            {
+                result.Add(new DepartmentTicketStatsDto(
+                    d.Id,
+                    d.Name,
+                    s.Total,
+                    s.Open,
+                    s.InProgress,
+                    s.Resolved,
+                    s.Closed,
+                    s.Escalated
+                ));
+            }
+            else
+            {
+                result.Add(new DepartmentTicketStatsDto(d.Id, d.Name, 0, 0, 0, 0, 0, 0));
+            }
+        }
+
+        return result;
     }
 
     public async Task<IReadOnlyList<AgentTicketStatsDto>> GetAgentTicketStatsViaDapperAsync(CancellationToken ct = default)
